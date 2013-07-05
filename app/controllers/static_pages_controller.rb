@@ -12,5 +12,6 @@ class StaticPagesController < ApplicationController
 
   # GET /faq
   def faq
+    campaign_render :template => 'faq'
   end
 end

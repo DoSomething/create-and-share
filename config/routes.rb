@@ -1,16 +1,29 @@
 CreateAndShare::Application.routes.draw do
   resources :campaigns
 
-
-  root :to => 'posts#index'
+  #root :to => 'posts#index'
 
   # DASHBOARD
   match '/dashboard', to: 'dashboard#index'
+
+  match ':campaign', to: 'campaigns#show'
 
   # Gate
   resources :sessions, :only => [:new, :create, :destroy]
   match '/login',  to: 'sessions#new',     :as => :login
   match '/logout', to: 'sessions#destroy', :as => :logout
+
+  scope ':campaign' do
+    # Static pages
+    get 'faq', to: 'static_pages#faq', :as => :faq
+    get 'gallery', to: 'static_pages#gallery', :as => :gallery
+    get 'start', to: 'static_pages#start', :as => :start
+  end
+
+  match ':campaign/submit', to: 'posts#new', :as => :real_submit_path
+  match ':campaign/my' => 'posts#filter', :run => 'my', :as => :mypics
+
+=begin
 
   # Static
   get '/start',   to: 'static_pages#start',   :as => :start
@@ -40,6 +53,8 @@ CreateAndShare::Application.routes.draw do
   # FACEBOOK AUTH
   match 'auth/:provider/callback' => 'sessions#fboauth'
   match 'auth/failure' => redirect('/'), :notice => 'Login failed! Try again?'
+=end
+
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

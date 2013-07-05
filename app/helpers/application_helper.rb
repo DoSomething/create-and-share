@@ -72,4 +72,13 @@ module ApplicationHelper
       "anything by you yet"
     end
   end
+
+  def campaign_render(**args)
+    base = Rails.root.to_s + '/app/views/' + params[:controller]
+    if File.exist? base + '/' + params[:campaign] + '/' + args[:template] + '.html.erb'
+      render :template => params[:controller] + '/' + params[:campaign] + '/' + args[:template]
+    else
+      render :template => params[:controller] + '/' + args[:template]
+    end
+  end
 end

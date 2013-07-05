@@ -1,4 +1,5 @@
 class CampaignsController < ApplicationController
+  layout 'admin', :except => [:show,:index]
   # GET /campaigns
   # GET /campaigns.json
   def index
@@ -13,7 +14,7 @@ class CampaignsController < ApplicationController
   # GET /campaigns/1
   # GET /campaigns/1.json
   def show
-    @campaign = Campaign.find(params[:id])
+    @campaign = Campaign.where(:path => params[:campaign]).first
 
     respond_to do |format|
       format.html # show.html.erb
@@ -44,7 +45,7 @@ class CampaignsController < ApplicationController
 
     respond_to do |format|
       if @campaign.save
-        format.html { redirect_to @campaign, notice: 'Campaign was successfully created.' }
+        format.html { redirect_to '/' + @campaign.path, notice: 'Campaign was successfully created.' }
         format.json { render json: @campaign, status: :created, location: @campaign }
       else
         format.html { render action: "new" }
