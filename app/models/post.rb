@@ -20,6 +20,7 @@ class Post < ActiveRecord::Base
   validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif'] }
 
   has_many :shares
+  belongs_to :campaign
 
   # The number of elements to show per "page" in the infinite scroll.
   def self.per_page

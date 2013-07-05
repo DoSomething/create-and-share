@@ -1,4 +1,7 @@
 CreateAndShare::Application.routes.draw do
+  resources :campaigns
+
+
   root :to => 'posts#index'
 
   # DASHBOARD
