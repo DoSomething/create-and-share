@@ -6,19 +6,13 @@ CreateAndShare::Application.routes.draw do
   # DASHBOARD
   match '/dashboard', to: 'dashboard#index'
 
-  # Gate
+  # Sessions business
   resources :sessions, :only => [:new, :create, :destroy]
   match '/login',  to: 'sessions#new',     :as => :login
   match '/logout', to: 'sessions#destroy', :as => :logout
-
-  resources :posts do
-    member do
-      post 'flag', constraints: lambda { is_admin? }
-    end
-  end
-
-  resources :users, :only => [:create]
-  resources :shares, :only => [:create]
+  match 'sessions' => redirect('/login')
+  get 'auth/:provider/callback' => 'sessions#fboauth'
+  get 'auth/failure' => redirect('/'), :notice => 'Login failed! Try again?'
 
   scope ':campaign', constraints: { campaign: /[A-Za-z0-9\-\_]+/ } do
     root to: 'campaigns#show'
@@ -27,10 +21,13 @@ CreateAndShare::Application.routes.draw do
     get 'faq', to: 'static_pages#faq', as: :faq
     get 'gallery', to: 'static_pages#gallery', as: :gallery
     get 'start', to: 'static_pages#start', as: :start
+    get 'submit/guide', to: 'users#intent', as: :intent
+
+    get 'submit', to: 'posts#new', as: :real_submit_path
 
     # General paths
-    get 'submit', to: 'posts#new', as: :real_submit_path
     get 'featured', to: 'posts#filter', run: 'featured'
+    get 'adopted', to: 'posts#filter', run: 'adopted'
 
     # Filters
     get 'my' => 'posts#filter', :run => 'my', :as => :mypics
@@ -40,27 +37,20 @@ CreateAndShare::Application.routes.draw do
     get ':atype', to: 'posts#filter', constraints: { atype: /(cat|dog|other)s?/ }, run: 'animal'
     get ':state', to: 'posts#filter', constraints: { state: /[A-Z]{2}/ }, run: 'state'
     get ':atype-:state', to: 'posts#filter', constraints: { atype: /(cat|dog|other)s?/, state: /[A-Z]{2}/ }, run: 'both'
+
+    resources :posts do
+      member do
+        post 'flag', constraints: lambda { is_admin? }
+      end
+
+      collection do
+        post 'autoimg'
+      end
+    end
+
+    resources :users, :only => [:create]
+    resources :shares, :only => [:create]
   end
-
-=begin
-  match ':id' => 'posts#show', :constraints => { :id => /\d+/ }, :as => :show_post
-  match ':atype' => 'posts#filter', :constraints => { :atype => /(cat|dog|other)s?/ }, :run => 'animal'
-  match ':state' => 'posts#filter', :constraints => { :state => /[A-Z]{2}/ }, :run => 'state'
-  match ':atype-:state' => 'posts#filter', :constraints => { :atype => /(cat|dog|other)s?/, :state => /[A-Z]{2}/ }, :run => 'both'
-  match 'featured' => 'posts#filter', :run => 'featured'
-  match 'adopted' => 'posts#filter', :run => 'adopted'
-  match 'fix' => 'posts#fix'
-  match 'autoimg' => 'posts#autoimg'
-  match 'alterimg/:id' => 'posts#alterimg', :as => :alter_image
-  match 'flag/:id' => 'posts#flag', :as => :flag
-  get 'submit/guide' => 'users#intent', :as => :intent
-  match 'sessions' => redirect('/login')
-  match ':vanity' => 'posts#vanity', :constraints => { :vanity => /[A-Za-z]+/ }
-
-  # FACEBOOK AUTH
-  match 'auth/:provider/callback' => 'sessions#fboauth'
-  match 'auth/failure' => redirect('/'), :notice => 'Login failed! Try again?'
-=end
 
 
   # The priority is based upon order of creation:
