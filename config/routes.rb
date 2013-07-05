@@ -36,6 +36,10 @@ CreateAndShare::Application.routes.draw do
     get 'my' => 'posts#filter', :run => 'my', :as => :mypics
     get ':id', to: 'posts#show', constraints: { id: /\d+/ }, as: :show_post
     get ':vanity', to: 'posts#vanity', constraints: { vanity: /[A-Za-z]+/ }, as: :vanity_post
+
+    get ':atype', to: 'posts#filter', constraints: { atype: /(cat|dog|other)s?/ }, run: 'animal'
+    get ':state', to: 'posts#filter', constraints: { state: /[A-Z]{2}/ }, run: 'state'
+    get ':atype-:state', to: 'posts#filter', constraints: { atype: /(cat|dog|other)s?/, state: /[A-Z]{2}/ }, run: 'both'
   end
 
 =begin
