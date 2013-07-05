@@ -451,7 +451,7 @@ class PostsController < ApplicationController
   # GET /flag/1
   def flag
     # Shouldn't be here if they're not an admin.
-    render :status => :forbidden if !admin?
+    render :status => :forbidden unless admin?
 
     @post = Post.find(params[:id])
     @post.flagged = true
@@ -471,10 +471,11 @@ class PostsController < ApplicationController
       .group('posts.id')
       .limit(1)
       .first
-    if @post.nil?
-      redirect_to :root
-    else
-      render :show
-    end
+
+    #if @post.nil?
+    #  redirect_to :root
+    #else
+      render :controller => 'posts', :action => 'show', :campaign => 'picsforpets'
+    #end
   end
 end

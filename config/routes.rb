@@ -6,36 +6,39 @@ CreateAndShare::Application.routes.draw do
   # DASHBOARD
   match '/dashboard', to: 'dashboard#index'
 
-  match ':campaign', to: 'campaigns#show'
-
   # Gate
   resources :sessions, :only => [:new, :create, :destroy]
   match '/login',  to: 'sessions#new',     :as => :login
   match '/logout', to: 'sessions#destroy', :as => :logout
 
-  scope ':campaign' do
-    # Static pages
-    get 'faq', to: 'static_pages#faq', :as => :faq
-    get 'gallery', to: 'static_pages#gallery', :as => :gallery
-    get 'start', to: 'static_pages#start', :as => :start
+  resources :posts do
+    member do
+      post 'flag', constraints: lambda { is_admin? }
+    end
   end
 
-  match ':campaign/submit', to: 'posts#new', :as => :real_submit_path
-  match ':campaign/my' => 'posts#filter', :run => 'my', :as => :mypics
-
-=begin
-
-  # Static
-  get '/start',   to: 'static_pages#start',   :as => :start
-  get '/gallery', to: 'static_pages#gallery', :as => :gallery
-  get '/faq',     to: 'static_pages#faq',     :as => :faq
-
-  resources :posts
   resources :users, :only => [:create]
   resources :shares, :only => [:create]
 
-  match 'submit' => 'posts#new', :as => :real_submit_path
-  match 'mypets' => 'posts#filter', :run => 'my', :as => :mypics
+  scope ':campaign', constraints: { campaign: /[A-Za-z0-9\-\_]+/ } do
+    root to: 'campaigns#show'
+
+    # Static pages
+    get 'faq', to: 'static_pages#faq', as: :faq
+    get 'gallery', to: 'static_pages#gallery', as: :gallery
+    get 'start', to: 'static_pages#start', as: :start
+
+    # General paths
+    get 'submit', to: 'posts#new', as: :real_submit_path
+    get 'featured', to: 'posts#filter', run: 'featured'
+
+    # Filters
+    get 'my' => 'posts#filter', :run => 'my', :as => :mypics
+    get ':id', to: 'posts#show', constraints: { id: /\d+/ }, as: :show_post
+    get ':vanity', to: 'posts#vanity', constraints: { vanity: /[A-Za-z]+/ }, as: :vanity_post
+  end
+
+=begin
   match ':id' => 'posts#show', :constraints => { :id => /\d+/ }, :as => :show_post
   match ':atype' => 'posts#filter', :constraints => { :atype => /(cat|dog|other)s?/ }, :run => 'animal'
   match ':state' => 'posts#filter', :constraints => { :state => /[A-Z]{2}/ }, :run => 'state'
