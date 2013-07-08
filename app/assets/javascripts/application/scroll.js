@@ -15,6 +15,7 @@ $(document).ready(function() {
 
       // If we are viewing a filter...
       if (typeof filter != 'undefined') {
+        console.log('/' + campaign.path + '/' + filter + '.js?page=' + page + '&last=' + latest);
           $.getScript('/' + campaign.path + '/' + filter + '.js?page=' + page + '&last=' + latest, function() {
             // Remove the current inview element.  Add a new one.
             $('.inview').remove();

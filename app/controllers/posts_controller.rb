@@ -100,7 +100,9 @@ class PostsController < ApplicationController
     @admin = 'admin-' if admin?
     @admin += campaign.path
 
-    campaign_id = campaign.id
+    cmp = campaign
+    campaign_id = cmp.id
+    campaign_path = cmp.path
 
     if params[:atype].is_a? String
       # Cats isn't a valid filter, but cat is.  Let's chop off
@@ -270,7 +272,7 @@ class PostsController < ApplicationController
       @last = @posts.last.id
     end
     @page = page.to_s
-    @path = request.fullpath[1..-1]
+    @path = request.fullpath.gsub(cmp.path, '')[2..-1]
     @filter = var
 
     respond_to do |format|
