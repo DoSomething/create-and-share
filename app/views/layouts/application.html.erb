@@ -11,6 +11,14 @@
   <meta property="og:image" content="http://pics.dosomething.org/images/logo-pics.png" />
   <%= csrf_meta_tags %>
   <%= yield(:head) %>
+  <script type="text/javascript">
+  <!--
+    var campaign = {
+      title: '<%= campaign.title %>',
+      path: '<%= campaign.path %>'
+    };
+  -->
+  </script>
 </head>
 <body>
 

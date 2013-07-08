@@ -81,4 +81,9 @@ module ApplicationHelper
       render :template => params[:controller] + '/' + args[:template]
     end
   end
+
+  def campaign
+    @@campaign = Campaign.where(:path => params[:campaign]).first
+    @@campaign
+  end
 end

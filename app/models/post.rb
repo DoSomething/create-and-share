@@ -16,6 +16,7 @@ class Post < ActiveRecord::Base
   validates :state,   :presence => true,
                       :length => { :maximum => 2 }
   validates :shelter, :presence => true
+  validates :campaign_id, :presence => true, :numericality => true
 
   has_attached_file :image, :styles => { :gallery => '450x450!' }, :default_url => '/images/:style/default.png', :processors => [:cropper]
   validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif'] }
