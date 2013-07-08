@@ -4,7 +4,7 @@ Feature: Crop image
 	Background:
 		Given there is a campaign
 		Given I am logged in
-		And I visit /submit
+		And I visit /picsforpets/submit
 
 	@javascript
 	Scenario: Successfully crop a picture

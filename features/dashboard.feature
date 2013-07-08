@@ -7,20 +7,25 @@ Feature: Access Dashboard
 		Given there is a campaign
 		Given there are posts
 
+	@javascript
 	Scenario: Visit while not signed in
 		When I visit /dashboard
-		Then the page should show how it works
-		And the page should show please login as admin
+		Then the page should show HOW IT WORKS
+		And the page should show PLEASE LOGIN AS ADMIN
 		And the page should not show you have been logged out
 
+	@javascript
 	Scenario: Visit while signed in but not admin
 		When I visit /dashboard
 		And I log in as a regular user
-		Then the page should show how it works
-		And the page should show please login as admin
-		And the page should show you have been logged out
+		When I visit /dashboard
+		Then the page should show HOW IT WORKS
+		And the page should show PLEASE LOGIN AS ADMIN
+		And the page should show YOU HAVE BEEN LOGGED OUT
 
+	@javascript
 	Scenario: Visit while signed in as admin
 		When I visit /dashboard
 		And I log in as an admin
+		When I visit /dashboard
 		Then the page should show Pics for Pets - Dashboard

@@ -5,19 +5,19 @@ Feature: Test pages
     Given there is a campaign
 
   Scenario: Routes
-    When I visit /
+    When I visit /picsforpets
     Then the page should redirect to /login
 
-    When I visit /submit
+    When I visit /picsforpets/submit
     Then the page should redirect to /login
 
-    When I visit /cats
+    When I visit /picsforpets/cats
     Then the page should redirect to /login
 
   @javascript
   Scenario: Submit flow
     Given I am logged in
-    When I visit /submit
+    When I visit /picsforpets/submit
     Then the page should show TELL US ABOUT YOUR ANIMAL
 
     Then element .form-submit should not show Adopt me because...
@@ -39,30 +39,30 @@ Feature: Test pages
     Given I am logged in
     Given there is a post
 
-    When I visit /mypets
+    When I visit /picsforpets/mine
     Then the element .post-list should show Spot the kitten
 
   Scenario: Filters
     Given I am logged in
     Given there is a post
 
-    When I visit /cats
+    When I visit /picsforpets/cats
     Then the element .post-list should show Spot the kitten
 
-    When I visit /cats-PA
+    When I visit /picsforpets/cats-PA
     Then the element .post-list should show Spot the kitten
 
-    When I visit /PA
+    When I visit /picsforpets/PA
     Then the element .post-list should show Spot the kitten
 
-    When I visit /dogs-PA
+    When I visit /picsforpets/dogs-PA
     Then the element .post-list should show We don't have
 
-    When I visit /dogs
+    When I visit /picsforpets/dogs
     Then the element .post-list should show We don't have
 
-    When I visit /others-PA
+    When I visit /picsforpets/others-PA
     Then the element .post-list should show We don't have
 
-    When I visit /others
+    When I visit /picsforpets/others
     Then the element .post-list should show We don't have

@@ -14,7 +14,7 @@ CreateAndShare::Application.routes.draw do
   get 'auth/failure' => redirect('/'), :notice => 'Login failed! Try again?'
 
   scope ':campaign', constraints: lambda{|params| Campaign.where(:path => params[:campaign]).count > 0 } do
-    root to: 'campaigns#show'
+    root to: 'posts#index'
 
     # Static pages
     get 'faq', to: 'static_pages#faq', as: :faq
@@ -29,7 +29,7 @@ CreateAndShare::Application.routes.draw do
     get 'adopted', to: 'posts#filter', run: 'adopted'
 
     # Filters
-    get 'my' => 'posts#filter', :run => 'my', :as => :mypics
+    get 'mine' => 'posts#filter', :run => 'my', :as => :mypics
     get ':id', to: 'posts#show', constraints: { id: /\d+/ }, as: :show_post
     get ':vanity', to: 'posts#vanity', constraints: { vanity: /[A-Za-z]+/ }, as: :vanity_post
 
