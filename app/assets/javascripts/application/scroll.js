@@ -15,7 +15,7 @@ $(document).ready(function() {
 
       // If we are viewing a filter...
       if (typeof filter != 'undefined') {
-          $.getScript('/' + filter + '.js?page=' + page + '&last=' + latest, function() {
+          $.getScript('/' + campaign + '/' + filter + '.js?page=' + page + '&last=' + latest, function() {
             // Remove the current inview element.  Add a new one.
             $('.inview').remove();
             $('<div></div>').addClass('inview').appendTo($('.post-list'));
@@ -34,7 +34,7 @@ $(document).ready(function() {
           });
       }
       else {
-        $.getScript('/posts.js?page=' + page + '&last=' + latest, function() {
+        $.getScript('/' + campaign + '/posts.js?page=' + page + '&last=' + latest, function() {
           // Remove the current inview element.  Add a new one.
           $('.inview').remove();
           $('<div></div>').addClass('inview').appendTo($('.post-list'));

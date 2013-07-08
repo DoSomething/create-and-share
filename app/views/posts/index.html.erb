@@ -1,3 +1,11 @@
+<% content_for :head do %>
+<script type="text/javascript">
+<!--
+  var campaign = '<%= @posts.first.campaign.path %>';
+-->
+</script>
+<% end %>
+
 <% cache @admin + 'posts-index-home' do %>
 <script type="text/javascript">
 <!--

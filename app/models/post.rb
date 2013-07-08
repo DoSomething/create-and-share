@@ -4,7 +4,8 @@ class Post < ActiveRecord::Base
   	:share_count, :shelter, :state, :city,
   	:story, :animal_type, :update_time,
     :meme_text, :meme_position,
-    :crop_x, :crop_y, :crop_w, :crop_h, :crop_dim_w
+    :crop_x, :crop_y, :crop_w, :crop_h, :crop_dim_w,
+    :campaign_id
 
   attr_accessor :crop_x, :crop_y, :crop_w, :crop_h, :cropped, :crop_dim_w
 
