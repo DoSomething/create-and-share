@@ -15,7 +15,7 @@ When /I click id (.*)/ do |e|
 end
 
 Then /I am on the login form/ do
-  visit '/login'
+  visit '/picsforpets'
   click_link 'log in'
 end
 

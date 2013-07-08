@@ -1,1 +1,1 @@
-<% cache @admin + @filter + '-page-' + @page do %><% if !@promoted.nil? %><% @post = @promoted %><%= render 'single_post' %><% end %><% @posts.each do |post| %><% @post = post; p @post %><%= render 'single_post' %><% end %><% end %>
+<% cache @admin + @filter + '-page-' + @page do %><% if !@promoted.nil? %><% @post = @promoted %><%= render 'single_post' %><% end %><% @posts.each do |post| %><% @post = post %><%= render 'single_post' %><% end %><% end %>

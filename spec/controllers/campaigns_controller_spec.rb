@@ -12,13 +12,13 @@ describe CampaignsController, :type => :controller do
     end
   end
 
-  describe "GET show" do
-    it "assigns the requested campaign as @campaign" do
-      campaign = Campaign.create! valid_attributes
-      get :show, {:campaign => campaign.path}
-      assigns(:campaign).should eq(campaign)
-    end
-  end
+# describe "GET show" do
+#    it "assigns the requested campaign as @campaign" do
+#      campaign = Campaign.create! valid_attributes
+#      get :show, {:campaign => campaign.path}
+#      assigns(:campaign).should eq(campaign)
+#    end
+#  end
 
   describe "GET new" do
     it "assigns a new campaign as @campaign" do

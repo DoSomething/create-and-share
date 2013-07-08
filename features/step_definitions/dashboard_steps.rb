@@ -4,7 +4,6 @@ When /I log in as a regular user/ do
     find(:id, 'session_username').set 'test@subject.com'
     find(:id, 'login-password').set 'test'
     click_button 'login'
-    save_screenshot 'CATS.jpg'
   end
 end
 
