@@ -13,6 +13,9 @@ class PostsController < ApplicationController
   def index
     @admin = ''
     @admin = 'admin-' if admin?
+    @admin += campaign.path
+
+    campaign_id = campaign.id
 
     # Get the page and offset
     page = params[:page] || 0
@@ -22,7 +25,7 @@ class PostsController < ApplicationController
     @p = Post
      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
      .select('posts.*, COUNT(shares.*) AS real_share_count')
-     .where(:flagged => false)
+     .where(:flagged => false, :campaign_id => campaign_id)
      .group('posts.id')
      .order('posts.created_at DESC')
      .limit(Post.per_page)
@@ -31,7 +34,7 @@ class PostsController < ApplicationController
         .joins('LEFT JOIN shares ON shares.post_id = posts.id')
         .select('posts.*, COUNT(shares.*) AS real_share_count')
         .group('posts.id')
-        .where(:promoted => true, :flagged => false)
+        .where(:promoted => true, :flagged => false, :campaign_id => campaign_id)
         .order('RANDOM()')
         .limit(1)
         .all
@@ -95,6 +98,9 @@ class PostsController < ApplicationController
   def filter
     @admin = ''
     @admin = 'admin-' if admin?
+    @admin += campaign.path
+
+    campaign_id = campaign.id
 
     if params[:atype].is_a? String
       # Cats isn't a valid filter, but cat is.  Let's chop off
@@ -111,12 +117,12 @@ class PostsController < ApplicationController
     @p = Post
       .joins('LEFT JOIN shares ON shares.post_id = posts.id')
       .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .where(:flagged => false)
+      .where(:flagged => false, :campaign_id => campaign_id)
       .group('posts.id, shares.post_id')
       .limit(Post.per_page)
     @total = Post
       .order('posts.created_at DESC')
-      .where(:flagged => false)
+      .where(:flagged => false, :campaign_id => campaign_id)
 
     # Sets up all of the filters.
     var = @admin + 'posts-filter-'
@@ -358,7 +364,7 @@ class PostsController < ApplicationController
   # GET /posts/1.json
   def show
     @post = Post
-      .where(:id => params[:id], :flagged => false)
+      .where(:id => params[:id], :flagged => false, :campaign_id => campaign.id)
       .joins('LEFT JOIN shares ON shares.post_id = posts.id')
       .select('posts.*, COUNT(shares.*) AS real_share_count')
       .group('shares.post_id, posts.id')
@@ -466,16 +472,16 @@ class PostsController < ApplicationController
     @post = Post
       .joins('LEFT JOIN shares ON shares.post_id = posts.id')
       .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .where(:promoted => true, :flagged => false)
+      .where(:promoted => true, :flagged => false, :campaign_id => campaign.id)
       .where('LOWER(name) = ?', params[:vanity])
       .group('posts.id')
       .limit(1)
       .first
 
-    #if @post.nil?
-    #  redirect_to :root
-    #else
-      render :controller => 'posts', :action => 'show', :campaign => 'picsforpets'
-    #end
+    if @post.nil?
+      redirect_to :root
+    else
+      render :controller => 'posts', :action => 'show', :campaign => campaign.path
+    end
   end
 end
