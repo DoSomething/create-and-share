@@ -1,3 +1,7 @@
+Given /there is a campaign/ do
+  FactoryGirl.create(:campaign)
+end
+
 When /I click on (.*)/ do |click|
   click_link click
 end

@@ -1,14 +1,15 @@
 require 'spec_helper'
 
 describe PostsController, :type => :controller do
+  let(:campaign) { FactoryGirl.create(:campaign) }
   describe 'GET #index' do
     it 'redirects to login' do
-      get :index
+      get :index, :campaign => campaign.path
       expect(response).to redirect_to :login
     end
 
     it 'shows index' do
-      get :index, :bypass => true
+      get :index, :campaign => campaign.path, :bypass => true
 
       expect(response).to be_success
       expect(response.status).to eq 200
@@ -18,12 +19,12 @@ describe PostsController, :type => :controller do
 
   describe 'GET #filter' do
     it 'redirects to login' do
-      get :filter, :run => 'my'
+      get :filter, :campaign => campaign.path, :run => 'my'
       expect(response).to redirect_to :login
     end
 
     it 'show filter' do
-      get :filter, :run => 'animal', :atype => 'cats', :bypass => true
+      get :filter, :campaign => campaign.path, :run => 'animal', :atype => 'cats', :bypass => true
       expect(response).to be_success
       expect(response.status).to eq 200
       expect(response).to render_template 'filter'
@@ -32,12 +33,12 @@ describe PostsController, :type => :controller do
 
   describe 'GET #new' do
     it 'redirects to login' do
-      get :new
+      get :new, :campaign => campaign.path
       expect(response).to redirect_to :login
     end
 
     it 'shows submit' do
-      get :new, :bypass => true
+      get :new, :campaign => campaign.path, :bypass => true
       expect(response).to be_success
       expect(response.status).to eq 200
       expect(response).to render_template 'new'

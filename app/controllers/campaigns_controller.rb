@@ -1,5 +1,5 @@
 class CampaignsController < ApplicationController
-  layout 'admin', :except => [:show,:index]
+  layout 'admin', :except => [:show]
   # GET /campaigns
   # GET /campaigns.json
   def index

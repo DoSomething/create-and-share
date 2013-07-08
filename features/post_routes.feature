@@ -1,6 +1,9 @@
 Feature: Test pages
   We need to check basic routes
 
+  Background:
+    Given there is a campaign
+
   Scenario: Routes
     When I visit /
     Then the page should redirect to /login

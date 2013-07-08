@@ -1,5 +1,5 @@
 When /I visit (.*)/ do |route|
-  visit(route)
+  visit('/picsforpets/' + route)
 end
 
 Then /the page should redirect to (.*)/ do |path|

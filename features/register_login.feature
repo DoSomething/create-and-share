@@ -1,6 +1,9 @@
 Feature: Home run
   We need to confirm that we can login / register.
 
+  Background:
+    Given there is a campaign
+
   @logreg
   @login
   Scenario: Fail Log in

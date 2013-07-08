@@ -4,6 +4,7 @@ Feature: Access Dashboard
 	I want to be able to access the dashboard
 
 	Background:
+		Given there is a campaign
 		Given there are posts
 
 	Scenario: Visit while not signed in

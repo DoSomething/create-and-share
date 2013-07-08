@@ -74,9 +74,9 @@ class SessionsController < ApplicationController
             end
             # It worked!
             flash[:message] = "You've logged in succesfully!"
-            source = session[:source] || :root
+            source = :root#session[:source] || :root
             session[:source] = nil
-            redirect_to source
+            redirect_to '/'
           else
             # Nope...
             flash[:error] = "Invalid username / password"
@@ -103,7 +103,7 @@ class SessionsController < ApplicationController
           # Yep!
           handle_mc(email, cell)
           flash.now[:message] = 'Super! You\'ve registered successfully' + " #{response}"
-          source = session[:source] || :root
+          source = :root#session[:source] || :root
           session[:source] = nil
           redirect_to source
         else

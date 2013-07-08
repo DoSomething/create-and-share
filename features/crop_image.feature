@@ -2,6 +2,7 @@ Feature: Crop image
 	We need to be able to crop uploaded images into 1:1 aspect ratio
 
 	Background:
+		Given there is a campaign
 		Given I am logged in
 		And I visit /submit
 

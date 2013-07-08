@@ -1,6 +1,9 @@
 Feature: Home run
   We need to check the basic flow works.
 
+  Background:
+    Given there is a campaign
+
   Scenario: Show the login form
     When I visit /
     Then the page should show Need an account?
