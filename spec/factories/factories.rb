@@ -18,6 +18,7 @@ FactoryGirl.define do
     city 'Pittsburgh'
     story "This is a story"
     animal_type 'cat'
+    campaign_id { Campaign.last ? Campaign.last.id : 1 }
   end
 
   factory :user do

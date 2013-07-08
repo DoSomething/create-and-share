@@ -3,6 +3,7 @@ Feature: Test pages
 
   Background:
     Given there is a campaign
+    Given there is a post
 
   Scenario: Routes
     When I visit /picsforpets
@@ -37,7 +38,6 @@ Feature: Test pages
 
   Scenario: My Pets
     Given I am logged in
-    Given there is a post
 
     When I visit /picsforpets/mine
     Then the element .post-list should show Spot the kitten
