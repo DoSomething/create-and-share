@@ -1,28 +1,5 @@
 <section class="start">
   <div class="section-container">
-    <p>Sometimes an amazing photo is all that stands between a homeless pet and a new home. Lend a nearby shelter your photo skills and share the pictures with your friends to help animals get adopted! When you submit a photo you'll be automatically entered to win a $4,000 scholarship!</p>
-    <h2>Step 1: How to take an irresistible photo</h2>
-    <p>Which one of these pics tugs at your heartstrings?</p>
-    <%= image_tag '/images/bg-good.jpg', :class => 'step-one good', :alt => 'An example of a good photo' %>
-    <%= image_tag '/images/bg-bad.jpg', :class => 'step-one', :alt => 'An example of a bad photo' %>
-    <p>A good photo makes all the difference for a homeless animal.</p>
-    <p>Here's how you make it happen.</p>
-    <ul>
-      <li><%= link_to 'Download our action kit', 'http://www.dosomething.org/files/campaigns/picsforpets/FindAShelter-ProTips_Postcard_2.pdf' %> to get a shelter near you on board.</li>
-      <li>Ask a shelter rep to handle the animal so you can keep your hands on the camera.</li>
-      <li>Remember the formula for a stunning pet pic:</li>
-    </ul>
-    <%= image_tag '/images/bg-equation.jpg', :alt => 'flash off + cage free = pro photo' %>
-
-    <h2>Step 2: Find a shelter near you</h2>
-    <div class="shelter-finder" id="shelter-finder">
-      <p class="error">Please enter a valid U.S. zip code</p>
-      <label>zip code</label>
-      <input type="number" id="shelter-zip"></input>
-      <a href="#" id="shelter-submit" class="btn secondary medium" target="_blank"><span>find a shelter</span></a>
-    </div>
-
-    <h2>Step 3: Back from the shelter?</h2>
-    <%= link_to :real_submit_path, :class => 'btn primary large' do %><span>submit your pic</span><% end %>
+    <p>This is the basic start / submit guide page for create and share campaigns.  Create a campaign-specific version by making a <b>start.html.erb</b> in 'app/views/<%= get_campaign.path %>/static_pages'.</p>
   </div>
 </section>
