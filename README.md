@@ -6,6 +6,7 @@ Create and Share is a campaign model used on DoSomething.org.  Users are encoura
 
 1. Visit /campaigns/new as an administrator (if you're not an admin, it'll ask you to log in).  Fill out the form as appropriate.  All fields are required.
 2. The path specified in step 1 will be automatically generated in the routes file, along with a number of generic routes:  
+
 ```
 /:campaign/submit         # Submit page
 /:campaign/faq            # FAQ
@@ -18,4 +19,5 @@ Create and Share is a campaign model used on DoSomething.org.  Users are encoura
 /:campaign/mine           # Pets that the user submitted / shared
 /:campaign/:vanity        # Searches for a promoted pet of the name specified by :vanity
 ```
+
 3. You can create / add filters by (TODO).
