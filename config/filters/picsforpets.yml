@@ -1,0 +1,17 @@
+":atype-:state":
+  constraints:
+    ":atype": "(?<atype>cat|dog|other)s?"
+    ":state": "(?<state>[A-Z]{2})"
+  where:
+    "animal_type": "atype"
+    "state": "state"
+":atype":
+  constraints:
+    ":atype": "(?<atype>cat|dog|other)s?"
+  where:
+    "animal_type": "atype"
+":state":
+  constraints:
+    ":state": "(?<state>[A-Z]{2})"
+  where:
+    "state": "state"

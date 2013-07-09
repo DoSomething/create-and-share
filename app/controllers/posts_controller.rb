@@ -486,4 +486,43 @@ class PostsController < ApplicationController
       render :controller => 'posts', :action => 'show', :campaign => get_campaign.path
     end
   end
+
+  def show_filter
+    @result = nil
+    @where = {}
+    @real_path = real_path = Pathname.new(request.fullpath).basename.to_s
+    @admin = ''
+    @page = 0.to_s
+
+    Rails.application.config.filters[params[:campaign]].each do |route, config|
+      ret = route
+      config['constraints'].each do |key, constraint|
+        ret = ret.gsub(key, constraint)
+      end
+
+      ret = Regexp.new "^#{ret}$"
+      if @result = @real_path.match(ret)
+        @where = config['where']
+        break
+      end
+    end
+
+    @posts = Post
+      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
+      .select('posts.*, COUNT(shares.*) AS real_share_count')
+      .where(:flagged => false, :campaign_id => get_campaign.id)
+      .group('posts.id')
+    @where.each do |key, condition|
+      if @result[condition]
+        @posts = @posts.where(key.to_sym => @result[condition])
+      end
+    end
+
+    @filter = @real_path
+    @count = @posts.length
+    @last = @posts.last.id
+    respond_to do |format|
+      format.html
+    end
+  end
 end

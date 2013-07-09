@@ -42,6 +42,7 @@ CreateAndShare::Application.routes.draw do
     get 'adopted', to: 'posts#filter', run: 'adopted'
 
     # Filters
+    get 'show/:filter', to: 'posts#show_filter', constraints: { filter: /.*/ }
     get ':atype', to: 'posts#filter', constraints: { atype: /(cat|dog|other)s?/ }, run: 'animal'
     get ':state', to: 'posts#filter', constraints: { state: /[A-Z]{2}/ }, run: 'state'
     get ':atype-:state', to: 'posts#filter', constraints: { atype: /(cat|dog|other)s?/, state: /[A-Z]{2}/ }, run: 'both'
