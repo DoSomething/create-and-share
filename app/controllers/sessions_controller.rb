@@ -62,7 +62,7 @@ class SessionsController < ApplicationController
       else
         date = Date.strptime(auth['birthday'], '%m/%d/%Y')
       end
-      if !User.register(password, auth['email'], auth['first_name'], auth['last_name'], '', date.month, date.day, date.year)
+      if !User.register(password, auth['email'], auth['id'], auth['first_name'], auth['last_name'], '', "#{date.month}/#{date.day}/#{date.year}")
         flash[:error] = "An error has occurred. Please log in again."
       end
     end
@@ -105,26 +105,6 @@ class SessionsController < ApplicationController
           flash[:error] = "Facebook authentication failed."
         end
         redirect_to :login
-      end
-    end
-
-    # Sends MailChimp / Mobile Commons messages to a user.
-    #
-    # @param string email
-    #   The email to send the message to.
-    # @param string mobile
-    #   A valid phone number to send a txt to.
-    ##
-    def handle_mc(email = nil, mobile = nil)
-      if !email.nil?
-        # MailChimp PicsforPets2013
-        Services::MailChimp.subscribe(email, 'PicsforPets2013')
-        Mailer.signup(email).deliver
-      end
-
-      if !mobile.nil?
-        # Mobile Commons 158551
-        Services::MobileCommons.subscribe(mobile, 158551)
       end
     end
 end

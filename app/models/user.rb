@@ -26,12 +26,14 @@ class User < ActiveRecord::Base
   # logs in a user with the given parameters and creates an entry in the rails database if one doesn't exist already
   def self.login(session, username, password, cell, fbid)
     if fbid != 0 # if logging in with Facebook
-      uid = Services::Auth.check_admin(username).first['uid']
+      uid = Services::Auth.check_admin(username).first
       if uid
+        uid = uid['uid']
         roles = { 1 => 'administrator', 2 => 'authenticated user' }
       else
-        uid = Services::Auth.check_exists(username).first['uid']
+        uid = Services::Auth.check_exists(username).first
         if uid
+          uid = uid['uid']
           roles = { 1 => 'authenticated user'}
         else
           return false
@@ -56,15 +58,36 @@ class User < ActiveRecord::Base
       if !email.match(/\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i)
         email = nil
       end
-      handle_mc(email, cell)
+      User.handle_mc(email, cell)
     elsif fbid != 0 # adds a fbid if they are logging in with facebook for the first time
+      ### UPDATE TO EDIT FACEBOOK ON DRUPAL AS WELL ###
       user.fbid = fbid
     end
     user.save
 
     # set up session for current user
-    session[:drupal_user_id] = response['user']['uid']
-    session[:drupal_user_role] = response['user']['roles']
+    session[:drupal_user_id] = uid
+    session[:drupal_user_role] = roles
     return true
+  end
+
+  # Sends MailChimp / Mobile Commons messages to a user.
+  #
+  # @param string email
+  #   The email to send the message to.
+  # @param string mobile
+  #   A valid phone number to send a txt to.
+  ##
+  def self.handle_mc(email = nil, mobile = nil)
+    if !email.nil?
+      # MailChimp PicsforPets2013
+      Services::MailChimp.subscribe(email, 'PicsforPets2013')
+      Mailer.signup(email).deliver
+    end
+
+    if !mobile.nil?
+      # Mobile Commons 158551
+      Services::MobileCommons.subscribe(mobile, 158551)
+    end
   end
 end
