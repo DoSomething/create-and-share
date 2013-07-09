@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe PostsController, :type => :controller do
   let(:campaign) { FactoryGirl.create(:campaign) }
+
   describe 'GET #index' do
     it 'redirects to login' do
       get :index, :campaign => campaign.path

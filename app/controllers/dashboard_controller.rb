@@ -84,7 +84,7 @@ class DashboardController < ApplicationController
       data[:nPosts][label] = data[:nCats][label] + data[:nDogs][label] + data[:nOthers][label]
       data[:nAdopted][label] = Post.where(:adopted => true, :created_at => start_date.end_of_day..end_date.end_of_day).count
       data[:totalAdopted][label] = Post.where(:adopted => true, :created_at => 20.years.ago..end_date.end_of_day).count
-      
+
       #user data
       data[:nUsers][label] = User.where(:created_at => start_date.end_of_day..end_date.end_of_day).count
       

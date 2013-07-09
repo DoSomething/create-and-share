@@ -16,7 +16,7 @@ $(function() {
       dest = ($type !== 'all') ? $type + (($state !== '') ? '-' + $state : '') : (($state !== '') ? $state : '');
     }
 
-    document.location.href = (dest !== '' ? '/' + dest : '/');
+    document.location.href = '/' + campaign.path + (dest !== '' ? '/' + dest : '/');
     return false;
   });
 });

@@ -5,7 +5,7 @@
 
 <h2>tell us about your animal</h2>
 <%= simple_form_for(@post, :html => { :multipart => true, :class => "form form-submit right" }) do |f| %>
-  <%= f.hidden_field :campaign_id, :value => campaign.id %>
+  <%= f.hidden_field :campaign_id, :value => get_campaign.id %>
   <% if @post.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@post.errors.count, "error") %> prohibited this post from being saved:</h2>

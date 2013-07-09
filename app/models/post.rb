@@ -89,7 +89,7 @@ class Post < ActiveRecord::Base
     if !@user.nil? && !@user.email.nil?
       Services::Mandrill.mail(@user.email, 'PicsforPets_2013_Reportback', 'How to get puppies adopted')
     end
-  end   
+  end
 
   after_save :reprocess_image, :if => :cropping?
   def cropping?

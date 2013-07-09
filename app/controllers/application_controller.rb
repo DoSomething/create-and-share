@@ -6,6 +6,13 @@ class ApplicationController < ActionController::Base
   # Handy little method that renders the "not found" message, instead of an error.
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
+  before_filter :find_view_path
+  def find_view_path
+    if !Rails.env.test?
+      prepend_view_path 'app/views/' + get_campaign.path
+    end
+  end
+
   # Not found message.
   def record_not_found
     render 'not_found'

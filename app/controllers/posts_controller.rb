@@ -13,9 +13,9 @@ class PostsController < ApplicationController
   def index
     @admin = ''
     @admin = 'admin-' if admin?
-    @admin += campaign.path
+    @admin += get_campaign.path
 
-    campaign_id = campaign.id
+    campaign_id = get_campaign.id
 
     # Get the page and offset
     page = params[:page] || 0
@@ -98,9 +98,9 @@ class PostsController < ApplicationController
   def filter
     @admin = ''
     @admin = 'admin-' if admin?
-    @admin += campaign.path
+    @admin += get_campaign.path
 
-    cmp = campaign
+    cmp = get_campaign
     campaign_id = cmp.id
     campaign_path = cmp.path
 
@@ -330,7 +330,7 @@ class PostsController < ApplicationController
     if File.exists? Rails.root.to_s + image
       PostsHelper.image_writer(image, @post.meme_text, @post.meme_position)
     end
-    
+
     respond_to do |format|
       format.html { redirect_to show_post_path(@post) }
     end
@@ -366,7 +366,7 @@ class PostsController < ApplicationController
   # GET /posts/1.json
   def show
     @post = Post
-      .where(:id => params[:id], :flagged => false, :campaign_id => campaign.id)
+      .where(:id => params[:id], :flagged => false, :campaign_id => get_campaign.id)
       .joins('LEFT JOIN shares ON shares.post_id = posts.id')
       .select('posts.*, COUNT(shares.*) AS real_share_count')
       .group('shares.post_id, posts.id')
@@ -413,7 +413,7 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.save
-        format.html { redirect_to show_post_path(@post, :campaign => campaign.path) }
+        format.html { redirect_to show_post_path(@post, :campaign => get_campaign.path) }
         format.json { render json: @post, status: :created, location: @post }
       else
         format.html { render action: "new" }
@@ -432,7 +432,7 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.update_attributes(params[:post])
-        format.html { redirect_to show_post_path(@post, :campaign => campaign.path), notice: 'Post was successfully updated.' }
+        format.html { redirect_to show_post_path(@post, :campaign => get_campaign.path), notice: 'Post was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
@@ -474,7 +474,7 @@ class PostsController < ApplicationController
     @post = Post
       .joins('LEFT JOIN shares ON shares.post_id = posts.id')
       .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .where(:promoted => true, :flagged => false, :campaign_id => campaign.id)
+      .where(:promoted => true, :flagged => false, :campaign_id => get_campaign.id)
       .where('LOWER(name) = ?', params[:vanity])
       .group('posts.id')
       .limit(1)
@@ -483,7 +483,7 @@ class PostsController < ApplicationController
     if @post.nil?
       redirect_to :root
     else
-      render :controller => 'posts', :action => 'show', :campaign => campaign.path
+      render :controller => 'posts', :action => 'show', :campaign => get_campaign.path
     end
   end
 end

@@ -28,7 +28,7 @@ module ApplicationHelper
 
     (user_id && (!shares.nil? && shares.count > 0 || !posts.nil? && posts.count > 0))
   end
- 
+
   # Make the URL human redable
   # @param string path (request.path)
   #   The path that should be made legible.  Should follow these standards:
@@ -82,8 +82,8 @@ module ApplicationHelper
     end
   end
 
-  def campaign
-    @@campaign = Campaign.where(:path => params[:campaign]).first
+  def get_campaign
+    @@campaign = Campaign.where('path = ?', params[:campaign]).first
     @@campaign
   end
 end
