@@ -1,6 +1,7 @@
 class PostsController < ApplicationController
   include Services
   include PostsHelper
+  respond_to :html, :js, :json, :csv
 
   # Before everything runs, run an authentication check and an API key check.
   before_filter :is_not_authenticated, :verify_api_key
@@ -490,7 +491,7 @@ class PostsController < ApplicationController
   def show_filter
     @result = nil
     @where = {}
-    @real_path = real_path = Pathname.new(request.fullpath).basename.to_s
+    @real_path = params[:filter]
     @admin = ''
     @page = 0.to_s
 
@@ -507,11 +508,17 @@ class PostsController < ApplicationController
       end
     end
 
+    # Page and offset.
+    page = params[:page] || 0
+    offset = (page.to_i * Post.per_page)
+    @scrolling = !params[:last].nil?
+
     @posts = Post
       .joins('LEFT JOIN shares ON shares.post_id = posts.id')
       .select('posts.*, COUNT(shares.*) AS real_share_count')
       .where(:flagged => false, :campaign_id => get_campaign.id)
       .group('posts.id')
+      .order('created_at DESC')
     @where.each do |key, condition|
       if @result[condition]
         @posts = @posts.where(key.to_sym => @result[condition])
@@ -520,9 +527,20 @@ class PostsController < ApplicationController
 
     @filter = @real_path
     @count = @posts.length
-    @last = @posts.last.id
-    respond_to do |format|
-      format.html
+
+    # Finish the posts query given the "page" of the infinite scroll.
+    if !params[:last].nil?
+      @posts = @posts
+        .where('"posts"."id" < ?', params[:last])
+        .limit(Post.per_page - 1)
+    else
+      @posts = @posts
+        .limit(Post.per_page - 1)
+        .all
     end
+
+    @last = @posts.last.id
+
+    respond_with(@posts)
   end
 end
