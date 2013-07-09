@@ -1,8 +1,10 @@
-<div class="post id-<%= @post.id %><%= @post.promoted ? ' promoted' : '' %>">
+<div class="post id-<%= @post.id %><%= @post.promoted ? ' promoted' : '' %><%= @post.adopted? ? ' adopted' : '' %>">
   <% if admin? %><div class="flag-container"><%= link_to 'Flag', flag_post_path(@post, :campaign => params[:campaign]), :confirm => 'Flag this?' %> | <%= link_to 'Edit', edit_post_path(@post, :campaign => params[:campaign]) %></div><% end %>
   <div class="share-container"><a href="#" class="facebook-share btn share medium" data-id="<%= @post.id %>"><span>Share Me</span></a><span class="share-count"><%= (@post.share_count ? @post.share_count : @post.real_share_count) || 0 %></span></div>
   <% if @post.promoted %><div class="promoted-container"><%= link_to 'promoted', '/featured', :class => 'promoted-badge'  %></div><% end %>
+  <% if @post.adopted %><%= image_tag '/images/adopted-badge.png', :alt => 'Adopted Pet', :class => 'adopted-badge' %><% end %>
   <div class="image-container"><%= image_tag @post.image(:gallery) %></div>
   <div class="name-loc"><%= link_to show_post_path(@post, :campaign => params[:campaign]) do %><span class="name"><%= @post.name %></span>, <%= @post.state %><% end %></div>
   <div class="story"><%=raw simple_format(@post.story).gsub(/(\r|\n|\r\n)/, '') %></div>
+  <div class="adopt-me">Adopt <%= @post.name %> at <%= link_to @post.shelter + ', ' + (!@post.city.nil? ? (@post.city + ', ') : '') + @post.state, 'http://www.adoptapet.com/animal-shelter-search?city_or_zip=' + (!@post.city.nil? ? (@post.city + ', ') : '') + @post.state + '&shelter_name=' + @post.shelter + '&distance=50&adopts_out=all', :target => '_blank' %></div>
 </div>

@@ -8,8 +8,8 @@
 
 <section class="posts">
   <div class="section-container">
-    <h2>Create and Share index page.</h2>
-    <p>This will be the default index page, unless you overwrite it with 'app/views/<%= get_campaign.path %>/posts/index.html.erb'.</p>
+    <h2>Share shelter pets with friends.</h2>
+    <p>For every 400 shares, we'll donate needed pet supplies to the animal's shelter.</p>
     <div class="post-list">
       <% if @posts.length > 0 %>
         <%=raw render('post').gsub(/\n/, '') %>
