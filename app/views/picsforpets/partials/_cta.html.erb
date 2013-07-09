@@ -1,0 +1,11 @@
+<section class="cta">
+  <div class="section-container">
+    <% if already_submitted? %>
+      <%= link_to :real_submit_path, :class => 'btn primary large' do %><span>submit another</span><% end %>
+      <%= link_to :mypics, :class => 'btn secondary large' do %><span>see your pets</span><% end %>
+    <% else %>
+      <h2>Help save shelter pets near you</h2>
+      <%= link_to :intent, :class => 'btn primary large solo' do %><span>Be a Pet Photographer</span><% end %>
+    <% end %>
+  </div>
+</section>
