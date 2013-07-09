@@ -7,6 +7,7 @@ gem 'paperclip'
 gem 'httparty'
 gem 'simple_form'
 gem 'therubyracer'
+gem 'nokogiri'
 
 gem 'gibbon'
 gem 'omniauth-facebook'

@@ -5,7 +5,6 @@ connection: &connection
   host: localhost
   database: create_and_share
   username: postgres
-  password: zanzibar
 
 development:
   <<: *connection
