@@ -3,13 +3,14 @@
 <head>
   <%= render 'partials/analytics' %>
 
-  <title>Pics for Pets</title>
+  <title><%= get_campaign.title %></title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta property="og:image" content="http://pics.dosomething.org/images/logo-pics.png" />
   <%= csrf_meta_tags %>
+
   <%= yield(:head) %>
   <script type="text/javascript">
   <!--
@@ -38,4 +39,3 @@
 
 </body>
 </html>
-
