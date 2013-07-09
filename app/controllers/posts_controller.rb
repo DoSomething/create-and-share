@@ -298,14 +298,16 @@ class PostsController < ApplicationController
   def show_filter
     @result = nil
     @where = {}
-    @real_path = params[:filter]
+    @real_path = params[:filter] ||= Pathname.new(request.fullpath).basename.to_s.gsub(/\.[a-z]+/, '')
     @admin = ''
     @page = 0.to_s
 
     Rails.application.config.filters[params[:campaign]].each do |route, config|
       ret = route
-      config['constraints'].each do |key, constraint|
-        ret = ret.gsub(key, constraint)
+      unless config['constraints'].nil?
+        config['constraints'].each do |key, constraint|
+          ret = ret.gsub(key, constraint)
+        end
       end
 
       ret = Regexp.new "^#{ret}$"
@@ -326,6 +328,7 @@ class PostsController < ApplicationController
       .where(:flagged => false, :campaign_id => get_campaign.id)
       .group('posts.id')
       .order('created_at DESC')
+
     @where.each do |key, condition|
       if @result[condition]
         @posts = @posts.where(key.to_sym => @result[condition])
@@ -349,5 +352,44 @@ class PostsController < ApplicationController
     @last = @posts.last.id
 
     respond_with(@posts)
+  end
+
+
+  def mine
+    @result = nil
+    @where = {}
+    @real_path = params[:filter] ||= Pathname.new(request.fullpath).basename.to_s.gsub(/\.[a-z]+/, '')
+    @admin = ''
+    @page = 0.to_s
+
+    # Page and offset.
+    page = params[:page] || 0
+    offset = (page.to_i * Post.per_page)
+    @scrolling = !params[:last].nil?
+
+    @posts = Post
+      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
+      .select('posts.*, COUNT(shares.*) AS real_share_count')
+      .where(:flagged => false, :campaign_id => get_campaign.id, :uid => session[:drupal_user_id])
+      .group('posts.id')
+      .order('created_at DESC')
+
+    @filter = @real_path
+    @count = @posts.length
+
+    # Finish the posts query given the "page" of the infinite scroll.
+    if !params[:last].nil?
+      @posts = @posts
+        .where('"posts"."id" < ?', params[:last])
+        .limit(Post.per_page - 1)
+    else
+      @posts = @posts
+        .limit(Post.per_page - 1)
+        .all
+    end
+
+    @last = @posts.last.id
+
+    render :index
   end
 end
