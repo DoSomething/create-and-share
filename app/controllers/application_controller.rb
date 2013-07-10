@@ -32,7 +32,6 @@ class ApplicationController < ActionController::Base
 
   # Checks if a user is an administrator.
   def admin
-    #unless admin? || request.format.symbol == :json || params[:bypass] === true
     unless admin? || request.format.symbol == :json || params[:bypass] === true
       flash[:error] = "error: please login as admin to view this page"
       if authenticated?

@@ -25,6 +25,7 @@ CreateAndShare::Application.routes.draw do
   match ':state' => 'posts#filter', :constraints => { :state => /[A-Z]{2}/ }, :run => 'state'
   match ':atype-:state' => 'posts#filter', :constraints => { :atype => /(cat|dog|other)s?/, :state => /[A-Z]{2}/ }, :run => 'both'
   match 'featured' => 'posts#filter', :run => 'featured'
+  match 'adopted' => 'posts#filter', :run => 'adopted'
   match 'fix' => 'posts#fix'
   match 'autoimg' => 'posts#autoimg'
   match 'alterimg/:id' => 'posts#alterimg', :as => :alter_image

@@ -3,9 +3,9 @@
 # Ruby, Java, .NET, PHP, and Python applications with deep visibility and low overhead.
 # For more information, visit www.newrelic.com.
 #
-# Generated May 30, 2013
+# Generated June 30, 2013
 #
-# This configuration file is custom generated for DoSomething.org
+# This configuration file is custom generated for DoSomething.org_1
 
 
 # Here are the settings that are common to all environments
@@ -15,7 +15,7 @@ common: &default_settings
   # You must specify the license key associated with your New Relic
   # account.  This key binds your Agent's data to your account in the
   # New Relic service.
-  license_key: 'ccecf2f2af8550847388e05fdabed29187236856'
+  license_key: '14226d68a36df067dbc4e906fe9af0e274ef5fbd'
 
   # Agent Enabled (Ruby/Rails Only)
   # Use this setting to force the agent to run or not run.
@@ -42,7 +42,7 @@ common: &default_settings
   #       - Ajax Service
   #       - All Services
   #
-  app_name: Do Something
+  app_name: Pics for Pets at Do Something
 
   # When "true", the agent collects performance data about your
   # application and reports this data to the New Relic service at

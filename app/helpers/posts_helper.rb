@@ -3,22 +3,33 @@ module PostsHelper
   # @param string text
   #   The string that should be broken.
   def self.find_break_points(text)
-	  count = position = 0
-	  text.scan(/./).each do |c|
-	    count += 1
-	    position += 1
-	    if count == 40
-	      if c == ' '
-	        text[position] = '||'
-	      else
-	        point = [text.index(' ', position - 1), text.rindex(' ', position - 1)].min
-	        text[point] =  '||'
-	      end
-	      count = 1
-	    end
-	  end
+    count = position = 0
+    text.scan(/./).each do |c|
+      count += 1
+      position += 1
+      if count == 40
+        if c == ' '
+          text[position] = '||'
+        else
+          ni = text.index(' ', position - 1)
+          ri = text.rindex(' ', position - 1)
+          if !ni.nil? && !ri.nil?
+            point = [ni, ri].min
+          elsif !ri.nil?
+            point = ri
+          elsif !ni.nil?
+            point = ni
+          else
+            point = 0
+          end
 
-	  text
+          text[point] =  '||'
+        end
+        count = 1
+      end
+    end
+
+    text
   end
 
   # Writes text to an image.

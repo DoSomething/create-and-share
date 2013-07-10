@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe PostsController, :type => :controller do
   before :each do
-    build_key()
+    FactoryGirl.create(:api_key)
   end
 
   describe 'GET #index.json' do

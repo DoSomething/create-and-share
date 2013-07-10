@@ -13,7 +13,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery.inview.js
-// JQPLOT
 //= require ./dashboard/jquery.jqplot.min.js
 //= require ./dashboard/plugins/jqplot.barRenderer.min.js
 //= require ./dashboard/plugins/jqplot.categoryAxisRenderer.min.js
@@ -25,5 +24,4 @@
 //= require ./dashboard/plugins/jqplot.canvasAxisLabelRenderer.min.js
 //= require ./dashboard/plugins/jqplot.highlighter.min.js
 //= require ./dashboard/plugins/jqplot.cursor.min.js
-// Render graphs
 //= require ./dashboard/graphs.js
