@@ -17,8 +17,8 @@ ImageMagick-deps:
 
 ImageMagick:
   cmd.run:
-    - name: wget http://www.imagemagick.org/download/ImageMagick-6.8.6-3.tar.gz && tar xvfz ImageMagick-6.8.6-3.tar.gz && cd ImageMagick-6.8.6-3 && ./configure --prefix=/usr/local --with-bzlib=yes --with-fontconfig=yes --with-freetype=yes --with-gslib=yes --with-gvc=yes --with-jpeg=yes --with-jp2=yes --with-png=yes --with-tiff=yes && make clean && make && sudo make install
-    - unless: stat ~/ImageMagick-6.8.6-3.tar.gz
+    - name: wget http://www.imagemagick.org/download/ImageMagick.tar.gz && tar xvfz ImageMagick.tar.gz && cd ImageMagick-6.8.6-4 && ./configure --prefix=/usr/local --with-bzlib=yes --with-fontconfig=yes --with-freetype=yes --with-gslib=yes --with-gvc=yes --with-jpeg=yes --with-jp2=yes --with-png=yes --with-tiff=yes && make clean && make && sudo make install
+    - unless: stat ~/ImageMagick.tar.gz
     - cwd: ~
     - user: vagrant
     - require:
