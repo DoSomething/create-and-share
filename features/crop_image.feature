@@ -3,7 +3,7 @@ Feature: Crop image
 
 	Background:
 		Given I am logged in
-		And I visit /submit
+		And I visit the submit page
 
 	@javascript
 	Scenario: Successfully crop a picture

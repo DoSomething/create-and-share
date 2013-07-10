@@ -17,6 +17,6 @@ When /I fill out the rest of the form and submit/ do
   click_button 'Submit'
 end
 
-Given /there is a post/ do
+Given /I have submitted a post/ do
   post = FactoryGirl.create(:post)
 end

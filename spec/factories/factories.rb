@@ -4,7 +4,7 @@ FactoryGirl.define do
   end
 
   factory :post do
-    uid 703718
+    uid 1263777
     adopted false
     meme_text 'Bottom text'
     meme_position 'bottom'
@@ -21,9 +21,9 @@ FactoryGirl.define do
   end
 
   factory :user do
-    email 'mchitten@gmail.com'
+    email 'test@subject.com'
     fbid nil
-    uid 778374
+    uid 1263777
     is_admin false
   end
 end

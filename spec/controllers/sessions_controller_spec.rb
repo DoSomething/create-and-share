@@ -7,8 +7,8 @@ describe SessionsController, :type => :controller do
       post :create, {
         :form => 'login',
         :session => {
-          :username => 'bohemian_test',
-          :password => 'bohemian_test'
+          :username => 'test@subject.com',
+          :password => 'test'
         }
       }
 

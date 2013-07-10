@@ -1,5 +1,18 @@
-Given /I am on the (.*) page/ do |route|
+When /I visit the (.*) page/ do |route|
+  if route == 'home'
+    route = ""
+  end
 	visit('/' + route)
+end
+
+Given /I am logged in/ do
+  visit '/login'
+  click_link 'log in'
+  within '.form-login' do
+    find(:id, 'session_username').set 'test@subject.com'
+    find(:id, 'login-password').set 'test'
+    click_button 'login'
+  end
 end
 
 Then /the page should not have element (.+)/ do |elements|
@@ -14,12 +27,8 @@ Then /the page should have element (.+)/ do |elements|
 	end
 end
 
-When /I visit (.*)/ do |route|
-  visit(route)
-end
-
-Then /the page should redirect to (.*)/ do |path|
-  page.current_path.should eq path
+Then /the page should redirect to the (.*) page/ do |path|
+  page.current_path.should eq "/" + path
 end
 
 Then /the page should redirect matching (.*)/ do |regex|
@@ -40,11 +49,6 @@ end
 
 When /I click id (.*)/ do |e|
   find(:id, e).click
-end
-
-Then /I am on the login form/ do
-  visit '/login'
-  click_link 'log in'
 end
 
 Then /the page should show (.*)/ do |content|

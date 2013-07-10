@@ -34,7 +34,7 @@ class SessionsController < ApplicationController
       if User.exists?(username)
         login(form, session, username, password, nil)
       else
-        flash[:error] = 'Account doesn\'t exist.'
+        flash[:error] = 'Invalid username / password.'
         redirect_to :login
       end
     elsif form == 'register' # registers user if they don't exist in the DoSomething drupal database and then logs in him/her
