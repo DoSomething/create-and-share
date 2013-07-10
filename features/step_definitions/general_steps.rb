@@ -1,3 +1,35 @@
+Given /I am on the (.*) page/ do |route|
+	visit('/' + route)
+end
+
+Then /the page should not have element (.+)/ do |elements|
+	elements.split(", ").each do |element|
+		page.should have_no_selector(:css_selector, element)
+	end
+end
+
+Then /the page should have element (.+)/ do |elements|
+	elements.split(", ").each do |element|
+		page.should have_selector(:css_selector, element)
+	end
+end
+
+When /I visit (.*)/ do |route|
+  visit(route)
+end
+
+Then /the page should redirect to (.*)/ do |path|
+  page.current_path.should eq path
+end
+
+Then /the page should redirect matching (.*)/ do |regex|
+  current_path.should match(regex)
+end
+
+Then /the page should respond with (\d+)/ do |response|
+  page.status_code.should eq response.to_i
+end
+
 When /I click on (.*)/ do |click|
   click_link click
 end
@@ -13,30 +45,6 @@ end
 Then /I am on the login form/ do
   visit '/login'
   click_link 'log in'
-end
-
-When /I sign in/ do
-  click_link 'log in'
-  within '.form-login' do
-    find(:id, 'session_username').set 'bohemian_test'
-    find(:id, 'login-password').set 'bohemian_test'
-    click_button 'login'
-  end
-end
-
-When /I fill in the email field/ do
-  tag = Time.now.to_i.to_s
-  find(:id, 'session_email').set 'void-' + tag + '@dosomething.org'
-end
-
-Given /I am logged in/ do
-  visit '/login'
-  click_link 'log in'
-  within '.form-login' do
-    find(:id, 'session_username').set 'bohemian_test'
-    find(:id, 'login-password').set 'bohemian_test'
-    click_button 'login'
-  end
 end
 
 Then /the page should show (.*)/ do |content|
