@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%= render 'partials/analytics' %>
+
+  <title>Pics for Pets - Dashboard</title>
+  <%= stylesheet_link_tag    'dashboard', :media => "all" %>
+  <%= javascript_include_tag "dashboard" %>
+  <%= stylesheet_link_tag 'jquery.jqplot.min' %>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <%= csrf_meta_tags %>
+</head>
+<body class="wrapper">
+
+<header>
+	<h1>Pics for Pets - Dashboard</h1>
+	<span class="links">
+		<%= link_to 'home', "/" %>
+		<%= link_to 'logout', :logout, { :class => 'logout' } %>
+	</span>
+</header>
+
+<section id="graphs">
+<%= yield %>
+</section>
+
+</body>
+</html>

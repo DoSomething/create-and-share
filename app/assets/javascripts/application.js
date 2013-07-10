@@ -12,6 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require_tree .
+//= require_tree ./application
 //= require jquery.inview.js
 //= require tdfriendselector.js

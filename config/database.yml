@@ -20,6 +20,5 @@ production:
   pool: 5
   database: create_and_share
 
-
 cucumber:
   <<: *test

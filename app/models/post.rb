@@ -1,6 +1,5 @@
 class Post < ActiveRecord::Base
   attr_accessible :uid, :adopted, :creation_time,
-
   	:flagged, :image, :name, :promoted,
   	:share_count, :shelter, :state, :city,
   	:story, :animal_type, :update_time,
@@ -70,7 +69,7 @@ class Post < ActiveRecord::Base
     end
   end
 
-  after_create :remove_tmp_image
+  after_create :remove_tmp_image, :send_thx_email
   # Remove the temp uploaded image after a post is successfully created.
   def remove_tmp_image
     filename = self.image.instance['image_file_name']
@@ -80,6 +79,14 @@ class Post < ActiveRecord::Base
       FileUtils.rm(dir + filename)
     end
   end
+
+  # Sends the "thanks for reporting back" email.
+  def send_thx_email
+    @user = User.where(:uid => self.uid).first
+    if !@user.nil? && !@user.email.nil?
+      Services::Mandrill.mail(@user.email, 'PicsforPets_2013_Reportback', 'How to get puppies adopted')
+    end
+  end   
 
   after_save :reprocess_image, :if => :cropping?
   def cropping?

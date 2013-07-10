@@ -1,5 +1,9 @@
 <section class="utility-bar">
   <% if Rails.env.development? %><%= link_to 'debug', '#', { :id => 'debug' } %><% end %>
-  <%= link_to 'logout', :logout, { :class => 'logout' } %>
+  <% if authenticated? %>
+    <%= link_to 'log out', :logout, { :class => 'logout' } %>
+  <% else %>
+    <%= link_to 'log in', :login, { :class => 'logout' } %>
+  <% end %>
   <%= link_to 'faq', :faq, { :class => 'faq' } %>
 </section>

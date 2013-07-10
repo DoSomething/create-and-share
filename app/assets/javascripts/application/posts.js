@@ -21,8 +21,9 @@ $(function() {
         'picture': settings['picture']
       }, function(response) {
         if (response && response.post_id) {
-          settings['share_elm'].text(++settings['share_count']);
-          $.post('/shares', { 'share': { 'post_id': settings['id'] } }, function(res) {});
+          var new_count = ++settings['share_count'];
+          settings['share_elm'].text(new_count);
+          $.post('/shares', { 'share': { 'post_id': settings['id'] }, 'new_count': new_count }, function(res) {});
         }
         $('html,body').animate({ scrollTop: $('.id-' + settings['id']).offset().top }, 'fast');
       });

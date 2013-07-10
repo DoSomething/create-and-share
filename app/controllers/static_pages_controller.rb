@@ -1,5 +1,5 @@
 class StaticPagesController < ApplicationController
-  before_filter :is_not_authenticated, :verify_api_key
+  before_filter :is_not_authenticated, :verify_api_key, :except => [:faq]
 
   # GET /start
   def guide

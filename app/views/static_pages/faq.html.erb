@@ -1,19 +1,33 @@
 <section class="faq">
   <div class="section-container">
-    <h2>Why are we doing this?</h2>
-    <p>Every year, 5 to 7 million pets enter animal shelters. Over half are euthanized. One reason animals don't get adopted? Their online photos don't do them justice. You can help increase adoption rates by settings up a visit at a shelter near you to take photos of the animals, upload them to the Pics for Pets gallery, and share them with your friends.</p>
+    <h2>How do I win the scholarship?</h2>
+    <p>Become a shelter pet photographer.  Each time you upload a picture of an adoptable pet to the Pics for Pets gallery, you'll be entered to win a $4,000 scholarship. <%= link_to 'Read the rules and Regulations here', 'http://www.dosomething.org/files/campaigns/picsforpets/Pics_for_Pets_Rules_and_Regs.pdf', :target => '_blank' %>.</p>
 
-    <h2>What's the deal with the scholarship?</h2>
-    <p>Each time you upload a picture of an adoptable pet to the Pics for Pets gallery, you'll be entered to win a $4,000 scholarship. <%= link_to 'Read the rules and Regulations here', 'http://www.dosomething.org/files/campaigns/picsforpets/Pics_for_Pets_Rules_and_Regs.pdf', :target => '_blank' %>.</p>
+    <% if authenticated? %>
+      <% if already_submitted? %>
+        <%= link_to :start, :class => 'btn primary large' do %><span>Become a Pet Photographer</span><% end %>
+      <% else %>
+        <%= link_to :intent, :class => 'btn primary large' do %><span>Become a Pet Photographer</span><% end %>
+      <% end %>
+    <% else %>
+      <%= link_to :start, :class => 'btn primary large' do %><span>Become a Pet Photographer</span><% end %>
+    <% end %>
+
+    <h2>Why are we doing this?</h2>
+    <p>Every year, 5 to 7 million pets enter animal shelters. Over half are killed when they don't find homes. One reason animals don't get adopted? Their online photos don't do them justice. You can help increase adoption rates by settings up a visit at a shelter near you to take photos of the animals, upload them to the Pics for Pets gallery, and share them with your friends.</p>
 
     <h2>What else do I need to know?</h2>
     <p>Before you visit the shelter, you'll need to call them to set up a time when they'll have a volunteer to help you take the picture.  For your safety and the animals' safety, you should never handle the pets.  Just take the photos you can and upload them here!</p>
 
     <h2>Ready to find a shelter and start taking pictures?</h2>
-    <% if already_submitted? %>
-      <%= link_to :start, :class => 'btn primary large' do %><span>Get started</span><% end %>
+    <% if authenticated? %>
+      <% if already_submitted? %>
+        <%= link_to :start, :class => 'btn primary large' do %><span>Get started</span><% end %>
+      <% else %>
+        <%= link_to :intent, :class => 'btn primary large' do %><span>Get started</span><% end %>
+      <% end %>
     <% else %>
-      <%= link_to :intent, :class => 'btn primary large' do %><span>Get started</span><% end %>
+      <%= link_to :login, :class => 'btn primary large' do %><span>Get started</span><% end %>
     <% end %>
   </div>
 </section>

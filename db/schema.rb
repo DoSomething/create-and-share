@@ -11,12 +11,35 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130610145920) do
+ActiveRecord::Schema.define(:version => 20130619154256) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  create_table "campaign_types", :force => true do |t|
+    t.string   "title"
+    t.string   "machine_name"
+    t.text     "data"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  create_table "campaigns", :force => true do |t|
+    t.string   "title"
+    t.string   "path"
+    t.integer  "settings"
+    t.string   "lead"
+    t.string   "lead_email"
+    t.datetime "start"
+    t.datetime "end"
+    t.text     "data"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+    t.boolean  "gated"
+    t.integer  "campaign_type_id"
   end
 
   create_table "posts", :force => true do |t|

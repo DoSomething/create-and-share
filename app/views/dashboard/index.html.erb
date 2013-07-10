@@ -1,0 +1,84 @@
+<div id="graph-container">
+	<div class="wrapper left">
+		<%= content_tag "section", id: "usersBar", data: {
+			total: @users,
+		} do %>
+		<% end %>
+	</div>
+	<div class="wrapper right">
+		<section id="usersLine"></section>
+		<div class="update users">
+			<%= form_tag '/dashboard', :method => :get, :remote => true do %>
+			<%= hidden_field_tag 'title', 'User Stats' %>
+			From
+			<input type="date" name="date" value='<%= Date.today.strftime("%Y-%m-%d") %>' />
+			going back for
+			<%= number_field_tag :num, 5, in: 1..12 %>
+			<%= select_tag :split, options_for_select(["Days", "Weeks", "Months"]) %>
+			<div class="btn primary"><%= submit_tag "Update", :name => nil %></div>
+			<% end %>
+		</div>
+	</div>
+	<div class="wrapper left">
+		<%= content_tag "section", id: "petsBar", data: {
+			cats: @cats,
+			dogs: @dogs,
+			others: @others,
+			total: @pets
+		} do %>
+		<% end %>
+	</div>
+	<div class="wrapper right">
+		<section id="petsLine"></section>
+		<div class="update pets">
+			<%= form_tag '/dashboard', :method => :get, :remote => true do %>
+			<%= hidden_field_tag 'title', 'Pet Stats' %>
+			From
+			<input type="date" name="date" value='<%= Date.today.strftime("%Y-%m-%d") %>' />
+			going back for
+			<%= number_field_tag :num, 5, in: 1..12 %>
+			<%= select_tag :split, options_for_select(["Days", "Weeks", "Months"]) %>
+			<div class="btn primary"><%= submit_tag "Update", :name => nil %></div>
+			<% end %>
+		</div>
+	</div>
+	<div class="wrapper left">
+		<%= content_tag "section", id: "sharesBar", data: {
+			total: @shares,
+			cat: @catShares,
+			dog: @dogShares,
+			other: @otherShares
+		} do %>
+		<% end %>
+	</div>
+	<div class="wrapper right">
+		<section id="sharesLine"></section>
+		<div class="update shares">
+			<%= form_tag '/dashboard', :method => :get, :remote => true do %>
+			<%= hidden_field_tag 'title', 'Share Stats' %>
+			From
+			<input type="date" name="date" value='<%= Date.today.strftime("%Y-%m-%d") %>' />
+			going back for
+			<%= number_field_tag :num, 5, in: 1..12 %>
+			<%= select_tag :split, options_for_select(["Days", "Weeks", "Months"]) %>
+			<div class="btn primary"><%= submit_tag "Update", :name => nil %></div>
+			<% end %>
+		</div>
+	</div>
+	<div class="wrapper left">
+		<%= content_tag "section", id: "petsPie", data: {
+			cats: @cats,
+			dogs: @dogs,
+			others: @others
+		} do %>
+		<% end %>
+	</div>
+	<div class="wrapper right">
+		<%= content_tag "section", id: "sharesPie", data: {
+			cat: @catShares,
+			dog: @dogShares,
+			other: @otherShares
+		} do %>
+		<% end %>
+	</div>
+</div>

@@ -1,1 +1,5 @@
+<% if @posts.last.nil? %>
+$('.inview').remove();
+<% else %>
 $('.post-list').append($('<%=raw render('filter_posts').gsub(/(\r|\n|\r\n)/, '').gsub("'", "\\\\'") %>')).append('<div class="inview"></div>'); var latest = <%= @posts.last.id %>; var returned = <%= @posts.length %>;
+<% end %>

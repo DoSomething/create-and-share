@@ -51,6 +51,10 @@ Then /the page should show (.*)/ do |content|
   page.should have_content content
 end
 
+Then /the page should not show (.*)/ do |content|
+  page.should_not have_content content
+end
+
 Then /element (.*) should show (.*)/ do |elm, content|
   e = find(:css_selector, elm)
   e.should have_content content

@@ -1,6 +1,11 @@
 # A sample Guardfile
 # More info at https://github.com/guard/guard#readme
 
+guard 'passenger' do
+  watch(/^lib\/.*\.rb$/)
+  watch(/^config\/.*\.rb$/)
+end
+
 guard 'livereload' do
   watch(%r{app/views/.+\.(erb|haml|slim)$})
   watch(%r{app/helpers/.+\.rb})

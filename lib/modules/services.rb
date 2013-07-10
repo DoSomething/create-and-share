@@ -1,5 +1,6 @@
 require 'httparty'
 require 'gibbon'
+require 'mailchimp'
 
 module Services
   # Login / out / register methods
@@ -87,5 +88,44 @@ module Services
     def self.subscribe(mobile, opt_in_path)
       post('/profiles/join', :body => { 'person[phone]' => mobile, 'opt_in_path[]' => opt_in_path })
     end
+  end
+
+  module Mandrill
+    include Mailchimp
+
+    def self.mail(email, template, subject)
+      @mandrill = Mailchimp::Mandrill.new(ENV['MANDRILL_APIKEY'])
+      response = @mandrill.messages_send_template({
+       :template_name => template,
+       :template_content => [
+         {
+           :name => "Friend",
+         }
+       ],
+       :message => {
+         :from_name=> "Hilary at DoSomething.org",
+         :from_email => "animals@dosomething.org",
+         :subject => subject,
+         :to => [
+           {
+             :email=> email,
+             :name => "friend"
+           }
+         ],
+         :auto_html => true,
+         :merge_vars => [
+           {
+             :rcpt => email,
+             :vars => [
+                {
+                  :name => "SUBJECT",
+                  :content => subject
+                }
+             ]
+           }
+         ]
+        }
+      })
+    end 
   end
 end

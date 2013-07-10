@@ -11,8 +11,10 @@ gem 'therubyracer'
 gem 'gibbon'
 gem 'omniauth-facebook'
 gem 'newrelic_rpm'
+gem 'chronic'
 
 gem 'dalli'
+gem 'mailchimp'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -35,13 +37,18 @@ group :development, :test do
   gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
+  gem 'passenger'
+  gem 'spork'
+
+  #guard!
   gem 'guard-rspec'
   gem 'guard-cucumber'
   gem 'guard-livereload'
   gem 'rack-livereload'
   #gem 'guard-compass'
-  gem 'spork'
   gem 'guard-spork'
+  gem 'guard-passenger'
+  gem 'factory_girl_rails', '~> 4.0'
 end
 
 gem 'jquery-rails'
