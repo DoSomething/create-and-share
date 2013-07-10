@@ -23,13 +23,7 @@ class PostsController < ApplicationController
     offset = (page.to_i * Post.per_page)
 
     # Basic post query.
-    @p = Post
-     .joins('LEFT JOIN shares ON shares.post_id = posts.id')
-     .select('posts.*, COUNT(shares.*) AS real_share_count')
-     .where(:flagged => false, :campaign_id => campaign_id)
-     .group('posts.id')
-     .order('posts.created_at DESC')
-     .limit(Post.per_page)
+    @p = Post.infinite_scroll(get_campaign.id).limit(Post.per_page)
     @sb_promoted = Rails.cache.fetch @admin + 'posts-index-promoted' do
       Post
         .joins('LEFT JOIN shares ON shares.post_id = posts.id')
@@ -174,12 +168,9 @@ class PostsController < ApplicationController
   # GET /posts/1.json
   def show
     @post = Post
-      .where(:id => params[:id], :flagged => false, :campaign_id => get_campaign.id)
-      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
-      .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .group('shares.post_id, posts.id')
-      .order('posts.created_at DESC')
-      .limit(Post.per_page)
+      .infinite_scroll(get_campaign.id)
+      .where(:id => params[:id])
+      .limit(1)
       .first
 
     respond_to do |format|
