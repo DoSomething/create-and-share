@@ -15,3 +15,8 @@
     ":state": "(?<state>[A-Z]{2})"
   where:
     "state": "state"
+"show-:digit":
+  constraints:
+    ":digit": "(?<id>[0-9]+)"
+  where:
+    "id": "id"

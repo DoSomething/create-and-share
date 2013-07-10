@@ -1,11 +1,20 @@
 class Post < ActiveRecord::Base
   attr_accessible :uid, :adopted, :creation_time,
-  	:flagged, :image, :name, :promoted,
-  	:share_count, :shelter, :state, :city,
-  	:story, :animal_type, :update_time,
+    :flagged, :image, :name, :promoted,
+    :share_count, :shelter, :state, :city,
+    :story, :animal_type, :update_time,
     :meme_text, :meme_position,
     :crop_x, :crop_y, :crop_w, :crop_h, :crop_dim_w,
     :campaign_id
+
+  def self.infinite_scroll(campaign_id)
+    self
+      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
+      .select('posts.*, COUNT(shares.*) AS real_share_count')
+      .where(:flagged => false, :campaign_id => campaign_id)
+      .group('posts.id')
+      .order('created_at DESC')
+  end
 
   attr_accessor :crop_x, :crop_y, :crop_w, :crop_h, :cropped, :crop_dim_w
 
@@ -27,6 +36,19 @@ class Post < ActiveRecord::Base
   # The number of elements to show per "page" in the infinite scroll.
   def self.per_page
     10
+  end
+
+  def self.scrolly(point)
+    # Finish the posts query given the "page" of the infinite scroll.
+    if !point.nil?
+      self
+        .where('"posts"."id" < ?', point)
+        .limit(Post.per_page - 1)
+    else
+      self
+        .limit(Post.per_page - 1)
+        .all
+    end
   end
 
   # Removes HTML tags.  This technically will automatically be sanitized,

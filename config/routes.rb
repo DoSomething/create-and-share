@@ -1,5 +1,5 @@
 CreateAndShare::Application.routes.draw do
-  root :to => 'campaigns#index'
+  root to: 'campaigns#index'
   resources :campaigns
 
   # DASHBOARD
@@ -44,7 +44,7 @@ CreateAndShare::Application.routes.draw do
     # Filters
     get 'show/:filter', to: 'posts#show_filter', constraints: { filter: /[A-Za-z0-9\-\_]+/ }
 
-    get 'mine' => 'posts#mine', as: 'mypics'
+    get 'mine', to: 'posts#mine', as: 'mypics'
     get ':id', to: 'posts#show', constraints: { id: /\d+/ }, as: :show_post
     get ':vanity', to: 'posts#vanity', constraints: { vanity: /\w+/ }, as: :vanity_post
   end
