@@ -15,4 +15,3 @@
 //= require_tree ./application
 //= require jquery.inview.js
 //= require tdfriendselector.js
-//= require_tree ./konami
