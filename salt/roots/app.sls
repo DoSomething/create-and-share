@@ -14,6 +14,7 @@ ImageMagick-deps:
       - bzip2-devel
       - freetype-devel
       - libtiff-devel
+      - libjpeg-turbo-devel
 
 ImageMagick:
   cmd.run:
