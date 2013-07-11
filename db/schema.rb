@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130708190143) do
+ActiveRecord::Schema.define(:version => 20130710145202) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -59,6 +59,8 @@ ActiveRecord::Schema.define(:version => 20130708190143) do
     t.integer  "campaign_id"
   end
 
+  add_index "posts", ["campaign_id"], :name => "index_posts_on_campaign_id"
+
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
     t.text     "data"
@@ -75,6 +77,8 @@ ActiveRecord::Schema.define(:version => 20130708190143) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "shares", ["post_id"], :name => "index_shares_on_post_id"
 
   create_table "users", :force => true do |t|
     t.integer  "fbid",       :limit => 8

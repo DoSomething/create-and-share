@@ -6,22 +6,22 @@ describe PostsController, :type => :controller do
 
   describe 'GET #index.json' do
     it 'fails' do
-      get :index, :campaign => campaign.path, :format => :json
+      get :index, :campaign_path => campaign.path, :format => :json
       expect(response).to be_forbidden
     end
     it 'succeeds' do
-      get :index, :campaign => campaign.path, :format => :json, :key => key.key
+      get :index, :campaign_path => campaign.path, :format => :json, :key => key.key
       expect(response.status).to eq 200
     end
   end
 
   describe 'GET #filter.json' do
     it 'fails' do
-      get :filter, :campaign => campaign.path, :atype => 'cats', :run => 'animal', :format => :json
+      get :filter, :campaign_path => campaign.path, :atype => 'cats', :run => 'animal', :format => :json
       expect(response).to be_forbidden
     end
     it 'succeeds' do
-      get :filter, :campaign => campaign.path, :atype => 'cats', :run => 'animal', :format => :json, :key => key.key
+      get :filter, :campaign_path => campaign.path, :atype => 'cats', :run => 'animal', :format => :json, :key => key.key
       expect(response.status).to eq 200
     end
   end

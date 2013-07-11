@@ -1,8 +1,8 @@
 <div class="post id-<%= @post.id %><%= @post.promoted ? ' promoted' : '' %>">
-  <% if admin? %><div class="flag-container"><%= link_to 'Flag', flag_post_path(@post, :campaign => params[:campaign]), :confirm => 'Flag this?' %> | <%= link_to 'Edit', edit_post_path(@post, :campaign => params[:campaign]) %></div><% end %>
+  <% if admin? %><div class="flag-container"><%= link_to 'Flag', flag_post_path(@post, :campaign => params[:campaign_path]), :confirm => 'Flag this?' %> | <%= link_to 'Edit', edit_post_path(@post, :campaign => params[:campaign_path]) %></div><% end %>
   <div class="share-container"><a href="#" class="facebook-share btn share medium" data-id="<%= @post.id %>"><span>Share Me</span></a><span class="share-count"><%= (@post.share_count ? @post.share_count : @post.real_share_count) || 0 %></span></div>
   <% if @post.promoted %><div class="promoted-container"><%= link_to 'promoted', '/featured', :class => 'promoted-badge'  %></div><% end %>
   <div class="image-container"><%= image_tag @post.image(:gallery) %></div>
-  <div class="name-loc"><%= link_to show_post_path(@post, :campaign => params[:campaign]) do %><span class="name"><%= @post.name %></span>, <%= @post.state %><% end %></div>
+  <div class="name-loc"><%= link_to show_post_path(@post, :campaign => params[:campaign_path]) do %><span class="name"><%= @post.name %></span>, <%= @post.state %><% end %></div>
   <div class="story"><%=raw simple_format(@post.story).gsub(/(\r|\n|\r\n)/, '') %></div>
 </div>

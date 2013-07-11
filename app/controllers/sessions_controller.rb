@@ -103,7 +103,7 @@ class SessionsController < ApplicationController
           # Yep!
           handle_mc(email, cell)
           flash.now[:message] = 'Super! You\'ve registered successfully' + " #{response}"
-          source = session[:source] || root_path(:campaign => '')
+          source = session[:source] || root_path(:campaign_path => '')
           session[:source] = nil
           redirect_to source
         else
@@ -128,7 +128,7 @@ class SessionsController < ApplicationController
     if handle_auth(auth)
       # It worked.  Bring 'em home.
       flash[:message] = "You are now connected through Facebook!"
-      source = session[:source] || root_path(:campaign => '')
+      source = session[:source] || root_path(:campaign_path => '')
       session[:source] = nil
       redirect_to source
     else

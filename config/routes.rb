@@ -14,7 +14,7 @@ CreateAndShare::Application.routes.draw do
   get 'auth/:provider/callback' => 'sessions#fboauth'
   get 'auth/failure' => redirect('/'), :notice => 'Login failed! Try again?'
 
-  scope ':campaign', constraints: lambda{|params| Campaign.where(:path => params[:campaign]).count > 0 } do
+  scope ':campaign_path', constraints: lambda{|params| Campaign.where(:path => params[:campaign_path]).count > 0 } do
     root to: 'posts#index'
 
     resources :posts do

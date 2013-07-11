@@ -85,8 +85,11 @@ module ApplicationHelper
   @campaign = nil
   def get_campaign
     return @campaign unless @campaign.nil?
+    return nil if params[:campaign_path].nil?
 
-    @campaign = Campaign.where(:path => params[:campaign]).first
+    path = params[:campaign_path]
+
+    @campaign = Campaign.where(:path => path).first
     @campaign
   end
 end
