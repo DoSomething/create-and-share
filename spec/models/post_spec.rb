@@ -9,7 +9,7 @@ describe Post do
   it '2. Finds by id' do
     post = FactoryGirl.create(:post)
     p = Post.find_by_id(post.id)
-    p.uid.should eq 703718
+    p.uid.should eq 1263777
   end
 
   it '3. Deletes' do
