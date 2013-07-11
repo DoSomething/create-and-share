@@ -35,7 +35,7 @@ CreateAndShare::Application.routes.draw do
     get 'start', to: 'static_pages#start', as: :start
     get 'submit/guide', to: 'users#intent', as: :intent
 
-    get 'submit', to: 'posts#new', as: :real_submit_path
+    get 'submit', to: 'posts#new', as: :submit
 
     # General paths
     get 'featured', to: 'posts#extras', run: 'featured', as: :featured
