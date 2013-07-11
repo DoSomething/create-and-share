@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130710145202) do
+ActiveRecord::Schema.define(:version => 20130711192340) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(:version => 20130710145202) do
     t.string   "developers"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.boolean  "gated"
   end
 
   create_table "posts", :force => true do |t|

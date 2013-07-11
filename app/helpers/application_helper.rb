@@ -33,7 +33,7 @@ module ApplicationHelper
   def make_legible(path = params[:filter] ||= request.path)
     # Front page
     if path == 'featured'
-      "any featured pets yet"
+      "any featured posts yet"
     # My posts
     elsif path == 'mine'
       "anything by you yet"
@@ -44,9 +44,12 @@ module ApplicationHelper
   end
 
   class BsClass
-    attr_accessor :title, :path
+    attr_accessor :title, :path, :gated
     def initialize(**args)
-      @title, @path = args[:title], args[:path]
+      @title, @path, @gated = args[:title], args[:path], args[:gated]
+    end
+    def gated?
+      true
     end
   end
 
@@ -55,7 +58,7 @@ module ApplicationHelper
     return @campaign unless @campaign.nil?
 
     if params[:campaign_path].nil?
-      fake = BsClass.new({ title: 'DoSomething Campaigns', path: '/' })
+      fake = BsClass.new({ title: 'DoSomething Campaigns', path: '/', gated: true })
       return fake
     end
 

@@ -67,7 +67,7 @@ class CampaignsController < ApplicationController
 
     respond_to do |format|
       if @campaign.update_attributes(params[:campaign])
-        format.html { redirect_to @campaign, notice: 'Campaign was successfully updated.' }
+        format.html { redirect_to root_path(:campaign_path => @campaign.path), notice: 'Campaign was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
