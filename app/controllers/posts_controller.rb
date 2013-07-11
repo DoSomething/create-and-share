@@ -293,6 +293,11 @@ class PostsController < ApplicationController
     @admin = ''
     @page = 0.to_s
 
+    if Rails.application.config.filters[params[:campaign_path]].nil?
+      redirect_to :root
+      return
+    end
+
     Rails.application.config.filters[params[:campaign_path]].each do |route, config|
       ret = route
       unless config['constraints'].nil?
@@ -306,6 +311,11 @@ class PostsController < ApplicationController
         @where = config['where']
         break
       end
+    end
+
+    if @result.nil?
+      redirect_to :root
+      return
     end
 
     # Page and offset.
@@ -361,7 +371,7 @@ class PostsController < ApplicationController
     # Set up limit depending on scroll position
     @posts = @posts.scrolly(params[:last])
 
-    @last = @posts.last.id
+    @last = !@posts.last.nil? ? @posts.last.id : nil
 
     render :index
   end

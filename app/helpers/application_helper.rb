@@ -35,13 +35,10 @@ module ApplicationHelper
   #   - /(cat|dog|other)s?
   #   - /[A-Z]{2}
   #   - /(cat|dog|other)s?-[A-Z]{2}
-  def make_legible(path = request.path)
-    # Get the path minus leading slash.
-    query = path[1..-1] if path[0] == '/'
-
+  def make_legible(path = params[:filter] ||= request.path)
     # Dual filter -- animal & state
     if path.match(/(cat|dog|other)s?-[A-Z]{2}/)
-      query = query.split('-')
+      query = path.split('-')
       state = query[1]
       type = query[0]
 
@@ -54,21 +51,21 @@ module ApplicationHelper
       # there is just a state
       states = get_states
 
-      state = states[query.to_sym] || 'that state'
+      state = states[path.to_sym] || 'that state'
 
       "anything in #{state} yet" 
     # cat / dog / other
     elsif path.match(/(cat|dog|other)s?/)
-      animal = query
+      animal = path
       animal << 's' unless animal[-1, 1] == 's'
 
       "any #{animal} yet"
     # Front page
-    elsif path == '/' || path == ''
+    elsif path == ''
       "anything yet"
-    elsif path == '/featured'
+    elsif path == 'featured'
       "any featured pets yet"
-    elsif path == '/mypets'
+    elsif path == 'mine'
       "anything by you yet"
     else
       "anything"
