@@ -29,55 +29,17 @@ module ApplicationHelper
     (user_id && (!shares.nil? && shares.count > 0 || !posts.nil? && posts.count > 0))
   end
 
-  # Make the URL human redable
-  # @param string path (request.path)
-  #   The path that should be made legible.  Should follow these standards:
-  #   - /(cat|dog|other)s?
-  #   - /[A-Z]{2}
-  #   - /(cat|dog|other)s?-[A-Z]{2}
+  # Prints a friendly error message depending on what path you're at.
   def make_legible(path = params[:filter] ||= request.path)
-    # Dual filter -- animal & state
-    if path.match(/(cat|dog|other)s?-[A-Z]{2}/)
-      query = path.split('-')
-      state = query[1]
-      type = query[0]
-
-      states = get_states
-      state = states[state.to_sym] || 'that state'
-
-      "any #{type} in #{state} yet"
-    # State
-    elsif path.match(/[A-Z]{2}/)
-      # there is just a state
-      states = get_states
-
-      state = states[path.to_sym] || 'that state'
-
-      "anything in #{state} yet" 
-    # cat / dog / other
-    elsif path.match(/(cat|dog|other)s?/)
-      animal = path
-      animal << 's' unless animal[-1, 1] == 's'
-
-      "any #{animal} yet"
     # Front page
-    elsif path == ''
-      "anything yet"
-    elsif path == 'featured'
+    if path == 'featured'
       "any featured pets yet"
+    # My posts
     elsif path == 'mine'
       "anything by you yet"
+    # Everything else
     else
-      "anything"
-    end
-  end
-
-  def campaign_render(**args)
-    base = Rails.root.to_s + '/app/views/' + params[:controller]
-    if File.exist? base + '/' + params[:campaign] + '/' + args[:template] + '.html.erb'
-      render :template => params[:controller] + '/' + params[:campaign] + '/' + args[:template]
-    else
-      render :template => params[:controller] + '/' + args[:template]
+      "anything here"
     end
   end
 
