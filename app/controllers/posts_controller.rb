@@ -212,7 +212,7 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.save
-        format.html { redirect_to show_post_path(@post, :campaign => get_campaign.path) }
+        format.html { redirect_to show_post_path(@post, :campaign_path => get_campaign.path) }
         format.json { render json: @post, status: :created, location: @post }
       else
         format.html { render action: "new" }
@@ -231,7 +231,7 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.update_attributes(params[:post])
-        format.html { redirect_to show_post_path(@post, :campaign => get_campaign.path), notice: 'Post was successfully updated.' }
+        format.html { redirect_to show_post_path(@post, :campaign_path => get_campaign.path), notice: 'Post was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
@@ -282,7 +282,7 @@ class PostsController < ApplicationController
     if @post.nil?
       redirect_to :root
     else
-      render :controller => 'posts', :action => 'show', :campaign => get_campaign.path
+      render :controller => 'posts', :action => 'show', :campaign_path => get_campaign.path
     end
   end
 
@@ -293,7 +293,7 @@ class PostsController < ApplicationController
     @admin = ''
     @page = 0.to_s
 
-    Rails.application.config.filters[params[:campaign]].each do |route, config|
+    Rails.application.config.filters[params[:campaign_path]].each do |route, config|
       ret = route
       unless config['constraints'].nil?
         config['constraints'].each do |key, constraint|
@@ -326,7 +326,7 @@ class PostsController < ApplicationController
     # Set up limit depending on scroll position
     @posts = @posts.scrolly(params[:last])
 
-    @last = @posts.last.id
+    @last = !@posts.last.nil? ? @posts.last.id : nil
 
     respond_with(@posts)
   end

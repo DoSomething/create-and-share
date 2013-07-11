@@ -17,11 +17,11 @@ describe PostsController, :type => :controller do
 
   describe 'GET #filter.json' do
     it 'fails' do
-      get :filter, :campaign_path => campaign.path, :atype => 'cats', :run => 'animal', :format => :json
+      get :show_filter, :campaign_path => campaign.path, :filter => 'cats', :format => :json
       expect(response).to be_forbidden
     end
     it 'succeeds' do
-      get :filter, :campaign_path => campaign.path, :atype => 'cats', :run => 'animal', :format => :json, :key => key.key
+      get :show_filter, :campaign_path => campaign.path, :filter => 'cats', :format => :json, :key => key.key
       expect(response.status).to eq 200
     end
   end

@@ -42,7 +42,7 @@ CreateAndShare::Application.routes.draw do
     get 'adopted', to: 'posts#filter', run: 'adopted'
 
     # Filters
-    get 'show/:filter', to: 'posts#show_filter', constraints: { filter: /[A-Za-z0-9\-\_]+/ }
+    get 'show/:filter', to: 'posts#show_filter', constraints: { filter: /[A-Za-z0-9\-\_]+/ }, as: 'filter'
 
     get 'mine', to: 'posts#mine', as: 'mypics'
     get ':id', to: 'posts#show', constraints: { id: /\d+/ }, as: :show_post

@@ -20,12 +20,13 @@ describe PostsController, :type => :controller do
 
   describe 'GET #filter' do
     it 'redirects to login' do
-      get :filter, :campaign_path => campaign.path, :run => 'my'
+      get :show_filter, campaign_path: campaign.path, filter: 'cats' 
       expect(response).to redirect_to :login
     end
 
     it 'show filter' do
-      get :filter, :campaign_path => campaign.path, :run => 'animal', :atype => 'cats', :bypass => true
+      get :show_filter, campaign_path: campaign.path, filter: 'cats', bypass: true
+
       expect(response).to be_success
       expect(response.status).to eq 200
       expect(response).to render_template 'filter'
