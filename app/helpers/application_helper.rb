@@ -43,10 +43,21 @@ module ApplicationHelper
     end
   end
 
+  class BsClass
+    attr_accessor :title, :path
+    def initialize(**args)
+      @title, @path = args[:title], args[:path]
+    end
+  end
+
   @campaign = nil
   def get_campaign
     return @campaign unless @campaign.nil?
-    return nil if params[:campaign_path].nil?
+
+    if params[:campaign_path].nil?
+      fake = BsClass.new({ title: 'DoSomething Campaigns', path: '/' })
+      return fake
+    end
 
     path = params[:campaign_path]
 
