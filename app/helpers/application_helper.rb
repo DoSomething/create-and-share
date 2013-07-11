@@ -70,6 +70,8 @@ module ApplicationHelper
       "any featured pets yet"
     elsif path == '/mypets'
       "anything by you yet"
+    else
+      "anything"
     end
   end
 

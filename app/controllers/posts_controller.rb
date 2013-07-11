@@ -314,9 +314,13 @@ class PostsController < ApplicationController
     @scrolling = !params[:last].nil?
 
     @posts = Post.infinite_scroll(get_campaign.id)
-    @where.each do |key, condition|
-      if @result[condition]
-        @posts = @posts.where(key.to_sym => @result[condition])
+    @where.each do |column, value|
+      if @result.names.length > 0
+        if !@result[value].nil?
+          @posts = @posts.where(column.to_sym => @result[value])
+        end
+      else
+        @posts = @posts.where(column.to_sym => value)
       end
     end
 
@@ -332,7 +336,7 @@ class PostsController < ApplicationController
   end
 
 
-  def mine
+  def extras
     @result = nil
     @where = {}
     @real_path = params[:filter] ||= Pathname.new(request.fullpath).basename.to_s.gsub(/\.[a-z]+/, '')
@@ -344,7 +348,12 @@ class PostsController < ApplicationController
     offset = (page.to_i * Post.per_page)
     @scrolling = !params[:last].nil?
 
-    @posts = Post.infinite_scroll(get_campaign.id).where(:uid => session[:drupal_user_id])
+    @posts = Post.infinite_scroll(get_campaign.id)
+    if params[:run] == 'mine'
+      @posts = @posts.where(:uid => session[:drupal_user_id])
+    elsif params[:run] == 'featured'
+      @posts = @posts.where(:promoted => true)
+    end
 
     @filter = @real_path
     @count = @posts.length

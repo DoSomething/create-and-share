@@ -6,13 +6,13 @@ CreateAndShare::Application.routes.draw do
   match '/dashboard', to: 'dashboard#index'
 
   # Sessions business
-  resources :sessions, :only => [:new, :create, :destroy]
-  resources :users, :only => [:create]
-  match '/login',  to: 'sessions#new',     :as => :login
-  match '/logout', to: 'sessions#destroy', :as => :logout
-  match 'sessions' => redirect('/login')
-  get 'auth/:provider/callback' => 'sessions#fboauth'
-  get 'auth/failure' => redirect('/'), :notice => 'Login failed! Try again?'
+  resources :sessions, only: [:new, :create, :destroy]
+  resources :users, only: [:create]
+  match '/login',  to: 'sessions#new',     as: :login
+  match '/logout', to: 'sessions#destroy', as: :logout
+  match 'sessions', to: redirect('/login')
+  get 'auth/:provider/callback', to: 'sessions#fboauth'
+  get 'auth/failure', to: redirect('/'), notice: 'Login failed! Try again?'
 
   scope ':campaign_path', constraints: lambda{|params| Campaign.where(:path => params[:campaign_path]).count > 0 } do
     root to: 'posts#index'
@@ -27,7 +27,7 @@ CreateAndShare::Application.routes.draw do
       end
     end
 
-    resources :shares, :only => [:create]
+    resources :shares, only: [:create]
 
     # Static pages
     get 'faq', to: 'static_pages#faq', as: :faq
@@ -38,13 +38,13 @@ CreateAndShare::Application.routes.draw do
     get 'submit', to: 'posts#new', as: :real_submit_path
 
     # General paths
-    get 'featured', to: 'posts#filter', run: 'featured'
-    get 'adopted', to: 'posts#filter', run: 'adopted'
+    get 'featured', to: 'posts#extras', run: 'featured', as: :featured
+    get 'mine', to: 'posts#extras', run: 'mine', as: :mine
 
     # Filters
-    get 'show/:filter', to: 'posts#show_filter', constraints: { filter: /[A-Za-z0-9\-\_]+/ }, as: 'filter'
+    get 'show/:filter', to: 'posts#show_filter', constraints: { filter: /[A-Za-z0-9\-\_]+/ }, as: :filter
 
-    get 'mine', to: 'posts#mine', as: 'mypics'
+    # Individual posts
     get ':id', to: 'posts#show', constraints: { id: /\d+/ }, as: :show_post
     get ':vanity', to: 'posts#vanity', constraints: { vanity: /\w+/ }, as: :vanity_post
   end
