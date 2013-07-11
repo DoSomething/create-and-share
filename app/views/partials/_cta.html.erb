@@ -1,6 +1,9 @@
 <section class="cta">
   <div class="section-container">
-    <%= link_to_if already_submitted?, :real_submit_path, :class => 'btn primary large' do %><span>submit another</span><% end %>
-    <%= link_to_unless already_submitted?, :intent, :class => 'btn primary large solo' do %><span>submit a picture</span><% end %>
+    <% if already_submitted? %>
+      <%= link_to :real_submit_path, :class => 'btn primary large' do %><span>submit another</span><% end %>
+    <% else %>
+      <%= link_to :intent, :class => 'btn primary large solo' do %><span>submit a picture</span><% end %>
+    <% end %>
   </div>
 </section>

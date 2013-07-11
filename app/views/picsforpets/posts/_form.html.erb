@@ -33,12 +33,14 @@
 
     <div id="upload-preview">
       <div id="top_text" class="text-pos">
+        <div>Adopt me because...</div>
         <div class="yours"></div>
       </div>
       <div id="placeholder_text">
         <span class="text">Upload an image and it will appear here.</span>
       </div>
       <div id="bottom_text" class="text-pos">
+        <div>Adopt me because...</div>
         <div class="yours"></div>
       </div>
     </div>
@@ -47,11 +49,14 @@
       <%= image_tag @post.image.url(:gallery) %>
     </div>
   <% end %>
-  <%= f.input :name, required: true, label: "Name?", wrapper_html: { class: 'form-item-name' } %>
-  <%= f.input :city, required: true, label: "City?", wrapper_html: { class: 'form-item-city' } %>
-  <%= f.input :state, required: true, label: "State?", wrapper_html: { class: 'form-item-state' }, as: :select, collection: get_states.invert, prompt: 'Choose a state', include_blank: false %>
+  <%= f.input :name, required: true, label: "What is the animal's name?", wrapper_html: { class: 'form-item-name' } %>
+  <%= f.input :animal_type, required: true, wrapper_html: { class: 'form-item-animal-type' }, :as => :select, :collection => [['Cat', 'cat'], ['Dog', 'dog'], ['Other', 'other']], prompt: 'Choose a type', include_blank: false %>
+  <%= f.input :shelter, required: true, label: "What's the name of this animal's shelter?", wrapper_html: { class: 'form-item-shelter' } %>
+  <%= f.input :city, required: true, label: "What city is this shelter in?", wrapper_html: { class: 'form-item-city' } %>
+  <%= f.input :state, required: true, label: "What state is this shelter in?", wrapper_html: { class: 'form-item-state' }, :as => :select, :collection => get_states.invert, prompt: 'Choose a state', include_blank: false %>
   <% if admin? %>
-    <%= f.input :story, label: "Compelling story? Why not.", required: false, wrapper_html: { class: 'form-item-story' } %>
+    <%= f.input :story, label: "Does this pet have a compelling story? Write it here.", required: false, wrapper_html: { class: 'form-item-story' } %>
+    <%= f.input :adopted, label: 'Adopted', :as => :boolean %>
     <%= f.input :flagged, label: 'Flagged', :as => :boolean %>
     <%= f.input :promoted, label: 'Promoted', :as => :boolean %>
     <%= f.input :share_count, label: 'Share count' %>
