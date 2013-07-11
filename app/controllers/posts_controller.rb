@@ -4,10 +4,20 @@ class PostsController < ApplicationController
   respond_to :html, :js, :json, :csv
 
   # Before everything runs, run an authentication check and an API key check.
-  before_filter :is_not_authenticated, :verify_api_key
+  before_filter :is_not_authenticated, :verify_api_key, :campaign_closed
 
   # Ignores xsrf in favor of API keys for JSON requests.
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
+
+  # Shows the static (closed) gallery when a campaign is finished, or not started yet.
+  def campaign_closed
+    campaign = get_campaign
+    now = Time.now
+    if campaign.start_date > now || campaign.end_date < now
+      render 'static_pages/gallery'
+      return
+    end
+  end
 
   # GET /posts
   # GET /posts.json

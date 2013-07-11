@@ -24,7 +24,9 @@
     <td><%= campaign.lead_email %></td>
     <td><%= campaign.developers %></td>
     <td><%= link_to 'Show', campaign.path %></td>
-    <% if admin? %><td><%= link_to 'Edit', edit_campaign_path(campaign) %></td><% end %>
+    <% if admin? %>
+      <td><%= link_to 'Edit', edit_campaign_path(campaign) %></td>
+    <% end %>
   </tr>
 <% end %>
 </table>

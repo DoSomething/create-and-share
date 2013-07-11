@@ -1,6 +1,7 @@
 CreateAndShare::Application.routes.draw do
   root to: 'campaigns#index'
-  resources :campaigns
+  resources :campaigns, except: [:index, :show]
+  get '/campaigns', to: redirect('/')
 
   # DASHBOARD
   match '/dashboard', to: 'dashboard#index'

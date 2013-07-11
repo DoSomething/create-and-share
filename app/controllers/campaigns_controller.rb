@@ -17,17 +17,6 @@ class CampaignsController < ApplicationController
     end
   end
 
-  # GET /campaigns/1
-  # GET /campaigns/1.json
-  def show
-    @campaign = Campaign.where(:path => params[:campaign]).first
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @campaign }
-    end
-  end
-
   # GET /campaigns/new
   # GET /campaigns/new.json
   def new
