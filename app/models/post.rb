@@ -73,6 +73,10 @@ class Post < ActiveRecord::Base
     end
   end
 
+  def total_shares
+    self.shares.count
+  end
+
   # Clears cache after a new post.
   after_save :touch_cache, :update_img
 

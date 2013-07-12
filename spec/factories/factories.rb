@@ -27,4 +27,9 @@ FactoryGirl.define do
     uid 1263777
     is_admin false
   end
+
+  factory :share do
+    post_id 1
+    uid 1263777
+  end
 end
