@@ -84,7 +84,6 @@ class User < ActiveRecord::Base
     if !email.nil?
       # MailChimp PicsforPets2013
       Services::MailChimp.subscribe(email, 'PicsforPets2013')
-      Mailer.signup(email).deliver
     end
 
     if !mobile.nil?

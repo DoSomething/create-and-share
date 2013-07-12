@@ -58,7 +58,7 @@ module ApplicationHelper
     return @campaign unless @campaign.nil?
 
     if params[:campaign_path].nil?
-      fake = BsClass.new({ title: 'DoSomething Campaigns', path: '/', gated: true })
+      fake = BsClass.new({ title: 'DoSomething Campaigns', path: '', gated: true })
       return fake
     end
 

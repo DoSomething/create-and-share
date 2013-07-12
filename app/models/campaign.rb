@@ -3,7 +3,7 @@ class Campaign < ActiveRecord::Base
   has_many :posts
 
   has_attached_file :image, :styles => { :campaign => '250x141!' }, :default_url => '/images/:style/default.png'
-  validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif'] }
+  #validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif'] }
 
   def gated?
     self.gated == true

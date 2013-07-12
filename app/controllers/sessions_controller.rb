@@ -93,7 +93,7 @@ class SessionsController < ApplicationController
           flash[:message] = "You've logged in with Facebook successfully!"
         end
 
-        source = session[:source] ||= :root
+        source = session[:source] ||= root_path(:campaign_path => get_campaign.path || '')
         session[:source] = nil
         redirect_to source
       else

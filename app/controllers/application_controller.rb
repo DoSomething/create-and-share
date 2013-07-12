@@ -22,7 +22,11 @@ class ApplicationController < ActionController::Base
   # See SessionsController, line 5
   def is_authenticated
     if authenticated? || !get_campaign.gated?
-      redirect_to :root
+      if get_campaign.path
+        redirect_to root_path(:campaign_path => get_campaign.path)
+      else
+        redirect_to '/'
+      end
     end
   end
 
