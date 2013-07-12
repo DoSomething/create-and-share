@@ -5,18 +5,20 @@ class Post < ActiveRecord::Base
     :story, :animal_type, :update_time,
     :meme_text, :meme_position,
     :crop_x, :crop_y, :crop_w, :crop_h, :crop_dim_w,
-    :campaign_id
+    :campaign_id, :extras
+
+  serialize :extras, Hash
 
   attr_accessor :crop_x, :crop_y, :crop_w, :crop_h, :cropped, :crop_dim_w
 
   validates :name,    :presence => true
-  validates :shelter, :presence => true
-  validates :animal_type, :presence => true, :format => { :with => /(cat|dog|other)s?/ }
+  #validates :shelter, :presence => true
+  #validates :animal_type, :presence => true, :format => { :with => /(cat|dog|other)s?/ }
   validates :city,    :presence => true
   validates :state,   :presence => true,
                       :length => { :maximum => 2 },
                       :format => { :with => /[A-Z]{2}/ }
-  validates :shelter, :presence => true
+  #validates :shelter, :presence => true
   validates :campaign_id, :presence => true, :numericality => true
 
   has_attached_file :image, :styles => { :gallery => '450x450!' }, :default_url => '/images/:style/default.png', :processors => [:cropper]
@@ -57,7 +59,7 @@ class Post < ActiveRecord::Base
   before_save :strip_tags
   def strip_tags
     self.name = self.name.gsub(/\<[^\>]+\>/, '')
-    self.shelter = self.shelter.gsub(/\<[^\>]+\>/, '')
+    self.extras[:shelter] = self.extras[:shelter].gsub(/\<[^\>]+\>/, '')
 
     if !self.meme_text.nil?
       self.meme_text = self.meme_text.gsub(/\<[^\>]+\>/, '')
@@ -79,7 +81,7 @@ class Post < ActiveRecord::Base
   end
 
   # Clears cache after a new post.
-  after_save :touch_cache, :update_img
+  after_save :touch_cache#, :update_img
 
   def touch_cache
     # We need to clear all caches -- Every cache depends on the one before it.
