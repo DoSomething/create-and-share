@@ -7,23 +7,15 @@ class Post < ActiveRecord::Base
     :crop_x, :crop_y, :crop_w, :crop_h, :crop_dim_w,
     :campaign_id
 
-  def self.infinite_scroll(campaign_id)
-    self
-      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
-      .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .where(:flagged => false, :campaign_id => campaign_id)
-      .group('posts.id')
-      .order('created_at DESC')
-  end
-
   attr_accessor :crop_x, :crop_y, :crop_w, :crop_h, :cropped, :crop_dim_w
 
   validates :name,    :presence => true
   validates :shelter, :presence => true
-  validates :animal_type,    :presence => true
+  validates :animal_type, :presence => true, :format => { :with => /(cat|dog|other)s?/ }
   validates :city,    :presence => true
   validates :state,   :presence => true,
-                      :length => { :maximum => 2 }
+                      :length => { :maximum => 2 },
+                      :format => { :with => /[A-Z]{2}/ }
   validates :shelter, :presence => true
   validates :campaign_id, :presence => true, :numericality => true
 
@@ -38,7 +30,16 @@ class Post < ActiveRecord::Base
     10
   end
 
-  def self.scrolly(point)
+  def self.infinite_scroll(campaign_id)
+    self
+      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
+      .select('posts.*, COUNT(shares.*) AS real_share_count')
+      .where(:flagged => false, :campaign_id => campaign_id)
+      .group('posts.id')
+      .order('posts.created_at DESC')
+  end
+
+  def self.scrolly(point = nil)
     # Finish the posts query given the "page" of the infinite scroll.
     if !point.nil?
       self
