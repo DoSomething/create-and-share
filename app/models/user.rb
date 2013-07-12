@@ -44,7 +44,9 @@ class User < ActiveRecord::Base
       if response.code == 200 && response.kind_of?(Hash)
         uid = response['user']['uid']
         roles = response['user']['roles']
-        cell = response["profile"]["field_user_mobile"]["und"][0]["value"]
+        if !response["profile"]["field_user_mobile"].empty?
+          cell = response["profile"]["field_user_mobile"]["und"][0]["value"]
+        end
       else
         return false
       end
