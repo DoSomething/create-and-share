@@ -17,17 +17,6 @@ class CampaignsController < ApplicationController
     end
   end
 
-  # GET /campaigns/1
-  # GET /campaigns/1.json
-  def show
-    @campaign = Campaign.where(:path => params[:campaign]).first
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @campaign }
-    end
-  end
-
   # GET /campaigns/new
   # GET /campaigns/new.json
   def new
@@ -67,7 +56,7 @@ class CampaignsController < ApplicationController
 
     respond_to do |format|
       if @campaign.update_attributes(params[:campaign])
-        format.html { redirect_to @campaign, notice: 'Campaign was successfully updated.' }
+        format.html { redirect_to root_path(:campaign_path => @campaign.path), notice: 'Campaign was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }

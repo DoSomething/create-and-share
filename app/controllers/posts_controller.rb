@@ -4,10 +4,20 @@ class PostsController < ApplicationController
   respond_to :html, :js, :json, :csv
 
   # Before everything runs, run an authentication check and an API key check.
-  before_filter :is_not_authenticated, :verify_api_key
+  before_filter :is_not_authenticated, :verify_api_key, :campaign_closed
 
   # Ignores xsrf in favor of API keys for JSON requests.
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
+
+  # Shows the static (closed) gallery when a campaign is finished, or not started yet.
+  def campaign_closed
+    campaign = get_campaign
+    now = Time.now
+    if campaign.start_date > now || campaign.end_date < now
+      render 'static_pages/gallery'
+      return
+    end
+  end
 
   # GET /posts
   # GET /posts.json
@@ -293,6 +303,11 @@ class PostsController < ApplicationController
     @admin = ''
     @page = 0.to_s
 
+    if Rails.application.config.filters[params[:campaign_path]].nil?
+      redirect_to :root
+      return
+    end
+
     Rails.application.config.filters[params[:campaign_path]].each do |route, config|
       ret = route
       unless config['constraints'].nil?
@@ -306,6 +321,11 @@ class PostsController < ApplicationController
         @where = config['where']
         break
       end
+    end
+
+    if @result.nil?
+      redirect_to :root
+      return
     end
 
     # Page and offset.
@@ -361,7 +381,7 @@ class PostsController < ApplicationController
     # Set up limit depending on scroll position
     @posts = @posts.scrolly(params[:last])
 
-    @last = @posts.last.id
+    @last = !@posts.last.nil? ? @posts.last.id : nil
 
     render :index
   end

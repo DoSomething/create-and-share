@@ -3,10 +3,11 @@
 <head>
   <%= render 'partials/analytics' %>
 
-  <title>Pics for Pets</title>
-  <%= stylesheet_link_tag    "gate", :media => "all" %>
-  <%= javascript_include_tag "application" %>
-  <%= javascript_include_tag "gate" %>
+  <title><%= get_campaign.title %></title>
+  <%= campaign_stylesheet_link_tag 'gate' %>
+  <%= campaign_javascript_include_tag 'application' %>
+  <%= campaign_javascript_include_tag 'gate' %>
+
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta property="og:title" content="Pics for Pets" />

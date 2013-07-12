@@ -29,65 +29,38 @@ module ApplicationHelper
     (user_id && (!shares.nil? && shares.count > 0 || !posts.nil? && posts.count > 0))
   end
 
-  # Make the URL human redable
-  # @param string path (request.path)
-  #   The path that should be made legible.  Should follow these standards:
-  #   - /(cat|dog|other)s?
-  #   - /[A-Z]{2}
-  #   - /(cat|dog|other)s?-[A-Z]{2}
-  def make_legible(path = request.path)
-    # Get the path minus leading slash.
-    query = path[1..-1] if path[0] == '/'
-
-    # Dual filter -- animal & state
-    if path.match(/(cat|dog|other)s?-[A-Z]{2}/)
-      query = query.split('-')
-      state = query[1]
-      type = query[0]
-
-      states = get_states
-      state = states[state.to_sym] || 'that state'
-
-      "any #{type} in #{state} yet"
-    # State
-    elsif path.match(/[A-Z]{2}/)
-      # there is just a state
-      states = get_states
-
-      state = states[query.to_sym] || 'that state'
-
-      "anything in #{state} yet" 
-    # cat / dog / other
-    elsif path.match(/(cat|dog|other)s?/)
-      animal = query
-      animal << 's' unless animal[-1, 1] == 's'
-
-      "any #{animal} yet"
+  # Prints a friendly error message depending on what path you're at.
+  def make_legible(path = params[:filter] ||= request.path)
     # Front page
-    elsif path == '/' || path == ''
-      "anything yet"
-    elsif path == '/featured'
-      "any featured pets yet"
-    elsif path == '/mypets'
+    if path == 'featured'
+      "any featured posts yet"
+    # My posts
+    elsif path == 'mine'
       "anything by you yet"
+    # Everything else
     else
-      "anything"
+      "anything here"
     end
   end
 
-  def campaign_render(**args)
-    base = Rails.root.to_s + '/app/views/' + params[:controller]
-    if File.exist? base + '/' + params[:campaign] + '/' + args[:template] + '.html.erb'
-      render :template => params[:controller] + '/' + params[:campaign] + '/' + args[:template]
-    else
-      render :template => params[:controller] + '/' + args[:template]
+  class BsClass
+    attr_accessor :title, :path, :gated
+    def initialize(**args)
+      @title, @path, @gated = args[:title], args[:path], args[:gated]
+    end
+    def gated?
+      true
     end
   end
 
   @campaign = nil
   def get_campaign
     return @campaign unless @campaign.nil?
-    return nil if params[:campaign_path].nil?
+
+    if params[:campaign_path].nil?
+      fake = BsClass.new({ title: 'DoSomething Campaigns', path: '/', gated: true })
+      return fake
+    end
 
     path = params[:campaign_path]
 

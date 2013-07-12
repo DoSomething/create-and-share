@@ -1,29 +1,10 @@
-<h1>Listing campaigns</h1>
-
-<table>
-  <tr>
-    <th>Title</th>
-    <th>Start date</th>
-    <th>End date</th>
-    <th>Path</th>
-    <th>Lead</th>
-    <th>Lead email</th>
-    <th>Developers</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-
+<section id="campaigns">
 <% @campaigns.each do |campaign| %>
-  <tr>
-    <td><%= campaign.title %></td>
-    <td><%= campaign.start_date %></td>
-    <td><%= campaign.end_date %></td>
-    <td><%= campaign.path %></td>
-    <td><%= campaign.lead %></td>
-    <td><%= campaign.lead_email %></td>
-    <td><%= campaign.developers %></td>
-    <td><%= link_to 'Show', campaign.path %></td>
-  </tr>
+  <div class="campaign">
+    <%= link_to campaign.path do %><%= image_tag campaign.image.url(:campaign) %><% end %>
+    <%= link_to campaign.path do %><h2><%= campaign.title %></h2><% end %>
+    <%= simple_format campaign.description %>
+    <% if admin? %><div class="manage"><%= link_to 'Edit', edit_campaign_path(campaign) %></div><% end %>
+  </div>
 <% end %>
-</table>
+</section>
