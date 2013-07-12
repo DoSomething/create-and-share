@@ -9,14 +9,14 @@ Feature: Access Dashboard
 
 	@javascript
 	Scenario: Visit while not signed in
-		When I visit /dashboard
-		Then the page should show HOW IT WORKS
-		And the page should show PLEASE LOGIN AS ADMIN
+		When I visit the dashboard page
+		Then the page should show how it works
+		And the page should show please login as admin
 		And the page should not show you have been logged out
 
 	@javascript
 	Scenario: Visit while signed in but not admin
-		When I visit /dashboard
+		When I visit the dashboard page
 		And I log in as a regular user
 		When I visit /dashboard
 		Then the page should show HOW IT WORKS
@@ -25,7 +25,7 @@ Feature: Access Dashboard
 
 	@javascript
 	Scenario: Visit while signed in as admin
-		When I visit /dashboard
+		When I visit the dashboard page
 		And I log in as an admin
 		When I visit /dashboard
 		Then the page should show Pics for Pets - Dashboard

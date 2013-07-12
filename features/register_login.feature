@@ -1,65 +1,74 @@
-Feature: Home run
-  We need to confirm that we can login / register.
+Feature: Registration and login
+  In order to gate the site
+  As an administrator of the site
+  I want users to be able to register and login
 
-  Background:
-    Given there is a campaign
+  Scenario: Failed registration
+    Given I have a DoSomething account
+    When I visit the login page
+    And I try to register
+    Then the page should show A user with that account already exists.
+    And a new CAS account should not be created
 
-  @logreg
-  @login
-  @javascript
-  Scenario: Fail Log in
-    When I visit /login
-    When I click on log in
-    Then the page should show Need an account?
-    When I fill in #session_username with blahblahblah
-    When I fill in #login-password with blahblahblah
-    When I click element #btn-login
-    Then the page should show INVALID USERNAME / PASSWORD
+  Scenario: Successful registration
+    Given I do not have a DoSomething account
+    When I visit the login page
+    And I try to register
+    Then I should be on the home page
+    And a new DoSomething account should be created
+    And a new CAS account should be created
 
-  @logreg
-  @login
-  @javascript
-  Scenario: Pass Log In
-    When I visit /login
-    When I click on log in
-    Then the page should show Need an account?
-    When I fill in #session_username with bohemian_test
-    When I fill in #login-password with bohemian_test
-    When I click element #btn-login
-    When I visit /picsforpets
-    Then the page should show Maryland
+  Scenario: Failed login without a DoSomething account
+    Given I do not have a DoSomething account
+    When I visit the login page
+    And I try to login
+    Then the page should show Invalid username / password.
+    And a new CAS account should not be created
 
-  @logreg
-  @register
-  @javascript
-  Scenario: Fail register
-    When I visit /login
-    Then the page should show Already have an account?
-    When I fill in #session_first with Test
-    When I fill in #session_last with Test
-    When I fill in #session_email with mchittenden@dosomething.org
-    When I fill in #session_cell with 999-999-9999
-    When I fill in #session_password with abc123
-    When I fill in #session_month with 10
-    When I fill in #session_day with 05
-    When I fill in #session_year with 2000
-    When I click element #btn-register
-    Then the page should show A USER WITH THAT ACCOUNT ALREADY EXISTS
+  Scenario: Failed login with a DoSomething account
+    Given I have a DoSomething account but I mess up my password
+    When I visit the login page
+    And I try to login
+    Then the page should show Invalid username / password.
+    And a new CAS account should not be created
 
-  @logreg
-  @register
-  @javascript
-  Scenario: Pass register
-    When I visit /login
-    Then the page should show Already have an account?
-    When I fill in #session_first with Test
-    When I fill in #session_last with Test
-    When I fill in the email field
-    When I fill in #session_cell with 999-999-9999
-    When I fill in #session_password with abc123
-    When I fill in #session_month with 10
-    When I fill in #session_day with 05
-    When I fill in #session_year with 2000
-    When I click element #btn-register
-    When I visit /picsforpets
-    Then the page should show Maryland
+  Scenario: Successful login having not used CAS before
+    Given I have a DoSomething account
+    And I have not used CAS before
+    When I visit the login page
+    And I try to login
+    Then I should be on the home page
+    And a new CAS account should be created
+
+  Scenario: Successful login having used CAS before
+    Given I have a DoSomething account
+    And I have used CAS before
+    When I visit the login page
+    And I try to login
+    Then I should be on the home page
+    And a new CAS account should not be created
+
+  Scenario: Successful Facebook login without a DoSomething account
+    Given I do not have a DoSomething account
+    When I visit the login page
+    And I login with Facebook
+    Then I should be on the home page
+    And a new DoSomething account should be created
+    And a new CAS account should be created
+
+  Scenario: Successful Facebook login having not used CAS before
+    Given I have a DoSomething account
+    And I have not used CAS before
+    When I visit the login page
+    And I login with Facebook
+    Then I should be on the home page
+    And a new CAS account should be created
+
+  Scenario: Successful Facebook login having used CAS before
+    Given I have a DoSomething account
+    And I have used CAS before
+    When I visit the login page
+    And I login with Facebook
+    Then I should be on the home page
+    And a new CAS account should not be created
+
