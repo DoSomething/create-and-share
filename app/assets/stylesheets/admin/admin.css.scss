@@ -1,0 +1,62 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: georgia;
+}
+
+aside {
+  text-align: center;
+  float: left;
+  width: 215px;
+  height: 100%;
+  background: #eeeeee;
+  padding: 15px;
+  border-right: 1px solid #dcdcdc;
+  font-family: Georgia;
+  p {
+    text-align: justify;
+  }
+}
+
+#campaigns {
+  float: left;
+  padding: 10px;
+  .campaign {
+    width: 250px;
+    float: left;
+    margin: 30px 0 30px 25px;
+    background: #f3f3f3;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 0 1px #808080;
+    a {
+      text-decoration: none;
+      h2 {
+        margin: 0;
+        padding: 0;
+        font-weight: normal;
+      }
+    }
+    p {
+      text-align: justify;
+    }
+  }
+  .field {
+    clear: both;
+    padding: 10px;
+    label {
+      float: left;
+      width: 100px;
+    }
+  }
+}
+
+a#add-campaign {
+  background: #f5c700;
+  text-decoration: none;
+  display: inline-block;
+  padding: 10px;
+  box-shadow: 0 0 2px #808080;
+  border-radius: 6px;
+}

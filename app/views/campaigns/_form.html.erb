@@ -12,35 +12,43 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :title %><br />
+    <%= f.label :title %>
     <%= f.text_field :title %>
   </div>
   <div class="field">
-    <%= f.label :start_date %><br />
+    <%= f.label :start_date %>
     <%= f.datetime_select :start_date %>
   </div>
   <div class="field">
-    <%= f.label :end_date %><br />
+    <%= f.label :end_date %>
     <%= f.datetime_select :end_date %>
   </div>
   <div class="field">
-    <%= f.label :path %><br />
+    <%= f.label :path %>
     <%= f.text_field :path %>
   </div>
   <div class="field">
-    <%= f.label :lead %><br />
+    <%= f.label :lead %>
     <%= f.text_field :lead %>
   </div>
   <div class="field">
-    <%= f.label :lead_email %><br />
+    <%= f.label :lead_email %>
     <%= f.text_field :lead_email %>
   </div>
   <div class="field">
-    <%= f.label :developers %><br />
+    <%= f.label :developers %>
     <%= f.text_field :developers %>
   </div>
   <div class="field">
-    <%= f.label :gated %><br />
+    <%= f.label :description %>
+    <%= f.text_area :description %>
+  </div>
+  <div class="field">
+    <%= f.label :image %>
+    <%= f.file_field :image %>
+  </div>
+  <div class="field">
+    <%= f.label :gated %>
     <%= f.check_box :gated %>
   </div>
   <div class="actions">
