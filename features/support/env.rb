@@ -76,6 +76,9 @@ Spork.prefork do
       headless.destroy
     end
   end
+
+  # Set up OmniAuth for testing
+  OmniAuth.config.test_mode = true
 end
 
 Spork.each_run do

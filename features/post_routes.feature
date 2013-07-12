@@ -6,19 +6,19 @@ Feature: Test pages
     Given there is a post
 
   Scenario: Routes
-    When I visit /picsforpets
-    Then the page should redirect to /login
+    When I visit the home page
+    Then the page should redirect to the login page
 
-    When I visit /picsforpets/submit
-    Then the page should redirect to /login
+    When I visit the submit page
+    Then the page should redirect to the login page
 
-    When I visit /picsforpets/cats
-    Then the page should redirect to /login
+    When I visit the cats page
+    Then the page should redirect to the login page
 
   @javascript
   Scenario: Submit flow
     Given I am logged in
-    When I visit /picsforpets/submit
+    When I visit the submit page
     Then the page should show TELL US ABOUT YOUR ANIMAL
 
     Then element .form-submit should not show Adopt me because...
@@ -38,31 +38,31 @@ Feature: Test pages
 
   Scenario: My Pets
     Given I am logged in
-
-    When I visit /picsforpets/mine
+    And I have submitted a post
+    When I visit the mypets page
     Then the element .post-list should show Spot the kitten
 
   Scenario: Filters
     Given I am logged in
-    Given there is a post
+    Given I have submitted a post
 
-    When I visit /picsforpets/cats
+    When I visit the cats page
     Then the element .post-list should show Spot the kitten
 
-    When I visit /picsforpets/cats-PA
+    When I visit the cats-PA page
     Then the element .post-list should show Spot the kitten
 
-    When I visit /picsforpets/PA
+    When I visit the PA page
     Then the element .post-list should show Spot the kitten
 
-    When I visit /picsforpets/dogs-PA
+    When I visit the dogs-PA page
     Then the element .post-list should show We don't have
 
-    When I visit /picsforpets/dogs
+    When I visit the dogs page
     Then the element .post-list should show We don't have
 
-    When I visit /picsforpets/others-PA
+    When I visit the others-PA page
     Then the element .post-list should show We don't have
 
-    When I visit /picsforpets/others
+    When I visit the others page
     Then the element .post-list should show We don't have

@@ -1,6 +1,5 @@
 class SessionsController < ApplicationController
   include Services
-  include SessionsHelper
 
   # Confirm that we're authenticated.
   before_filter :is_authenticated, :only => :new
@@ -12,8 +11,6 @@ class SessionsController < ApplicationController
 
   # GET /login
   def create
-    # @TODO - IF AUTHENTICATED, THROW 500
-
     # form
     form     = params[:form]
 
@@ -33,109 +30,44 @@ class SessionsController < ApplicationController
     day      = sess[:day]
     year     = sess[:year]
 
-    # @TODO - PASSWORD VALIDATION CHECK; MINIMUM CHECK ON LENGTH
-    # @TODO - ACCEPTABLE RESPONSE TO USER WHO FAILS TO LOG IN
-    # @TODO - STOP REDIRECTING TO /SESSIONS
-    # @TODO - KEEP FIELDS POPULATED WHEN CONTROLLER ERRORS OUT
-    # @TODO - DATE VALIDATION ON BIRTHDAY
-
-    # If we're attempting to log in...
-    if form == 'login'
-      # If the user exists...
-      if @user = User.exists?(nil, username)
-        # Attempt to log them in.
-        @u = User.login(session, @user['uid'], username, password)
-        if User.logged_in?
-          flash[:message] = "You've logged in successfully!"
-          source = session[:source] || :root
-          session[:source] = nil
-          redirect_to source
-        else
-          # Login fail
-          flash[:error] = 'Invalid username / password'
-          render :new
-        end
-      # The user doesn't exist.
+    if form == 'login' # logs in user if he/she exist
+      if User.exists?(username)
+        login(form, session, username, password, nil)
       else
-        # Attempt to add the user to our database
-        @user = User.create({
-          :email => username,
-          :fbid => 0,
-        }, username, password)
-        # If we succeed there...
-        if User.created?
-          # Try to log in...
-          @u = User.login(session, @user.uid, username, password)
-          if User.logged_in?
-            uemail = @u.parsed_response['user']['mail'] || ''
-            if uemail.match(/\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i)
-              # We can't send mobile commons if we don't have their cell phone #
-              handle_mc(uemail, nil)
-            end
-            # It worked!
-            flash[:message] = "You've logged in succesfully!"
-            source = :root#session[:source] || :root
-            session[:source] = nil
-            redirect_to '/'
-          else
-            # Nope...
-            flash[:error] = "Invalid username / password"
-            redirect_to :login
-          end
-        else
-          # This would appear if they're trying to login a user that doesn't exist.
-          flash[:error] = "Invalid username / password"
-          redirect_to :login
-        end
-      end
-    # Otherwise, if we're trying to register...
-    elsif form == 'register'
-      # Attempt to register the user (this applies here and on Drupal)
-      @user = User.register(password, email, 0, first, last, cell, "#{month}/#{day}/#{year}")
-
-      # Did it work?
-      if User.registered?
-        # Attempt to log them in.
-        User.login(session, @user.uid, email, password)
-
-        # Are they logged in?
-        if User.logged_in?
-          # Yep!
-          handle_mc(email, cell)
-          flash.now[:message] = 'Super! You\'ve registered successfully' + " #{response}"
-          source = session[:source] || root_path(:campaign_path => '')
-          session[:source] = nil
-          redirect_to source
-        else
-          # Nope.
-          flash.now[:error] = 'Oh no! Something went wrong while logging you in.  Try again?'
-          redirect_to :login
-        end
-      else
-        # Account already exists.
-        flash.now[:error] = "A user with that account already exists."
+        flash[:error] = 'Invalid username / password.'
         redirect_to :login
+      end
+    elsif form == 'register' # registers user if they don't exist in the DoSomething drupal database and then logs in him/her
+      if User.exists?(email)
+        flash[:error] = "A user with that account already exists."
+        redirect_to :login
+      else
+        if User.register(password, email, 0, first, last, cell, "#{month}/#{day}/#{year}")
+          login(form, session, email, password, cell)
+        else
+          flash[:error] = "An error has occurred. Please register again."
+        end
       end
     end
   end
 
-  # Facebook OAuth handler
+  # GET /auth/facebook/callback
   def fboauth
-    # There's a bunch of data in this variable.
-    auth = env['omniauth.auth']['extra']['raw_info']
+    auth = env['omniauth.auth']['extra']['raw_info'] # data from Facebook
 
-    # Attempt to authenticate (register / login).
-    if handle_auth(auth)
-      # It worked.  Bring 'em home.
-      flash[:message] = "You are now connected through Facebook!"
-      source = session[:source] || root_path(:campaign_path => '')
-      session[:source] = nil
-      redirect_to source
-    else
-      # No work.  Let's ask them to register by other means.
-      flash.now[:error] = 'Auth failed! Please try again, or try registering through the form below.'
-      render :new
+    if !User.exists?(auth['email']) # registers user if he/she isn't already in the drupal database
+      password = (0...50).map{ ('a'..'z').to_a[rand(26)] }.join
+      if auth['birthday'].nil? # parse user's birthday or fake it
+        date = Date.parse('5th October 2000')
+      else
+        date = Date.strptime(auth['birthday'], '%m/%d/%Y')
+      end
+      if !User.register(password, auth['email'], auth['id'], auth['first_name'], auth['last_name'], '', "#{date.month}/#{date.day}/#{date.year}")
+        flash[:error] = "An error has occurred. Please log in again."
+      end
     end
+
+    login('facebook', session, auth['email'], nil, nil, auth['id'])
   end
 
   # GET /logout
@@ -143,4 +75,36 @@ class SessionsController < ApplicationController
     reset_session
     redirect_to :login
   end
+
+  private
+    # attempts to log in user and creates a new entry in the rails database if one doesn't exist already
+    #
+    # @param string form
+    #   Specifies from where the method was called so the method can handle errors appropriately
+    ##
+    def login(form, session, username, password, cell, fbid = 0)
+      if User.login(session, username, password, cell, fbid)
+        case form
+        when 'login'
+          flash[:message] = "You've logged in successfully!"
+        when 'register'
+          flash[:message] = "You've registered successfully!"
+        when 'facebook'
+          flash[:message] = "You've logged in with Facebook successfully!"
+        end
+        source = session[:source] || :root
+        session[:source] = nil
+        redirect_to source
+      else
+        case form
+        when 'login'
+          flash[:error] = "Invalid username / password."
+        when 'register'
+          flash[:error] = "There was an issue logging you in. Please try again."
+        when 'facebook'
+          flash[:error] = "Facebook authentication failed."
+        end
+        redirect_to :login
+      end
+    end
 end
