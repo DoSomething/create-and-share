@@ -165,7 +165,6 @@ $(document).ready(function() {
           jcrop_api = this;
         });
       });
-      alert("hi");
       overlay.css({
         position: "fixed",
         top: 0
