@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130712204641) do
+ActiveRecord::Schema.define(:version => 20130712214303) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -41,9 +41,7 @@ ActiveRecord::Schema.define(:version => 20130712204641) do
   create_table "posts", :force => true do |t|
     t.string   "image"
     t.string   "name"
-    t.string   "animal_type"
     t.string   "state"
-    t.string   "shelter"
     t.boolean  "flagged",            :default => false
     t.boolean  "promoted",           :default => false
     t.integer  "share_count"

@@ -333,14 +333,32 @@ class PostsController < ApplicationController
     offset = (page.to_i * Post.per_page)
     @scrolling = !params[:last].nil?
 
+    cols = Post.column_names
     @posts = Post.infinite_scroll(get_campaign.id)
+    i = 0
     @where.each do |column, value|
-      if @result.names.length > 0
-        if !@result[value].nil?
-          @posts = @posts.where(column.to_sym => @result[value])
+      if cols.include? column
+        if @result.names.length > 0
+          if !@result[value].nil?
+            @posts = @posts.where(column.to_sym => @result[value])
+          end
+        else
+          @posts = @posts.where(column.to_sym => value)
         end
       else
-        @posts = @posts.where(column.to_sym => value)
+        col_alias = "t#{i.to_s}"
+        if @result.names.length > 0
+          if !@result[value].nil?
+            value = @result[value]
+          end
+        else
+          value = value
+        end
+
+        @posts = @posts
+          .joins('INNER JOIN tags ' + col_alias + ' ON (' + col_alias + '.post_id = posts.id)')
+          .where(col_alias + '.column = ? and ' + col_alias + '.value = ?', column, value)
+        i += 1
       end
     end
 
