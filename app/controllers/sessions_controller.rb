@@ -58,6 +58,11 @@ class SessionsController < ApplicationController
   def fboauth
     auth = env['omniauth.auth']['extra']['raw_info'] # data from Facebook
 
+    # Try and find the campaign by the path specified in source.
+    campaign = Campaign.find_by_path(session[:source].gsub('/', ''))
+    # if no, try and return 
+    campaign ||= nil
+
     if !User.exists?(auth['email']) # registers user if he/she isn't already in the drupal database
       password = (0...50).map{ ('a'..'z').to_a[rand(26)] }.join
       if auth['birthday'].nil? # parse user's birthday or fake it
@@ -65,12 +70,13 @@ class SessionsController < ApplicationController
       else
         date = Date.strptime(auth['birthday'], '%m/%d/%Y')
       end
-      if !User.register(@@campaign, password, auth['email'], auth['id'], auth['first_name'], auth['last_name'], '', "#{date.month}/#{date.day}/#{date.year}")
+      # @todo: Update this for campaign.
+      if !User.register(campaign, password, auth['email'], auth['id'], auth['first_name'], auth['last_name'], '', "#{date.month}/#{date.day}/#{date.year}")
         flash[:error] = "An error has occurred. Please log in again."
       end
     end
 
-    login(nil, 'facebook', session, auth['email'], nil, nil, auth['id'])
+    login(campaign, 'facebook', session, auth['email'], nil, nil, auth['id'])
   end
 
   # GET /logout
