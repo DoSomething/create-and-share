@@ -60,55 +60,6 @@ class PostsController < ApplicationController
     end
   end
 
-  # GET /alterimg/1
-  # Alters image by adding top and bottom text, within semi-transparent block.
-  def alterimg
-    # We need to be an administrator to be here.
-    if !admin?
-      redirect_to :root
-    end
-
-    # Find the post and the image associated with it.
-    @post = Post.find(params[:id])
-    image = @post.image.url(:gallery)
-    image = '/public' + image.gsub(/\?.*/, '')
-
-    # Rewrite the image.
-    if File.exists? Rails.root.to_s + image
-      PostsHelper.image_writer(image, @post.meme_text, @post.meme_position)
-    end
-
-    respond_to do |format|
-      format.html { redirect_to show_post_path(@post) }
-    end
-  end
-
-  # GET /fix
-  # Fixes all images should they lose their text.
-  def fix
-    # Must be an admin to do this.
-    if !admin?
-      redirect_to :root
-    end
-
-    # Get all posts.
-    @posts = Post.all
-    @posts.each do |post|
-      # Get the actual image path.
-      image = post.image.url(:gallery)
-      image = '/public' + image.gsub(/\?.*/, '')
-
-      # Assuming the file exists, write the text.
-      if File.exists? Rails.root.to_s + image
-        PostsHelper.image_writer(image, post.meme_text, meme_position)
-      end
-    end
-
-    respond_to do |format|
-      format.html { redirect_to :root, notice: "Images fixed." }
-    end
-  end
-
   # GET /posts/1
   # GET /posts/1.json
   def show
