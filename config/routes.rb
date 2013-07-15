@@ -49,7 +49,7 @@ CreateAndShare::Application.routes.draw do
     get 'mine',     to: 'posts#extras', run: 'mine', as: :mine
 
     # Filters
-    get 'show/:filter', to: 'posts#show_filter', constraints: { filter: /[A-Za-z0-9\-\_]+/ }, as: :filter
+    get 'show/:filter', to: 'posts#filter', constraints: { filter: /[A-Za-z0-9\-\_]+/ }, as: :filter
 
     # Individual posts
     get ':id',     to: 'posts#show', constraints: { id: /\d+/ }, as: :show_post
