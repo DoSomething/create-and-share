@@ -6,11 +6,16 @@ class ApplicationController < ActionController::Base
   # Handy little method that renders the "not found" message, instead of an error.
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
-  before_filter :find_view_path
+  before_filter :find_view_path, :set_global_campaign
   def find_view_path
     if !Rails.env.test? && !get_campaign.nil?
       prepend_view_path 'app/views/' + get_campaign.path
     end
+  end
+
+  def set_global_campaign
+    $campaign = Campaign.where(:path => params[:campaign_path]).first
+    $campaign ||= nil
   end
 
   # Not found message.
