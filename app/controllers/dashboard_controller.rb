@@ -78,7 +78,7 @@ class DashboardController < ApplicationController
       end
 
       #post data
-      data[:nCats][label] = Post.tagged(:animal_type => 'cat').count#here(:created_at => start_date.end_of_day..end_date.end_of_day).count
+      data[:nCats][label] = Post.tagged(:animal_type => 'cat').where(:created_at => start_date.end_of_day..end_date.end_of_day).count
       data[:nDogs][label] = Post.tagged(:animal_type => 'dog').where(:created_at => start_date.end_of_day..end_date.end_of_day).count
       data[:nOthers][label] = Post.tagged(:animal_type => 'other').where(:created_at => start_date.end_of_day..end_date.end_of_day).count
       data[:nPosts][label] = data[:nCats][label] + data[:nDogs][label] + data[:nOthers][label]
