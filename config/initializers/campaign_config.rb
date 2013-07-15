@@ -1,22 +1,25 @@
-class Filters
+class CampaignSettings
+  cattr_accessor :filters, :facebook
+
   @@filters = {}
+  @@facebook = {}
   def initialize
-  	files = Dir["#{Rails.root}/config/filters/*.yml"]
+  	files = Dir["#{Rails.root}/config/campaigns/*.yml"]
   	files.each do |file|
   	  k = Pathname.new(file).basename.to_s.gsub('.yml', '')
   	  @@filters[k] ||= []
-  	  @@filters[k] = YAML::load(File.open(file))
-  	end
-  end
+      @@facebook[k] ||= []
 
-  def blah
-    @@filters
+  	  f = YAML::load(File.open(file))
+      @@filters[k] = f['filters']
+      @@facebook[k] = f['facebook']
+  	end
   end
 end
 
-filters = Filters.new
-business = filters.blah
-CreateAndShare::Application.config.filters = business
+settings = CampaignSettings.new
+CreateAndShare::Application.config.filters = settings.filters
+CreateAndShare::Application.config.facebook = settings.facebook
 
 if ActiveRecord::Base.connection.table_exists? 'campaigns'
   Campaign.find(:all, :select => 'path').each do |campaign|
