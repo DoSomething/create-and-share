@@ -9,5 +9,8 @@ FactoryGirl.define do
     lead "Test user"
     lead_email "test+user@dosomething.org"
     developers "mchittenden@dosomething.org"
+    description "Pics for pets is a campaign about pictures of pets."
+    image nil
+    gated true
   end
 end

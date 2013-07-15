@@ -6,7 +6,7 @@ describe DashboardController, :type => :controller do
   describe 'GET #index' do
     it 'redirects to login' do
       get :index, :campaign_path => campaign.path
-      expect(response).to redirect_to :login
+      expect(response).to redirect_to '/login'
     end
 
     it 'shows index' do

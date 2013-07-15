@@ -3,7 +3,7 @@ connection: &connection
   encoding: unicode
   pool: 5
   host: localhost
-  database: create_and_share
+  database: create_and_share_campaigns
   username: postgres
   password: zanzibar
 
@@ -12,13 +12,13 @@ development:
 
 test: &test
   <<: *connection
-  database: create_and_share_test
+  database: create_and_share_campaigns_test
 
 production:
   adapter: postgresql
   encoding: unicode
   pool: 5
-  database: create_and_share
+  database: create_and_share_campaigns
 
 cucumber:
   <<: *test

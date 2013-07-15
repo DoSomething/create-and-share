@@ -13,11 +13,12 @@ FactoryGirl.define do
     name 'Spot the kitten'
     promoted false
     share_count 0
-    shelter 'Cats'
     state 'PA'
     city 'Pittsburgh'
+    extras {
+      { :animal_type => 'cat', :shelter => 'Cats' }
+    }
     story "This is a story"
-    animal_type 'cat'
     campaign_id { Campaign.last ? Campaign.last.id : 1 }
   end
 
@@ -26,5 +27,10 @@ FactoryGirl.define do
     fbid nil
     uid 1263777
     is_admin false
+  end
+
+  factory :share do
+    post_id 1
+    uid 1263777
   end
 end

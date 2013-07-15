@@ -73,7 +73,7 @@ class SessionsController < ApplicationController
   # GET /logout
   def destroy
     reset_session
-    redirect_to :login
+    redirect_to :root
   end
 
   private
@@ -92,7 +92,8 @@ class SessionsController < ApplicationController
         when 'facebook'
           flash[:message] = "You've logged in with Facebook successfully!"
         end
-        source = session[:source] || :root
+
+        source = session[:source] ||= root_path(:campaign_path => get_campaign.path || '')
         session[:source] = nil
         redirect_to source
       else

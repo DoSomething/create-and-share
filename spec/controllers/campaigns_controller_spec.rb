@@ -93,7 +93,7 @@ describe CampaignsController, :type => :controller do
       it "redirects to the campaign" do
         campaign = Campaign.create! valid_attributes
         put :update, {:id => campaign.to_param, :campaign => valid_attributes}, valid_session
-        response.should redirect_to(campaign)
+        response.should redirect_to(root_path(:campaign_path => campaign.path))
       end
     end
 

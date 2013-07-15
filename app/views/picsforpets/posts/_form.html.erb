@@ -50,8 +50,10 @@
     </div>
   <% end %>
   <%= f.input :name, required: true, label: "What is the animal's name?", wrapper_html: { class: 'form-item-name' } %>
-  <%= f.input :animal_type, required: true, wrapper_html: { class: 'form-item-animal-type' }, :as => :select, :collection => [['Cat', 'cat'], ['Dog', 'dog'], ['Other', 'other']], prompt: 'Choose a type', include_blank: false %>
-  <%= f.input :shelter, required: true, label: "What's the name of this animal's shelter?", wrapper_html: { class: 'form-item-shelter' } %>
+  <%= f.simple_fields_for :extras do |extra| %>
+    <%= extra.input :animal_type, required: true, wrapper_html: { class: 'form-item-animal-type' }, :as => :select, :collection => [['Cat', 'cat'], ['Dog', 'dog'], ['Other', 'other']], prompt: 'Choose a type', include_blank: false %>
+    <%= extra.input :shelter, required: true, label: "What's the name of this animal's shelter?", wrapper_html: { class: 'form-item-shelter' } %>
+  <% end %>
   <%= f.input :city, required: true, label: "What city is this shelter in?", wrapper_html: { class: 'form-item-city' } %>
   <%= f.input :state, required: true, label: "What state is this shelter in?", wrapper_html: { class: 'form-item-state' }, :as => :select, :collection => get_states.invert, prompt: 'Choose a state', include_blank: false %>
   <% if admin? %>

@@ -8,25 +8,23 @@ describe "campaigns/index" do
         :path => "Path",
         :lead => "Lead",
         :lead_email => "Lead Email",
-        :developers => "Developers"
+        :developers => "Developers",
+        :description => "Campaign",
       ),
       stub_model(Campaign,
         :title => "Title",
         :path => "Path",
         :lead => "Lead",
         :lead_email => "Lead Email",
-        :developers => "Developers"
+        :developers => "Developers",
+        :description => "Campaign",
       )
     ])
   end
 
   it "renders a list of campaigns" do
     render
-    # Run the generator again with the --webrat flag if you want to use webrat matchers
-    assert_select "tr>td", :text => "Title".to_s, :count => 2
-    assert_select "tr>td", :text => "Path".to_s, :count => 2
-    assert_select "tr>td", :text => "Lead".to_s, :count => 2
-    assert_select "tr>td", :text => "Lead Email".to_s, :count => 2
-    assert_select "tr>td", :text => "Developers".to_s, :count => 2
+    assert_select ".campaign a>h2", :text => "Title".to_s, :count => 2
+    assert_select ".campaign>p", :text => "Campaign".to_s, :count => 2
   end
 end
