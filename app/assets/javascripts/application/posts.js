@@ -14,16 +14,16 @@ $(function() {
       FB.ui({
         'to': friend,
         'method': 'feed',
-        'link': 'http://pics.dosomething.org/' + settings['id'],
-        'name': 'Want to adopt me?',
-        'caption': 'Pics for Pets',
-        'description': settings['name'] + ' is super cute and deserves a loving home.  Could you be ' + settings['name'] + '\'s new owner?',
+        'link': document.location.origin + '/' + settings['id'],
+        'name': campaign.facebook.title || '',
+        'caption': campaign.facebook.caption || '',
+        'description': campaign.facebook.description || '',
         'picture': settings['picture']
       }, function(response) {
         if (response && response.post_id) {
           var new_count = ++settings['share_count'];
           settings['share_elm'].text(new_count);
-          $.post('/shares', { 'share': { 'post_id': settings['id'] }, 'new_count': new_count }, function(res) {});
+          $.post('/' + campaign.path + '/shares', { 'share': { 'post_id': settings['id'] }, 'new_count': new_count }, function(res) {});
         }
         $('html,body').animate({ scrollTop: $('.id-' + settings['id']).offset().top }, 'fast');
       });

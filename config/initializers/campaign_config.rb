@@ -11,8 +11,8 @@ class CampaignSettings
       @@facebook[k] ||= []
 
   	  f = YAML::load(File.open(file))
-      @@filters[k] = f['filters']
-      @@facebook[k] = f['facebook']
+      @@filters[k] = f['filters'] || {}
+      @@facebook[k] = f['facebook'] || {}
   	end
   end
 end
