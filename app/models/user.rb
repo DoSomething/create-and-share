@@ -5,9 +5,9 @@ class User < ActiveRecord::Base
 
   # checks if a user with the given email exists in the DoSomething drupal database
   def self.exists?(email)
-    if email.nil? || Services::Auth.check_exists(email).first.nil?
+    if email.nil?
       false
-    else
+    elsif !Services::Auth.check_exists(email).first.nil? || (email.index('@').nil? && email.gsub(/[^0-9]/, '').length == 10)
       true
     end
   end
