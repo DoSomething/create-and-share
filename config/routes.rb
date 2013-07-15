@@ -32,7 +32,7 @@ CreateAndShare::Application.routes.draw do
 
     # Login / out
     match 'login',  to: 'sessions#new',     as: :login
-    match 'logout', to: 'sessions#destroy', as: :logout
+    get 'logout', to: 'sessions#destroy', as: :logout
 
     # Static pages
     get 'faq',          to: 'static_pages#faq', as: :faq
