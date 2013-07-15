@@ -114,7 +114,8 @@ class SessionsController < ApplicationController
         when 'facebook'
           flash[:error] = "Facebook authentication failed."
         end
-        redirect_to :login
+
+        redirect_to login_path(:campaign_path => campaign.path || '')
       end
     end
 end
