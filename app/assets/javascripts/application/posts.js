@@ -98,6 +98,17 @@ $(function() {
     return false;
   });
 
+  $('.thumbs').click(function() {
+    var $direction = $(this).attr('data-direction');
+    var $id = $(this).parent().parent().attr('data-id');
+
+    $.post('/' + campaign.path + '/posts/' + $id + '/thumbs_' + $direction, {}, function(response) {
+      // Do Something...hahaha
+    });
+
+    return false;
+  });
+
   // FACEBOOK POST SHARING FUNCTIONALITY
   load_facebook();
 
