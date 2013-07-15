@@ -15,23 +15,6 @@ describe Post do
       @post.should_not be_valid
     end
 
-    it 'is invalid without shelter' do
-      @post.shelter = nil
-      @post.should_not be_valid
-    end
-
-    context 'animal type' do
-      it 'is invalid without animal_type' do
-        @post.animal_type = nil
-        @post.should_not be_valid
-      end
-
-      it 'is invalid without a correct animal type' do
-        @post.animal_type = 'mittens'
-        @post.should_not be_valid
-      end
-    end
-
     it 'is invalid without city' do
       @post.city = nil
       @post.should_not be_valid
@@ -50,11 +33,6 @@ describe Post do
         @post.state = '12'
         @post.should_not be_valid
       end
-    end
-
-    it 'is invalid without shelter' do
-      @post.shelter = nil
-      @post.should_not be_valid
     end
 
     it 'is invalid without campaign_id' do
@@ -119,10 +97,6 @@ describe Post do
       it 'strips bad tags from name' do
         new_post = FactoryGirl.create(:post, name: '<b>Spot</b>')
         new_post.name.should eq 'Spot'
-      end
-      it 'strips bad tags from shelter' do
-        new_post = FactoryGirl.create(:post, shelter: '<b>Shelter</b>')
-        new_post.shelter.should eq 'Shelter'
       end
       it 'strips bad tags from meme text' do
         new_post = FactoryGirl.create(:post, meme_text: '<b>Meme</b>')

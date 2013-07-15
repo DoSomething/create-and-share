@@ -13,11 +13,12 @@ FactoryGirl.define do
     name 'Spot the kitten'
     promoted false
     share_count 0
-    shelter 'Cats'
     state 'PA'
     city 'Pittsburgh'
+    extras {
+      { :animal_type => 'cat', :shelter => 'Cats' }
+    }
     story "This is a story"
-    animal_type 'cat'
     campaign_id { Campaign.last ? Campaign.last.id : 1 }
   end
 

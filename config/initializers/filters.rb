@@ -18,9 +18,11 @@ filters = Filters.new
 business = filters.blah
 CreateAndShare::Application.config.filters = business
 
-Campaign.find(:all, :select => 'path').each do |campaign|
-  campaign = campaign.path
-  %w{stylesheets javascripts}.each do |dir|
-    CreateAndShare::Application.config.assets.precompile += ["app/assets/#{dir}/campaigns/#{campaign}/*.css", "app/assets/#{dir}/campaigns/#{campaign}/*.js"]
+if ActiveRecord::Base.connection.table_exists? 'campaigns'
+  Campaign.find(:all, :select => 'path').each do |campaign|
+    campaign = campaign.path
+    %w{stylesheets javascripts}.each do |dir|
+      CreateAndShare::Application.config.assets.precompile += ["app/assets/#{dir}/campaigns/#{campaign}/*.css", "app/assets/#{dir}/campaigns/#{campaign}/*.js"]
+    end
   end
 end

@@ -27,6 +27,20 @@ class Post < ActiveRecord::Base
   has_many :shares
   belongs_to :campaign
 
+  def self.tagged(**args)
+    i = 0
+    @p = self
+    args.each do |col, val|
+      c_a = "t0"
+      @p = @p
+       .joins("INNER JOIN tags #{c_a} ON (#{c_a}.post_id = posts.id)")
+       .where("#{c_a}.campaign_id = posts.campaign_id AND (#{c_a}.column = ? AND #{c_a}.value = ?)", col, val)
+      i += 1
+    end
+
+    @p
+  end
+
   # The number of elements to show per "page" in the infinite scroll.
   def self.per_page
     10

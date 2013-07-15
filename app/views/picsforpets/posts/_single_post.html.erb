@@ -6,5 +6,5 @@
   <div class="image-container"><%= image_tag @post.image(:gallery) %></div>
   <div class="name-loc"><%= link_to show_post_path(@post, :campaign_path => params[:campaign_path]) do %><span class="name"><%= @post.name %></span>, <%= @post.state %><% end %></div>
   <div class="story"><%=raw simple_format(@post.story).gsub(/(\r|\n|\r\n)/, '') %></div>
-  <div class="adopt-me">Adopt <%= @post.name %> at <%= link_to @post.extras[:shelter] + ', ' + (!@post.city.nil? ? (@post.city + ', ') : '') + @post.state, 'http://www.adoptapet.com/animal-shelter-search?city_or_zip=' + (!@post.city.nil? ? (@post.city + ', ') : '') + @post.state + '&shelter_name=' + @post.extras[:shelter] + '&distance=50&adopts_out=all', :target => '_blank' %></div>
+  <div class="adopt-me">Adopt <%= @post.name %> at <%= link_to @post.extras[:shelter] ||= '' + ', ' + (!@post.city.nil? ? (@post.city + ', ') : '') + @post.state, 'http://www.adoptapet.com/animal-shelter-search?city_or_zip=' + (!@post.city.nil? ? (@post.city + ', ') : '') + @post.state + '&shelter_name=' + @post.extras[:shelter]||= ''  + '&distance=50&adopts_out=all', :target => '_blank' %></div>
 </div>
