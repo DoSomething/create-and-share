@@ -12,13 +12,10 @@ class Post < ActiveRecord::Base
   attr_accessor :crop_x, :crop_y, :crop_w, :crop_h, :cropped, :crop_dim_w
 
   validates :name,    :presence => true
-  #validates :shelter, :presence => true
-  #validates :animal_type, :presence => true, :format => { :with => /(cat|dog|other)s?/ }
   validates :city,    :presence => true
   validates :state,   :presence => true,
                       :length => { :maximum => 2 },
                       :format => { :with => /[A-Z]{2}/ }
-  #validates :shelter, :presence => true
   validates :campaign_id, :presence => true, :numericality => true
 
   has_attached_file :image, :styles => { :gallery => '450x450!' }, :default_url => '/images/:style/default.png', :processors => [:cropper]
@@ -31,7 +28,7 @@ class Post < ActiveRecord::Base
     i = 0
     @p = self
     args.each do |col, val|
-      c_a = "t0"
+      c_a = "t#{i}"
       @p = @p
        .joins("INNER JOIN tags #{c_a} ON (#{c_a}.post_id = posts.id)")
        .where("#{c_a}.campaign_id = posts.campaign_id AND (#{c_a}.column = ? AND #{c_a}.value = ?)", col, val)
@@ -95,7 +92,7 @@ class Post < ActiveRecord::Base
   end
 
   # Clears cache after a new post.
-  after_save :touch_cache#, :update_img
+  after_save :touch_cache, :update_img
 
   def touch_cache
     # We need to clear all caches -- Every cache depends on the one before it.
