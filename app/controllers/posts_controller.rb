@@ -402,4 +402,16 @@ class PostsController < ApplicationController
 
     render :index
   end
+
+  # POST /posts/:id/thumbs_up
+  def thumbs_up
+    post = Post.increment_counter(:thumbs_up_count, params[:id])
+    render json: { success: true }
+  end
+
+  # POST /posts/:id/thumbs_down
+  def thumbs_down
+    post = Post.increment_counter(:thumbs_down_count, params[:id])
+    render json: { success: true }
+  end
 end
