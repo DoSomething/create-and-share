@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130715144800) do
+ActiveRecord::Schema.define(:version => 20130715191949) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -68,6 +68,8 @@ ActiveRecord::Schema.define(:version => 20130715144800) do
     t.string   "city"
     t.integer  "campaign_id"
     t.text     "extras"
+    t.integer  "thumbs_up_count",    :default => 0
+    t.integer  "thumbs_down_count",  :default => 0
   end
 
   add_index "posts", ["campaign_id"], :name => "index_posts_on_campaign_id"

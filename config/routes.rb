@@ -21,6 +21,8 @@ CreateAndShare::Application.routes.draw do
     resources :posts do
       member do
         post 'flag', constraints: lambda { is_admin? }
+        post 'thumbs_up'
+        post 'thumbs_down'
       end
 
       collection do

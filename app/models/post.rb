@@ -2,6 +2,7 @@ class Post < ActiveRecord::Base
   attr_accessible :uid, :adopted, :creation_time,
     :flagged, :image, :name, :promoted,
     :share_count, :state, :city,
+    :thumbs_up_count, :thumbs_down_count,
     :story, :update_time,
     :meme_text, :meme_position,
     :crop_x, :crop_y, :crop_w, :crop_h, :crop_dim_w,
