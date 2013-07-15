@@ -127,7 +127,10 @@ class Post < ActiveRecord::Base
   def send_thx_email
     @user = User.where(:uid => self.uid).first
     if !@user.nil? && !@user.email.nil?
-      Services::Mandrill.mail(@user.email, 'PicsforPets_2013_Reportback', 'How to get puppies adopted')
+      campaign = get_campaign
+      if !campaign.submit_email.nil?
+        Services::Mandrill.mail(@user.email, campaign.submit_email)
+      end
     end
   end
 

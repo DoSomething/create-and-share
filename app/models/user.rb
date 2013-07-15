@@ -81,14 +81,21 @@ class User < ActiveRecord::Base
   #   A valid phone number to send a txt to.
   ##
   def self.handle_mc(email = nil, mobile = nil)
+    campaign = get_campaign
+
     if !email.nil?
       # MailChimp PicsforPets2013
-      Services::MailChimp.subscribe(email, 'PicsforPets2013')
+      if !campaign.mailchimp.nil?
+        Services::MailChimp.subscribe(email, campaign.mailchimp)
+      end
+      if !campaign.signup_email.nil?
+        Services::Mandrill.mail(@user.email, campaign.signup_email)
+      end
     end
 
     if !mobile.nil?
       # Mobile Commons 158551
-      Services::MobileCommons.subscribe(mobile, 158551)
+      Services::MobileCommons.subscribe(mobile, campaign.mobile_commons)
     end
   end
 end

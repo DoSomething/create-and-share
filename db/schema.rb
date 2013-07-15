@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130712232315) do
+ActiveRecord::Schema.define(:version => 20130715144800) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -36,6 +36,11 @@ ActiveRecord::Schema.define(:version => 20130712232315) do
     t.string   "image_content_type"
     t.integer  "image_file_size"
     t.datetime "image_updated_at"
+    t.string   "mailchimp"
+    t.string   "mobile_commons"
+    t.string   "mailchimp_submit"
+    t.string   "email_submit"
+    t.string   "email_signup"
   end
 
   create_table "posts", :force => true do |t|

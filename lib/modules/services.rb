@@ -52,22 +52,7 @@ module Services
   module MailChimp
     @mc = Gibbon.new('cdd0ad8955001739ec42519956312bee-us4')
     def self.subscribe(email, campaign)
-      @groups = {
-        'PicsforPets2013' => 10621
-      }
-
-      @gid = Rails.cache.fetch 'mailchimp-group-' + campaign do
-        gbit = ''
-
-        if !@groups[campaign].nil?
-          gbit = @groups[campaign]
-        end
-
-        gbit
-      end
-
-      @campaign = campaign
-      mv = { 'GROUPINGS' => { 0 => { 'id' => @gid, 'groups' => campaign } } }
+      mv = { 'GROUPINGS' => { 0 => { 'id' => 10621, 'groups' => campaign } } }
       r = @mc.list_subscribe({
       	:id => 'f2fab1dfd4',
       	:email_address => email,
@@ -93,7 +78,7 @@ module Services
   module Mandrill
     include Mailchimp
 
-    def self.mail(email, template, subject)
+    def self.mail(email, template, subject = '')
       @mandrill = Mailchimp::Mandrill.new(ENV['MANDRILL_APIKEY'])
       response = @mandrill.messages_send_template({
        :template_name => template,
