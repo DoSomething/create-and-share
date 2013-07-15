@@ -71,8 +71,6 @@ class Post < ActiveRecord::Base
   before_save :strip_tags
   def strip_tags
     self.name = self.name.gsub(/\<[^\>]+\>/, '')
-    self.extras[:shelter] = self.extras[:shelter].gsub(/\<[^\>]+\>/, '')
-
     if !self.meme_text.nil?
       self.meme_text = self.meme_text.gsub(/\<[^\>]+\>/, '')
     end
@@ -102,13 +100,14 @@ class Post < ActiveRecord::Base
 
   # Writes text to image.
   def update_img
-    @post = Post.find(self.id)
-    image = @post.image.url(:gallery)
+    # Using find() here seems to break things.
+    post = Post.where(id: self.id).first
+    image = post.image.url(:gallery)
     image = '/public' + image.gsub(/\?.*/, '')
 
-    if !@post.meme_text.nil?
+    if !post.meme_text.nil?
       if File.exists? Rails.root.to_s + image
-        PostsHelper.image_writer(image, @post.meme_text, @post.meme_position)
+        PostsHelper.image_writer(image, post.meme_text, post.meme_position)
       end
     end
   end
@@ -128,9 +127,8 @@ class Post < ActiveRecord::Base
   def send_thx_email
     @user = User.where(:uid => self.uid).first
     if !@user.nil? && !@user.email.nil?
-      campaign = get_campaign
-      if !campaign.submit_email.nil?
-        Services::Mandrill.mail(@user.email, campaign.submit_email)
+      if !$campaign.email_submit.nil?
+        Services::Mandrill.mail(@user.email, $campaign.email_submit)
       end
     end
   end

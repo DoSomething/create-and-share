@@ -11,9 +11,8 @@ class PostsController < ApplicationController
 
   # Shows the static (closed) gallery when a campaign is finished, or not started yet.
   def campaign_closed
-    campaign = get_campaign
     now = Time.now
-    if campaign.start_date > now || campaign.end_date < now
+    if $campaign.start_date > now || $campaign.end_date < now
       render 'static_pages/gallery'
       return
     end
@@ -24,16 +23,16 @@ class PostsController < ApplicationController
   def index
     @admin = ''
     @admin = 'admin-' if admin?
-    @admin += get_campaign.path
+    @admin += $campaign.path
 
-    campaign_id = get_campaign.id
+    campaign_id = $campaign.id
 
     # Get the page and offset
     page = params[:page] || 0
     offset = (page.to_i * Post.per_page)
 
     # Basic post query.
-    @p = Post.infinite_scroll(get_campaign.id).limit(Post.per_page)
+    @p = Post.infinite_scroll($campaign.id).limit(Post.per_page)
     @sb_promoted = Rails.cache.fetch @admin + 'posts-index-promoted' do
       Post
         .joins('LEFT JOIN shares ON shares.post_id = posts.id')
@@ -178,7 +177,7 @@ class PostsController < ApplicationController
   # GET /posts/1.json
   def show
     @post = Post
-      .infinite_scroll(get_campaign.id)
+      .infinite_scroll($campaign.id)
       .where(:id => params[:id])
       .limit(1)
       .first
@@ -222,7 +221,7 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.save
-        format.html { redirect_to show_post_path(@post, :campaign_path => get_campaign.path) }
+        format.html { redirect_to show_post_path(@post, :campaign_path => $campaign.path) }
         format.json { render json: @post, status: :created, location: @post }
       else
         format.html { render action: "new" }
@@ -241,7 +240,7 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.update_attributes(params[:post])
-        format.html { redirect_to show_post_path(@post, :campaign_path => get_campaign.path), notice: 'Post was successfully updated.' }
+        format.html { redirect_to show_post_path(@post, :campaign_path => $campaign.path), notice: 'Post was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
@@ -283,7 +282,7 @@ class PostsController < ApplicationController
     @post = Post
       .joins('LEFT JOIN shares ON shares.post_id = posts.id')
       .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .where(:promoted => true, :flagged => false, :campaign_id => get_campaign.id)
+      .where(:promoted => true, :flagged => false, :campaign_id => $campaign.id)
       .where('LOWER(name) = ?', params[:vanity])
       .group('posts.id')
       .limit(1)
@@ -292,7 +291,7 @@ class PostsController < ApplicationController
     if @post.nil?
       redirect_to :root
     else
-      render :controller => 'posts', :action => 'show', :campaign_path => get_campaign.path
+      render :controller => 'posts', :action => 'show', :campaign_path => $campaign.path
     end
   end
 
@@ -334,7 +333,7 @@ class PostsController < ApplicationController
     @scrolling = !params[:last].nil?
 
     cols = Post.column_names
-    @posts = Post.infinite_scroll(get_campaign.id)
+    @posts = Post.infinite_scroll($campaign.id)
     i = 0
     @where.each do |column, value|
       if cols.include? column
@@ -386,7 +385,7 @@ class PostsController < ApplicationController
     offset = (page.to_i * Post.per_page)
     @scrolling = !params[:last].nil?
 
-    @posts = Post.infinite_scroll(get_campaign.id)
+    @posts = Post.infinite_scroll($campaign.id)
     if params[:run] == 'mine'
       @posts = @posts.where(:uid => session[:drupal_user_id])
     elsif params[:run] == 'featured'
