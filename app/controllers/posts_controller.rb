@@ -1,7 +1,6 @@
 class PostsController < ApplicationController
   include Services
   include PostsHelper
-  respond_to :html, :js, :json, :csv
 
   # Before everything runs, run an authentication check and an API key check.
   before_filter :is_not_authenticated, :verify_api_key, :campaign_closed
@@ -79,17 +78,10 @@ class PostsController < ApplicationController
     # The page.
     @page = page.to_s
 
-    # Fixes an issue with the JSON export -- shows gallery pics.
-    if request.format.symbol == :json
-      @posts.each do |post|
-        post.image.options[:default_style] = :gallery
-      end
-    end
-
     respond_to do |format|
       format.js
       format.html # index.html.erb
-      format.json { render json: @posts }
+      format.json { render json: @posts, root: false }
       format.csv { send_data Post.as_csv }
     end
   end
@@ -369,9 +361,13 @@ class PostsController < ApplicationController
 
     @last = !@posts.last.nil? ? @posts.last.id : nil
 
-    respond_with(@posts)
+    respond_to do |format|
+      format.js
+      format.html # index.html.erb
+      format.json { render json: @posts, root: false }
+      format.csv { send_data Post.as_csv }
+    end
   end
-
 
   def extras
     @result = nil
