@@ -261,7 +261,7 @@ $(document).ready(function() {
       var form_data = new FormData();
       form_data.append("file", file_data);
       $.ajax({
-        url: "/autoimg",
+        url: "/" + campaign.path + "/posts/autoimg",
         dataType: 'script',
         cache: false,
         contentType: false,

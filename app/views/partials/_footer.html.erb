@@ -1,28 +1,12 @@
 <% cache 'footer' do %>
-
   <footer class="footer-help">
     <div class="section-container">
-     <p class="help">Questions? E-mail Hilary at <a href="mailto:animals@dosomething.org">animals@dosomething.org</a></p>
+     <p class="help">Questions? E-mail <%= get_campaign.lead %> at <%= mail_to get_campaign.lead_email %></p>
     </div>
   </footer>
   <footer class="footer-sponsor">
     <div class="section-container">
-     <%# <p class="sponsor-copy">Sponsored by:</p> %>
-     <div class="sponsor-container first">
-       <%= link_to '//icanhas.cheezburger.com/' do %>
-         <%= image_tag '/images/logo-ichc.png', :class => 'sponsor-logo', :alt => 'I Can Has Cheez Burger Logo' %>
-       <% end %>
-     </div>
-     <div class="sponsor-container second">
-      <%= link_to '//www.adoptapet.com/' do %>
-         <%= image_tag '/images/logo-aap.png', :class => 'sponsor-logo', :alt => 'Adopt a Pet Logo' %>
-       <% end %>
-     </div>
-     <div class="sponsor-container third">
-      <%= link_to '//bestfriends.org/' do %>
-         <%= image_tag '/images/logo-bf.png', :class => 'sponsor-logo', :alt => 'Best Friends Animal Society Logo' %>
-       <% end %>
-     </div>
+      <%= render 'partials/sponsors' %>
     </div>
   </footer>
 
@@ -43,6 +27,4 @@
      document.getElementById('fb-root').appendChild(e);
    }());
   </script>
-
 <% end %>
-

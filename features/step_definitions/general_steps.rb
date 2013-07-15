@@ -1,3 +1,8 @@
+Given /there is a campaign/ do
+  FactoryGirl.create(:campaign)
+end
+
+
 When /I visit the (.*) page/ do |route|
   if route == 'home'
     route = ""
@@ -21,10 +26,9 @@ Then /the page should not have element (.+)/ do |elements|
 	end
 end
 
-Then /the page should have element (.+)/ do |elements|
-	elements.split(", ").each do |element|
-		page.should have_selector(:css_selector, element)
-	end
+Then /I am on the login form/ do
+  visit '/picsforpets'
+  click_link 'log in'
 end
 
 Then /the page should redirect to the (.*) page/ do |path|

@@ -71,3 +71,4 @@ Feature: Registration and login
     And I login with Facebook
     Then I should be on the home page
     And a new CAS account should not be created
+

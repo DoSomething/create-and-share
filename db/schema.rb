@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130619154256) do
+ActiveRecord::Schema.define(:version => 20130715144800) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -19,35 +19,34 @@ ActiveRecord::Schema.define(:version => 20130619154256) do
     t.datetime "updated_at", :null => false
   end
 
-  create_table "campaign_types", :force => true do |t|
-    t.string   "title"
-    t.string   "machine_name"
-    t.text     "data"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
-  end
-
   create_table "campaigns", :force => true do |t|
     t.string   "title"
+    t.datetime "start_date"
+    t.datetime "end_date"
     t.string   "path"
-    t.integer  "settings"
     t.string   "lead"
     t.string   "lead_email"
-    t.datetime "start"
-    t.datetime "end"
-    t.text     "data"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.string   "developers"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
     t.boolean  "gated"
-    t.integer  "campaign_type_id"
+    t.text     "description"
+    t.string   "image"
+    t.string   "image_file_name"
+    t.string   "image_content_type"
+    t.integer  "image_file_size"
+    t.datetime "image_updated_at"
+    t.string   "mailchimp"
+    t.string   "mobile_commons"
+    t.string   "mailchimp_submit"
+    t.string   "email_submit"
+    t.string   "email_signup"
   end
 
   create_table "posts", :force => true do |t|
     t.string   "image"
     t.string   "name"
-    t.string   "animal_type"
     t.string   "state"
-    t.string   "shelter"
     t.boolean  "flagged",            :default => false
     t.boolean  "promoted",           :default => false
     t.integer  "share_count"
@@ -67,7 +66,11 @@ ActiveRecord::Schema.define(:version => 20130619154256) do
     t.string   "meme_text"
     t.string   "meme_position"
     t.string   "city"
+    t.integer  "campaign_id"
+    t.text     "extras"
   end
+
+  add_index "posts", ["campaign_id"], :name => "index_posts_on_campaign_id"
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
@@ -85,6 +88,20 @@ ActiveRecord::Schema.define(:version => 20130619154256) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "shares", ["post_id"], :name => "index_shares_on_post_id"
+
+  create_table "tags", :force => true do |t|
+    t.integer  "campaign_id"
+    t.integer  "post_id"
+    t.string   "column"
+    t.string   "value"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "tags", ["campaign_id"], :name => "index_tags_on_campaign_id"
+  add_index "tags", ["post_id"], :name => "index_tags_on_post_id"
 
   create_table "users", :force => true do |t|
     t.integer  "fbid",       :limit => 8

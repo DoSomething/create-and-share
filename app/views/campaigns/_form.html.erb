@@ -1,0 +1,30 @@
+<%= simple_form_for(@campaign) do |f| %>
+  <% if @campaign.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this campaign from being saved:</h2>
+
+      <ul>
+      <% @campaign.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.input :title %>
+  <%= f.input :start_date, order: [:month, :day, :year] %>
+  <%= f.input :end_date, order: [:month, :day, :year] %>
+  <%= f.input :path %>
+  <%= f.input :lead %>
+  <%= f.input :lead_email %>
+  <%= f.input :developers %>
+  <%= f.input :mailchimp %>
+  <%= f.input :email_signup, label: "Mandrill Email (Signup)" %>
+  <%= f.input :email_submit, label: "Mandrill Email (Submit)" %>
+  <%= f.input :mobile_commons %>
+  <%= f.input :description %>
+  <%= f.input :image %>
+  <%= f.input :gated %>
+  <%= f.submit %>
+
+<% end %>

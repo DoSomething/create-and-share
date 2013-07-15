@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe SessionsController, :type => :controller do
+  let(:campaign) { FactoryGirl.create(:campaign) }
   describe 'login / register process' do
     it '1. Logs in' do
       # Login
@@ -13,7 +14,7 @@ describe SessionsController, :type => :controller do
       }
 
       # Make sure it redirects us to root
-      expect(response).to redirect_to :root
+      expect(response).to redirect_to root_path(:campaign_path => '')
 
       # Make sure the user is in our database.
       user = User.last
@@ -44,7 +45,7 @@ describe SessionsController, :type => :controller do
         }
       }
 
-      expect(response).to redirect_to :root
+      expect(response).to redirect_to root_path(:campaign_path => '')
 
       user = User.last
       user.uid.should_not eq nil

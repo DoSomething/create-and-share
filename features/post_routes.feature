@@ -1,6 +1,10 @@
 Feature: Test pages
   We need to check basic routes
 
+  Background:
+    Given there is a campaign
+    Given there is a post
+
   Scenario: Routes
     When I visit the home page
     Then the page should redirect to the login page

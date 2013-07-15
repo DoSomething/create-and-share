@@ -17,6 +17,7 @@
 config/database.yml
 
 public/system/posts
+public/system/campaigns
 public/system/tmp
 public/assets
 

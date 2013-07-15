@@ -6,4 +6,7 @@
     <%= link_to 'log in', :login, { :class => 'logout' } %>
   <% end %>
   <%= link_to 'faq', :faq, { :class => 'faq' } %>
+  <% if admin? %>
+    <%= link_to 'edit this campaign', edit_campaign_path(get_campaign.id) %>
+  <% end %>
 </section>

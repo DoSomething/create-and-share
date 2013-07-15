@@ -15,26 +15,26 @@ $(document).ready(function() {
 
       // If we are viewing a filter...
       if (typeof filter != 'undefined') {
-          $.getScript('/' + filter + '.js?page=' + page + '&last=' + latest, function() {
-            // Remove the current inview element.  Add a new one.
-            $('.inview').remove();
-            $('<div></div>').addClass('inview').appendTo($('.post-list'));
+        $.getScript('/' + campaign.path + '/show/' + filter + '.js?page=' + page + '&last=' + latest, function() {
+          // Remove the current inview element.  Add a new one.
+          $('.inview').remove();
+          $('<div></div>').addClass('inview').appendTo($('.post-list'));
 
-            // Reload Facebook click event
-            load_facebook();
-            // Running count += returned count
-            running += returned;
-            // Only keep going if there are more posts to show.
-            if (running < count) {
-              in_view();
-            }
-            else {
-              $('.inview').remove();
-            }
-          });
+          // Reload Facebook click event
+          load_facebook();
+          // Running count += returned count
+          running += returned;
+          // Only keep going if there are more posts to show.
+          if (running < count) {
+            in_view();
+          }
+          else {
+            $('.inview').remove();
+          }
+        });
       }
       else {
-        $.getScript('/posts.js?page=' + page + '&last=' + latest, function() {
+        $.getScript('/' + campaign.path + '/posts.js?page=' + page + '&last=' + latest, function() {
           // Remove the current inview element.  Add a new one.
           $('.inview').remove();
           $('<div></div>').addClass('inview').appendTo($('.post-list'));

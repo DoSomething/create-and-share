@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Campaign Administration</title>
+  <%= stylesheet_link_tag    "admin/admin", :media => "all" %>
+  <%= javascript_include_tag "admin" %>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <%= csrf_meta_tags %>
+</head>
+<body class="wrapper">
+
+<aside>
+  <%= link_to '//www.dosomething.org' do %><%= image_tag '/images/logo-ds.png', alt: 'DoSomething.org' %><% end %>
+  <p>DoSomething.org is the largest organization for Teens and Social Change in the United States.  We strive to make the world a better place by fulfilling teens with actions and campaigns that they can take part in, and make their own change.</p>
+  <% if admin? %><%= link_to 'Add New Campaign', new_campaign_path, id: 'add-campaign' %><% end %>
+</aside>
+
+<section id="campaigns">
+<%= yield %>
+</section>
+
+</body>
+</html>
