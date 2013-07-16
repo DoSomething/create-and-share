@@ -4,6 +4,7 @@ class PostsController < ApplicationController
 
   # Before everything runs, run an authentication check and an API key check.
   before_filter :is_not_authenticated, :verify_api_key, :campaign_closed
+  skip_before_filter :campaign_closed, only: [:create, :update]
 
   # Ignores xsrf in favor of API keys for JSON requests.
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
@@ -64,8 +65,8 @@ class PostsController < ApplicationController
   # GET /posts/1.json
   def show
     @post = Post
-      .infinite_scroll($campaign.id)
-      .where(:id => params[:id])
+      .build_post
+      .where(id: params[:id])
       .limit(1)
       .first
 
@@ -76,22 +77,15 @@ class PostsController < ApplicationController
     end
   end
 
-  # GET /posts/new
+  # GET /:campaign/submit
   def new
     @post = Post.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-    end
   end
 
-  # GET /posts/1/edit
+  # GET /:campaign/posts/1/edit
   def edit
     # Shouldn't be here if they're not an admin.
-    if !admin?
-      redirect_to :root
-    end
-
+    render status: :forbidden unless admin?
     @post = Post.find(params[:id])
   end
 
@@ -108,7 +102,7 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.save
-        format.html { redirect_to show_post_path(@post, :campaign_path => $campaign.path) }
+        format.html { redirect_to show_post_path(@post, :campaign_path => @post.campaign.path) }
         format.json { render json: @post, status: :created, location: @post }
       else
         format.html { render action: "new" }
@@ -121,13 +115,13 @@ class PostsController < ApplicationController
   # PUT /posts/1.json
   def update
     # Shouldn't be here if they're not an admin.
-    render :status => :forbidden if !admin?
+    render status: :forbidden unless admin?
 
     @post = Post.find(params[:id])
 
     respond_to do |format|
       if @post.update_attributes(params[:post])
-        format.html { redirect_to show_post_path(@post, :campaign_path => $campaign.path), notice: 'Post was successfully updated.' }
+        format.html { redirect_to show_post_path(@post, :campaign_path => @post.campaign.path), notice: 'Post was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
@@ -151,37 +145,35 @@ class PostsController < ApplicationController
     end
   end
 
-  # GET /flag/1
+  # POST /:campaign/posts/1/flag
   def flag
     # Shouldn't be here if they're not an admin.
-    render :status => :forbidden unless admin?
+    render status: :forbidden unless admin?
 
     @post = Post.find(params[:id])
     @post.flagged = true
     @post.save
 
-    respond_to do |format|
-      format.html { redirect_to request.env["HTTP_REFERER"] }
-    end
+    redirect_to request.env['HTTP_REFERER']
   end
 
+  # GET /:campaign/henri
   def vanity
     @post = Post
-      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
-      .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .where(:promoted => true, :flagged => false, :campaign_id => $campaign.id)
-      .where('LOWER(name) = ?', params[:vanity])
-      .group('posts.id')
+      .build_post
+      .where(promoted: true)
+      .where('LOWER(name) = ?', params[:vanity].downcase)
       .limit(1)
       .first
 
     if @post.nil?
       redirect_to :root
     else
-      render :controller => 'posts', :action => 'show', :campaign_path => $campaign.path
+      render :show
     end
   end
 
+  # GET /:campaign/show/cats-NY
   def filter
     if Rails.application.config.filters[params[:campaign_path]].nil?
       redirect_to :root
@@ -204,6 +196,8 @@ class PostsController < ApplicationController
     end
   end
 
+  # GET /:campaign/mine
+  # GET /:campaign/featured
   def extras
     @result = nil
     @where = {}
@@ -211,12 +205,7 @@ class PostsController < ApplicationController
     @admin = ''
     @page = 0.to_s
 
-    # Page and offset.
-    page = params[:page] || 0
-    offset = (page.to_i * Post.per_page)
-    @scrolling = !params[:last].nil?
-
-    @posts = Post.infinite_scroll($campaign.id)
+    @posts = Post.build_post
     if params[:run] == 'mine'
       @posts = @posts.where(:uid => session[:drupal_user_id])
     elsif params[:run] == 'featured'
@@ -234,15 +223,15 @@ class PostsController < ApplicationController
     render :index
   end
 
-  # POST /posts/:id/thumbs_up
+  # POST /:campaign/posts/1/thumbs_up
   def thumbs_up
-    post = Post.increment_counter(:thumbs_up_count, params[:id])
+    Post.increment_counter(:thumbs_up_count, params[:id])
     render json: { success: true }
   end
 
-  # POST /posts/:id/thumbs_down
+  # POST /:campaign/posts/1/thumbs_down
   def thumbs_down
-    post = Post.increment_counter(:thumbs_down_count, params[:id])
+    Post.increment_counter(:thumbs_down_count, params[:id])
     render json: { success: true }
   end
 end

@@ -182,6 +182,7 @@ class Post < ActiveRecord::Base
     self.name = self.name.gsub(/\<[^\>]+\>/, '')
     if !self.meme_text.nil?
       self.meme_text = self.meme_text.gsub(/\<[^\>]+\>/, '')
+      self.meme_text = self.meme_text.gsub(/'/, "'\"\'\"'")
     end
   end
 

@@ -15,6 +15,8 @@ module Paperclip
     end
 
     def make
+      return @file unless !@text.blank?
+      
       dst = Tempfile.new([@basename, @format].compact.join("."))
       dst.binmode
 
@@ -22,13 +24,9 @@ module Paperclip
       set_font = "-font #{@font} -fill white -pointsize 24 -gravity Center"
       draw_text = "caption:'Adopt me because...\n#{@text}'"
       composite = "-border 0 #{fromfile} +swap -gravity #{@pos} -composite #{tofile(dst)}"
+      
       params = "#{set_bg} #{set_font} #{draw_text} #{composite}"
- 
-      begin
-        success = Paperclip.run('convert', params)
-      rescue PaperclipCommandLineError
-        raise PaperclipError, "There was an error processing the watermark for #{@basename}" if @whiny
-      end
+      Paperclip.run('convert', params)
  
       dst
     end

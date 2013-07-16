@@ -1,0 +1,11 @@
+Description:
+    Builds the directory and configuration structure for new campaigns.
+
+Example:
+    rails generate campaign blah
+
+    This will create:
+        config/campaigns/blah.yml
+        app/assets/javascripts/campaigns/blah
+        app/assets/stylesheets/campaigns/blah
+

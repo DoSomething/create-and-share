@@ -9,7 +9,7 @@ class CampaignsController < ApplicationController
   # GET /campaigns
   # GET /campaigns.json
   def index
-    @campaigns = Campaign.all
+    @campaigns = Campaign.order('created_at DESC').all
 
     respond_to do |format|
       format.html # index.html.erb

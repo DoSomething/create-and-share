@@ -5,7 +5,7 @@ FactoryGirl.define do
     title "Pics for Pets"
     start_date "2013-07-05 11:47:46"
     end_date "2015-07-05 11:47:46"
-    path "picsforpets"
+    path "testpics"
     lead "Test user"
     lead_email "test+user@dosomething.org"
     developers "mchittenden@dosomething.org"
