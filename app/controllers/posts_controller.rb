@@ -160,18 +160,16 @@ class PostsController < ApplicationController
   # GET /:campaign/henri
   def vanity
     @post = Post
-      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
-      .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .where(:promoted => true, :flagged => false, :campaign_id => $campaign.id)
-      .where('LOWER(name) = ?', params[:vanity])
-      .group('posts.id')
+      .build_post
+      .where(promoted: true)
+      .where('LOWER(name) = ?', params[:vanity].downcase)
       .limit(1)
       .first
 
     if @post.nil?
       redirect_to :root
     else
-      render :controller => 'posts', :action => 'show', :campaign_path => $campaign.path
+      render :show
     end
   end
 
@@ -207,12 +205,7 @@ class PostsController < ApplicationController
     @admin = ''
     @page = 0.to_s
 
-    # Page and offset.
-    page = params[:page] || 0
-    offset = (page.to_i * Post.per_page)
-    @scrolling = !params[:last].nil?
-
-    @posts = Post.build_post($campaign.id)
+    @posts = Post.build_post
     if params[:run] == 'mine'
       @posts = @posts.where(:uid => session[:drupal_user_id])
     elsif params[:run] == 'featured'
@@ -232,13 +225,13 @@ class PostsController < ApplicationController
 
   # POST /:campaign/posts/1/thumbs_up
   def thumbs_up
-    post = Post.increment_counter(:thumbs_up_count, params[:id])
+    Post.increment_counter(:thumbs_up_count, params[:id])
     render json: { success: true }
   end
 
   # POST /:campaign/posts/1/thumbs_down
   def thumbs_down
-    post = Post.increment_counter(:thumbs_down_count, params[:id])
+    Post.increment_counter(:thumbs_down_count, params[:id])
     render json: { success: true }
   end
 end

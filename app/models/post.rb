@@ -50,7 +50,6 @@ class Post < ActiveRecord::Base
       .joins('LEFT JOIN shares ON shares.post_id = posts.id')
       .where(campaign_id: $campaign.id, flagged: false)
       .group('posts.id')
-      .order('posts.created_at DESC')
   end
 
   def self.get_scroll(admin, params, state, filtered = false)
@@ -59,7 +58,9 @@ class Post < ActiveRecord::Base
 
     params[:page] ||= 0
 
-    uncached_posts = self.build_post
+    uncached_posts = self
+      .build_post
+      .order('created_at DESC')
 
     if filtered
       uncached_posts = uncached_posts
@@ -68,11 +69,9 @@ class Post < ActiveRecord::Base
 
     if !filtered
       promoted = Rails.cache.fetch prefix + 'posts-' + state + '-promoted' do
-        Post
-          .joins('LEFT JOIN shares ON shares.post_id = posts.id')
-          .select('posts.*, COUNT(shares.*) AS real_share_count')
-          .group('posts.id')
-          .where(promoted: true, flagged: false, campaign_id: $campaign.id)
+        self
+          .build_post
+          .where(promoted: true)
           .order('RANDOM()')
           .limit(1)
           .all

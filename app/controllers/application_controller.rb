@@ -16,6 +16,12 @@ class ApplicationController < ActionController::Base
   def set_global_campaign
     $campaign = Campaign.where(:path => params[:campaign_path]).first
     $campaign ||= nil
+
+    $user = {
+      id: session[:drupal_user_id] || nil,
+      admin: (session[:drupal_user_role] && session[:drupal_user_role].values.include?('administrator')),
+      roles: session[:drupal_user_role] || nil
+    }
   end
 
   # Not found message.
