@@ -38,7 +38,6 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.datetime "image_updated_at"
     t.string   "mailchimp"
     t.string   "mobile_commons"
-    t.string   "mailchimp_submit"
     t.string   "email_submit"
     t.string   "email_signup"
   end
