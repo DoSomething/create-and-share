@@ -2,6 +2,7 @@ class Post < ActiveRecord::Base
   attr_accessible :uid, :adopted, :creation_time,
     :flagged, :image, :name, :promoted,
     :share_count, :state, :city,
+    :thumbs_up_count, :thumbs_down_count,
     :story, :update_time,
     :meme_text, :meme_position,
     :crop_x, :crop_y, :crop_w, :crop_h, :crop_dim_w,
@@ -9,7 +10,7 @@ class Post < ActiveRecord::Base
 
   serialize :extras, Hash
 
-  attr_accessor :crop_x, :crop_y, :crop_w, :crop_h, :reprocessed, :crop_dim_w
+  attr_accessor :crop_x, :crop_y, :crop_w, :crop_h, :reprocessed, :crop_dim_w, :real_share_count
 
   validates :name,    :presence => true
   validates :city,    :presence => true
@@ -43,13 +44,122 @@ class Post < ActiveRecord::Base
     10
   end
 
-  def self.infinite_scroll(campaign_id)
-    self
-      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
+  def self.get_scroll(admin, params, state, filtered = false)
+    prefix = admin ? 'admin-' : ''
+    prefix += $campaign.id.to_s + '-' + state + '-'
+
+    params[:page] ||= 0
+
+    uncached_posts = self
       .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .where(:flagged => false, :campaign_id => campaign_id)
+      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
+      .where(:campaign_id => $campaign.id)
       .group('posts.id')
       .order('posts.created_at DESC')
+
+    if filtered
+      uncached_posts = uncached_posts
+        .filtered(params)
+    end
+
+    if !filtered
+      promoted = Rails.cache.fetch prefix + 'posts-' + state + '-promoted' do
+        Post
+          .joins('LEFT JOIN shares ON shares.post_id = posts.id')
+          .select('posts.*, COUNT(shares.*) AS real_share_count')
+          .group('posts.id')
+          .where(:promoted => true, :flagged => false, :campaign_id => $campaign.id)
+          .order('RANDOM()')
+          .limit(1)
+          .all
+          .first
+      end
+    else
+      promoted = nil
+    end
+
+    if !params[:last].nil?
+      cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
+        uncached_posts
+          .where('posts.id < ?', params[:last])
+          .where('posts.id != ?', promoted.id || 0)
+          .limit(self.per_page)
+          .all
+      end
+    else
+      cached_posts = Rails.cache.fetch prefix + 'posts-' + state do
+        uncached_posts
+          .limit(self.per_page - 1)
+          .all
+      end
+
+      total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
+        self
+          .where(flagged: false, campaign_id: $campaign.id)
+          .count
+      end
+    end
+
+    if !cached_posts.last.nil?
+      last = cached_posts.last.id
+    end
+    last ||= nil
+
+    [promoted, cached_posts, total, last, params[:page].to_s, prefix]
+  end
+
+  def self.filtered(params)
+    Rails.application.config.filters[params[:campaign_path]].each do |route, config|
+      ret = route
+      unless config['constraints'].nil?
+        config['constraints'].each do |key, constraint|
+          ret = ret.gsub(key, constraint)
+        end
+      end
+
+      ret = Regexp.new "^#{ret}$"
+      if @result = params[:filter].match(ret)
+        @where = config['where']
+        break
+      end
+    end
+
+    if @result.nil?
+      raise
+      return
+    end
+
+    cols = Post.column_names
+    i = 0
+    @results = self
+
+    @where.each do |column, value|
+      if cols.include? column
+        if @result.names.length > 0
+          if !@result[value].nil?
+            @results = @results.where(column.to_sym => @result[value])
+          end
+        else
+          @results = @results.where(column.to_sym => value)
+        end
+      else
+        col_alias = "t#{i.to_s}"
+        if @result.names.length > 0
+          if !@result[value].nil?
+            value = @result[value]
+          end
+        else
+          value = value
+        end
+
+        @results = @results
+          .joins('INNER JOIN tags ' + col_alias + ' ON (' + col_alias + '.post_id = posts.id)')
+          .where(col_alias + '.column = ? and ' + col_alias + '.value = ?', column, value)
+        i += 1
+      end
+    end
+
+    @results
   end
 
   def self.scrolly(point = nil)
@@ -70,8 +180,6 @@ class Post < ActiveRecord::Base
   before_save :strip_tags
   def strip_tags
     self.name = self.name.gsub(/\<[^\>]+\>/, '')
-    self.extras[:shelter] = self.extras[:shelter].gsub(/\<[^\>]+\>/, '')
-
     if !self.meme_text.nil?
       self.meme_text = self.meme_text.gsub(/\<[^\>]+\>/, '')
     end
@@ -92,44 +200,19 @@ class Post < ActiveRecord::Base
   end
 
   # Clears cache after a new post.
-  after_save :touch_cache, :update_img
-
+  after_save :touch_cache
   def touch_cache
     # We need to clear all caches -- Every cache depends on the one before it.
     Rails.cache.clear
   end
 
-  # Writes text to image.
-  def update_img
-    @post = Post.find(self.id)
-    image = @post.image.url(:gallery)
-    image = '/public' + image.gsub(/\?.*/, '')
-
-    if !@post.meme_text.nil?
-      if File.exists? Rails.root.to_s + image
-        PostsHelper.image_writer(image, @post.meme_text, @post.meme_position)
-      end
-    end
-  end
-
-  after_create :remove_tmp_image, :send_thx_email
-  # Remove the temp uploaded image after a post is successfully created.
-  def remove_tmp_image
-    filename = self.image.instance['image_file_name']
-    dir = 'public/system/tmp/'
-
-    if File.exists?(dir + filename)
-      FileUtils.rm(dir + filename)
-    end
-  end
-
+  after_create :send_thx_email
   # Sends the "thanks for reporting back" email.
   def send_thx_email
     @user = User.where(:uid => self.uid).first
     if !@user.nil? && !@user.email.nil?
-      campaign = get_campaign
-      if !campaign.submit_email.nil?
-        Services::Mandrill.mail(@user.email, campaign.submit_email)
+      if !$campaign.email_submit.nil?
+        Services::Mandrill.mail(@user.email, $campaign.email_submit)
       end
     end
   end

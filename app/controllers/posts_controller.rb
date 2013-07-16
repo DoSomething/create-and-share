@@ -1,7 +1,6 @@
 class PostsController < ApplicationController
   include Services
   include PostsHelper
-  respond_to :html, :js, :json, :csv
 
   # Before everything runs, run an authentication check and an API key check.
   before_filter :is_not_authenticated, :verify_api_key, :campaign_closed
@@ -11,9 +10,8 @@ class PostsController < ApplicationController
 
   # Shows the static (closed) gallery when a campaign is finished, or not started yet.
   def campaign_closed
-    campaign = get_campaign
     now = Time.now
-    if campaign.start_date > now || campaign.end_date < now
+    if $campaign.start_date > now || $campaign.end_date < now
       render 'static_pages/gallery'
       return
     end
@@ -22,75 +20,12 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
-    @admin = ''
-    @admin = 'admin-' if admin?
-    @admin += get_campaign.path
-
-    campaign_id = get_campaign.id
-
-    # Get the page and offset
-    page = params[:page] || 0
-    offset = (page.to_i * Post.per_page)
-
-    # Basic post query.
-    @p = Post.infinite_scroll(get_campaign.id).limit(Post.per_page)
-    @sb_promoted = Rails.cache.fetch @admin + 'posts-index-promoted' do
-      Post
-        .joins('LEFT JOIN shares ON shares.post_id = posts.id')
-        .select('posts.*, COUNT(shares.*) AS real_share_count')
-        .group('posts.id')
-        .where(:promoted => true, :flagged => false, :campaign_id => campaign_id)
-        .order('RANDOM()')
-        .limit(1)
-        .all
-        .first
-    end
-
-    if !params[:last].nil?
-      # We're on a "page" of the infinite scroll.  Load the cache for that page.
-      @posts = Rails.cache.fetch @admin + 'posts-index-before-' + params[:last] do
-      @p
-        .where('posts.id < ?', params[:last])
-        .where('posts.id != ?', (!@sb_promoted.nil? ? @sb_promoted.id : 0))
-        .all
-      end
-    else
-      # We're on the first "page" of the infinite scroll.  Load the cache for
-      # promoted, the posts, and the total count.
-      @promoted = @sb_promoted
-      @posts = Rails.cache.fetch @admin + 'posts-index' do
-      @p
-        .where(:promoted => false)
-        .limit(Post.per_page - 1)
-        .all
-      end
-      @count = Rails.cache.fetch @admin + 'posts-index-count' do
-        Post
-          .where(:flagged => false)
-          .all
-          .count
-      end
-    end
-
-    # The ID of the last post on the page.
-    @last = 0
-    if !@posts.last.nil?
-      @last = @posts.last.id
-    end
-    # The page.
-    @page = page.to_s
-
-    # Fixes an issue with the JSON export -- shows gallery pics.
-    if request.format.symbol == :json
-      @posts.each do |post|
-        post.image.options[:default_style] = :gallery
-      end
-    end
+    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(admin?, params, 'index')
 
     respond_to do |format|
       format.js
       format.html # index.html.erb
-      format.json { render json: @posts }
+      format.json { render json: @posts, root: false }
       format.csv { send_data Post.as_csv }
     end
   end
@@ -125,60 +60,11 @@ class PostsController < ApplicationController
     end
   end
 
-  # GET /alterimg/1
-  # Alters image by adding top and bottom text, within semi-transparent block.
-  def alterimg
-    # We need to be an administrator to be here.
-    if !admin?
-      redirect_to :root
-    end
-
-    # Find the post and the image associated with it.
-    @post = Post.find(params[:id])
-    image = @post.image.url(:gallery)
-    image = '/public' + image.gsub(/\?.*/, '')
-
-    # Rewrite the image.
-    if File.exists? Rails.root.to_s + image
-      PostsHelper.image_writer(image, @post.meme_text, @post.meme_position)
-    end
-
-    respond_to do |format|
-      format.html { redirect_to show_post_path(@post) }
-    end
-  end
-
-  # GET /fix
-  # Fixes all images should they lose their text.
-  def fix
-    # Must be an admin to do this.
-    if !admin?
-      redirect_to :root
-    end
-
-    # Get all posts.
-    @posts = Post.all
-    @posts.each do |post|
-      # Get the actual image path.
-      image = post.image.url(:gallery)
-      image = '/public' + image.gsub(/\?.*/, '')
-
-      # Assuming the file exists, write the text.
-      if File.exists? Rails.root.to_s + image
-        PostsHelper.image_writer(image, post.meme_text, meme_position)
-      end
-    end
-
-    respond_to do |format|
-      format.html { redirect_to :root, notice: "Images fixed." }
-    end
-  end
-
   # GET /posts/1
   # GET /posts/1.json
   def show
     @post = Post
-      .infinite_scroll(get_campaign.id)
+      .infinite_scroll($campaign.id)
       .where(:id => params[:id])
       .limit(1)
       .first
@@ -222,7 +108,7 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.save
-        format.html { redirect_to show_post_path(@post, :campaign_path => get_campaign.path) }
+        format.html { redirect_to show_post_path(@post, :campaign_path => $campaign.path) }
         format.json { render json: @post, status: :created, location: @post }
       else
         format.html { render action: "new" }
@@ -241,7 +127,7 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.update_attributes(params[:post])
-        format.html { redirect_to show_post_path(@post, :campaign_path => get_campaign.path), notice: 'Post was successfully updated.' }
+        format.html { redirect_to show_post_path(@post, :campaign_path => $campaign.path), notice: 'Post was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
@@ -283,7 +169,7 @@ class PostsController < ApplicationController
     @post = Post
       .joins('LEFT JOIN shares ON shares.post_id = posts.id')
       .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .where(:promoted => true, :flagged => false, :campaign_id => get_campaign.id)
+      .where(:promoted => true, :flagged => false, :campaign_id => $campaign.id)
       .where('LOWER(name) = ?', params[:vanity])
       .group('posts.id')
       .limit(1)
@@ -292,87 +178,31 @@ class PostsController < ApplicationController
     if @post.nil?
       redirect_to :root
     else
-      render :controller => 'posts', :action => 'show', :campaign_path => get_campaign.path
+      render :controller => 'posts', :action => 'show', :campaign_path => $campaign.path
     end
   end
 
-  def show_filter
-    @result = nil
-    @where = {}
-    @real_path = params[:filter] ||= Pathname.new(request.fullpath).basename.to_s.gsub(/\.[a-z]+/, '')
-    @admin = ''
-    @page = 0.to_s
-
+  def filter
     if Rails.application.config.filters[params[:campaign_path]].nil?
       redirect_to :root
       return
     end
 
-    Rails.application.config.filters[params[:campaign_path]].each do |route, config|
-      ret = route
-      unless config['constraints'].nil?
-        config['constraints'].each do |key, constraint|
-          ret = ret.gsub(key, constraint)
-        end
-      end
-
-      ret = Regexp.new "^#{ret}$"
-      if @result = @real_path.match(ret)
-        @where = config['where']
-        break
-      end
-    end
-
-    if @result.nil?
+    begin
+      @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(admin?, params, params[:filter], true)
+      @filter = params[:filter]
+    rescue
       redirect_to :root
       return
     end
 
-    # Page and offset.
-    page = params[:page] || 0
-    offset = (page.to_i * Post.per_page)
-    @scrolling = !params[:last].nil?
-
-    cols = Post.column_names
-    @posts = Post.infinite_scroll(get_campaign.id)
-    i = 0
-    @where.each do |column, value|
-      if cols.include? column
-        if @result.names.length > 0
-          if !@result[value].nil?
-            @posts = @posts.where(column.to_sym => @result[value])
-          end
-        else
-          @posts = @posts.where(column.to_sym => value)
-        end
-      else
-        col_alias = "t#{i.to_s}"
-        if @result.names.length > 0
-          if !@result[value].nil?
-            value = @result[value]
-          end
-        else
-          value = value
-        end
-
-        @posts = @posts
-          .joins('INNER JOIN tags ' + col_alias + ' ON (' + col_alias + '.post_id = posts.id)')
-          .where(col_alias + '.column = ? and ' + col_alias + '.value = ?', column, value)
-        i += 1
-      end
+    respond_to do |format|
+      format.js
+      format.html # index.html.erb
+      format.json { render json: @posts, root: false }
+      format.csv { send_data Post.as_csv }
     end
-
-    @filter = @real_path
-    @count = @posts.length
-
-    # Set up limit depending on scroll position
-    @posts = @posts.scrolly(params[:last])
-
-    @last = !@posts.last.nil? ? @posts.last.id : nil
-
-    respond_with(@posts)
   end
-
 
   def extras
     @result = nil
@@ -386,7 +216,7 @@ class PostsController < ApplicationController
     offset = (page.to_i * Post.per_page)
     @scrolling = !params[:last].nil?
 
-    @posts = Post.infinite_scroll(get_campaign.id)
+    @posts = Post.infinite_scroll($campaign.id)
     if params[:run] == 'mine'
       @posts = @posts.where(:uid => session[:drupal_user_id])
     elsif params[:run] == 'featured'
@@ -402,5 +232,17 @@ class PostsController < ApplicationController
     @last = !@posts.last.nil? ? @posts.last.id : nil
 
     render :index
+  end
+
+  # POST /posts/:id/thumbs_up
+  def thumbs_up
+    post = Post.increment_counter(:thumbs_up_count, params[:id])
+    render json: { success: true }
+  end
+
+  # POST /posts/:id/thumbs_down
+  def thumbs_down
+    post = Post.increment_counter(:thumbs_down_count, params[:id])
+    render json: { success: true }
   end
 end

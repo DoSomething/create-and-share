@@ -21,6 +21,8 @@ CreateAndShare::Application.routes.draw do
     resources :posts do
       member do
         post 'flag', constraints: lambda { is_admin? }
+        post 'thumbs_up'
+        post 'thumbs_down'
       end
 
       collection do
@@ -32,7 +34,7 @@ CreateAndShare::Application.routes.draw do
 
     # Login / out
     match 'login',  to: 'sessions#new',     as: :login
-    match 'logout', to: 'sessions#destroy', as: :logout
+    get 'logout', to: 'sessions#destroy', as: :logout
 
     # Static pages
     get 'faq',          to: 'static_pages#faq', as: :faq
@@ -47,7 +49,7 @@ CreateAndShare::Application.routes.draw do
     get 'mine',     to: 'posts#extras', run: 'mine', as: :mine
 
     # Filters
-    get 'show/:filter', to: 'posts#show_filter', constraints: { filter: /[A-Za-z0-9\-\_]+/ }, as: :filter
+    get 'show/:filter', to: 'posts#filter', constraints: { filter: /[A-Za-z0-9\-\_]+/ }, as: :filter
 
     # Individual posts
     get ':id',     to: 'posts#show', constraints: { id: /\d+/ }, as: :show_post

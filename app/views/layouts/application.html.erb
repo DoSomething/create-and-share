@@ -14,11 +14,16 @@
   <%= csrf_meta_tags %>
 
   <%= yield(:head) %>
+  <%
+    campaign = get_campaign
+    facebook = Rails.application.config.facebook[campaign.path]
+  %>
   <script type="text/javascript">
   <!--
     var campaign = {
-      title: '<%= get_campaign.title %>',
-      path: '<%= get_campaign.path %>'
+      title: '<%= campaign.title %>',
+      path: '<%= campaign.path %>',
+      facebook: <%=raw facebook.to_json %>,
     };
   -->
   </script>

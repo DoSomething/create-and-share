@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   attr_accessible :email, :fbid, :uid, :is_admin
+  cattr_accessor :campaign
 
   include Services
 
@@ -13,7 +14,8 @@ class User < ActiveRecord::Base
   end
 
   # creates a new user with the given parameters in the DoSomething drupal database
-  def self.register(password, email, fbid, first, last, cell, birthday)
+  def self.register(campaign, password, email, fbid, first, last, cell, birthday)
+    @@campaign = campaign
     bday = Date.strptime(birthday, '%m/%d/%Y')
     response = Services::Auth.register(password, email, first, last, cell, bday.month, bday.day, bday.year)
     if response.code == 200 && response.kind_of?(Hash)
@@ -24,7 +26,8 @@ class User < ActiveRecord::Base
   end
 
   # logs in a user with the given parameters and creates an entry in the rails database if one doesn't exist already
-  def self.login(session, username, password, cell, fbid)
+  def self.login(campaign, session, username, password, cell, fbid)
+    @@campaign = campaign
     if fbid != 0 # if logging in with Facebook
       uid = Services::Auth.check_admin(username).first
       if uid
@@ -81,21 +84,22 @@ class User < ActiveRecord::Base
   #   A valid phone number to send a txt to.
   ##
   def self.handle_mc(email = nil, mobile = nil)
-    campaign = get_campaign
-
     if !email.nil?
-      # MailChimp PicsforPets2013
-      if !campaign.mailchimp.nil?
-        Services::MailChimp.subscribe(email, campaign.mailchimp)
+      if !@@campaign.mailchimp.nil?
+        logger.info "Sending mailchimp (#{@@campaign.mailchimp}) email to (#{email})"
+        Services::MailChimp.subscribe(email, @@campaign.mailchimp)
       end
-      if !campaign.signup_email.nil?
-        Services::Mandrill.mail(@user.email, campaign.signup_email)
+      if !@@campaign.email_signup.nil?
+        logger.info "Sending mandrill (#{@@campaign.email_signup}) email to (#{email})"
+        Services::Mandrill.mail(email, @@campaign.email_signup)
       end
     end
 
     if !mobile.nil?
-      # Mobile Commons 158551
-      Services::MobileCommons.subscribe(mobile, campaign.mobile_commons)
+      if !@@campaign.mobile_commons.nil?
+        logger.info "Sending mobile commons (#{@@campaign.mobile_commons}) @@campaign to (#{mobile})"
+        Services::MobileCommons.subscribe(mobile, @@campaign.mobile_commons)
+      end
     end
   end
 end

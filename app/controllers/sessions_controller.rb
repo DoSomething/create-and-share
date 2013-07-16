@@ -30,9 +30,12 @@ class SessionsController < ApplicationController
     day      = sess[:day]
     year     = sess[:year]
 
+    # Campaign information
+    campaign = Campaign.find(sess[:campaign])
+
     if form == 'login' # logs in user if he/she exist
       if User.exists?(username)
-        login(form, session, username, password, nil)
+        login(campaign, form, session, username, password, nil)
       else
         flash[:error] = 'Invalid username / password.'
         redirect_to :login
@@ -42,8 +45,8 @@ class SessionsController < ApplicationController
         flash[:error] = "A user with that account already exists."
         redirect_to :login
       else
-        if User.register(password, email, 0, first, last, cell, "#{month}/#{day}/#{year}")
-          login(form, session, email, password, cell)
+        if User.register(campaign, password, email, 0, first, last, cell, "#{month}/#{day}/#{year}")
+          login(campaign, form, session, email, password, cell)
         else
           flash[:error] = "An error has occurred. Please register again."
         end
@@ -55,6 +58,11 @@ class SessionsController < ApplicationController
   def fboauth
     auth = env['omniauth.auth']['extra']['raw_info'] # data from Facebook
 
+    # Try and find the campaign by the path specified in source.
+    campaign = Campaign.find_by_path(session[:source].gsub('/', ''))
+    # if no, try and return 
+    campaign ||= nil
+
     if !User.exists?(auth['email']) # registers user if he/she isn't already in the drupal database
       password = (0...50).map{ ('a'..'z').to_a[rand(26)] }.join
       if auth['birthday'].nil? # parse user's birthday or fake it
@@ -62,18 +70,19 @@ class SessionsController < ApplicationController
       else
         date = Date.strptime(auth['birthday'], '%m/%d/%Y')
       end
-      if !User.register(password, auth['email'], auth['id'], auth['first_name'], auth['last_name'], '', "#{date.month}/#{date.day}/#{date.year}")
+      # @todo: Update this for campaign.
+      if !User.register(campaign, password, auth['email'], auth['id'], auth['first_name'], auth['last_name'], '', "#{date.month}/#{date.day}/#{date.year}")
         flash[:error] = "An error has occurred. Please log in again."
       end
     end
 
-    login('facebook', session, auth['email'], nil, nil, auth['id'])
+    login(campaign, 'facebook', session, auth['email'], nil, nil, auth['id'])
   end
 
   # GET /logout
   def destroy
     reset_session
-    redirect_to :root
+    redirect_to root_path(:campaign_path => get_campaign.path)
   end
 
   private
@@ -82,8 +91,8 @@ class SessionsController < ApplicationController
     # @param string form
     #   Specifies from where the method was called so the method can handle errors appropriately
     ##
-    def login(form, session, username, password, cell, fbid = 0)
-      if User.login(session, username, password, cell, fbid)
+    def login(campaign, form, session, username, password, cell, fbid = 0)
+      if User.login(campaign, session, username, password, cell, fbid)
         case form
         when 'login'
           flash[:message] = "You've logged in successfully!"
@@ -105,7 +114,8 @@ class SessionsController < ApplicationController
         when 'facebook'
           flash[:error] = "Facebook authentication failed."
         end
-        redirect_to :login
+
+        redirect_to login_path(:campaign_path => campaign.path || '')
       end
     end
 end
