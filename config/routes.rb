@@ -15,12 +15,15 @@ CreateAndShare::Application.routes.draw do
   get 'auth/:provider/callback', to: 'sessions#fboauth'
   get 'auth/failure', to: redirect('/'), notice: 'Login failed! Try again?'
 
+  # Fixes most unusual edit post error
+  resources :posts, only: [:update, :create]
+
   scope ':campaign_path', constraints: lambda { |params| Campaign.where(:path => params[:campaign_path]).count > 0 } do
     root to: 'posts#index'
 
-    resources :posts do
+    resources :posts, except: [:update, :create] do
       member do
-        post 'flag', constraints: lambda { is_admin? }
+        post 'flag'
         post 'thumbs_up'
         post 'thumbs_down'
       end

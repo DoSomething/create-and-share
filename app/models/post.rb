@@ -44,18 +44,22 @@ class Post < ActiveRecord::Base
     10
   end
 
+  def self.build_post
+    self
+      .select('posts.*, COUNT(shares.*) AS real_share_count')
+      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
+      .where(campaign_id: $campaign.id, flagged: false)
+      .group('posts.id')
+      .order('posts.created_at DESC')
+  end
+
   def self.get_scroll(admin, params, state, filtered = false)
     prefix = admin ? 'admin-' : ''
     prefix += $campaign.id.to_s + '-' + state + '-'
 
     params[:page] ||= 0
 
-    uncached_posts = self
-      .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
-      .where(:campaign_id => $campaign.id)
-      .group('posts.id')
-      .order('posts.created_at DESC')
+    uncached_posts = self.build_post
 
     if filtered
       uncached_posts = uncached_posts
@@ -68,7 +72,7 @@ class Post < ActiveRecord::Base
           .joins('LEFT JOIN shares ON shares.post_id = posts.id')
           .select('posts.*, COUNT(shares.*) AS real_share_count')
           .group('posts.id')
-          .where(:promoted => true, :flagged => false, :campaign_id => $campaign.id)
+          .where(promoted: true, flagged: false, campaign_id: $campaign.id)
           .order('RANDOM()')
           .limit(1)
           .all
@@ -209,19 +213,25 @@ class Post < ActiveRecord::Base
 
   # Writes text to image.
   def update_img
-    # Using find() here seems to break things.
-    post = Post.where(id: self.id).first
-    image = post.image.url(:gallery)
-    image = '/public' + image.gsub(/\?.*/, '')
+    if @do_image_update
+      # Using find() here seems to break things.
+      post = Post.where(id: self.id).first
+      image = post.image.url(:gallery)
+      image = '/public' + image.gsub(/\?.*/, '')
 
-    if !post.meme_text.nil?
-      if File.exists? Rails.root.to_s + image
-        PostsHelper.image_writer(image, post.meme_text, post.meme_position)
+      if !post.meme_text.nil?
+        if File.exists? Rails.root.to_s + image
+          PostsHelper.image_writer(image, post.meme_text, post.meme_position)
+        end
       end
     end
   end
 
-  after_create :remove_tmp_image, :send_thx_email
+  after_create :check_update_img, :remove_tmp_image, :send_thx_email
+  def check_update_img
+    @do_image_update = true
+  end
+
   # Remove the temp uploaded image after a post is successfully created.
   def remove_tmp_image
     filename = self.image.instance['image_file_name']
@@ -236,8 +246,8 @@ class Post < ActiveRecord::Base
   def send_thx_email
     @user = User.where(:uid => self.uid).first
     if !@user.nil? && !@user.email.nil?
-      if !$campaign.email_submit.nil?
-        Services::Mandrill.mail(@user.email, $campaign.email_submit)
+      if !self.campaign.email_submit.nil?
+        Services::Mandrill.mail(@user.email, self.campaign.email_submit)
       end
     end
   end
