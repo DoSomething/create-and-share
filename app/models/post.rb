@@ -9,7 +9,7 @@ class Post < ActiveRecord::Base
 
   serialize :extras, Hash
 
-  attr_accessor :crop_x, :crop_y, :crop_w, :crop_h, :cropped, :crop_dim_w
+  attr_accessor :crop_x, :crop_y, :crop_w, :crop_h, :reprocessed, :crop_dim_w
 
   validates :name,    :presence => true
   validates :city,    :presence => true
@@ -18,7 +18,7 @@ class Post < ActiveRecord::Base
                       :format => { :with => /[A-Z]{2}/ }
   validates :campaign_id, :presence => true, :numericality => true
 
-  has_attached_file :image, :styles => { :gallery => '450x450!' }, :default_url => '/images/:style/default.png', :processors => [:cropper]
+  has_attached_file :image, :styles => { :gallery => '450x450!' }, :default_url => '/images/:style/default.png', :processors => [:cropper, :memify]
   validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif'] }
 
   has_many :shares
@@ -134,9 +134,9 @@ class Post < ActiveRecord::Base
     end
   end
 
-  after_save :reprocess_image, :if => :cropping?
-  def cropping?
-    if self.cropped.nil?
+  after_save :reprocess_image, :if => :reprocessing?
+  def reprocessing?
+    if self.reprocessed.nil?
       !self.crop_x.blank? && !self.crop_y.blank? && !self.crop_w.blank? && !self.crop_h.blank?
     end
   end
