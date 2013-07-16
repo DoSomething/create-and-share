@@ -12,24 +12,18 @@ module Paperclip
  
       @text = word_wrap(@attachment.instance.meme_text, :line_width => 30)
       @pos = @attachment.instance.meme_position == "top" ? "North" : "South"
-      @font = font_path = Rails.root.to_s + '/DINComp-Medium.ttf'
+      @font = Rails.root.to_s + '/DINComp-Medium.ttf'
     end
 
     def make
       dst = Tempfile.new([@basename, @format].compact.join("."))
       dst.binmode
- 
-      # Background params
-      h = bg_height
-      y1 = @pos == "North" ? 0 : 450 - h
-      y2 = @pos == "North" ? h : 450
-      draw_bg = "-fill 'rgba(0, 0, 0, 0.35)' -draw 'rectangle 0,#{y1} 450,#{h}'"
-      # Text params
-      set_pos = "-gravity #{@pos}"
-      set_font = "-font #{@font} -pointsize 24 -size 450x -fill white"
-      draw_text = "-annotate 0 #{@text}"
-      # Put it all togethers
-      params = "#{fromfile} #{draw_bg} #{set_pos} #{set_font} #{draw_text} #{tofile(dst)}"
+
+      set_bg = "-background none -bordercolor 'rgba(0, 0, 0, 0.36)' -border 5 -size 440x"
+      set_font = "-font #{@font} -fill white -pointsize 24 -gravity Center"
+      draw_text = "caption:'Adopt me because...\n#{@text}'"
+      composite = "-border 0 #{fromfile} +swap -gravity #{@pos} -composite #{tofile(dst)}"
+      params = "#{set_bg} #{set_font} #{draw_text} #{composite}"
  
       begin
         success = Paperclip.run('convert', params)
