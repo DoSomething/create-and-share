@@ -1,6 +1,5 @@
 module Paperclip
   class Memify < Processor
-    include ActionView::Helpers::TextHelper
 
     def initialize file, options = {}, attachment = nil
       super
@@ -10,7 +9,7 @@ module Paperclip
       @current_format = File.extname(@file.path)
       @basename = File.basename(@file.path, @current_format)
  
-      @text = word_wrap(@attachment.instance.meme_text, :line_width => 30)
+      @text = @attachment.instance.meme_text
       @pos = @attachment.instance.meme_position == "top" ? "North" : "South"
       @font = Rails.root.to_s + '/DINComp-Medium.ttf'
     end
@@ -40,10 +39,6 @@ module Paperclip
  
     def tofile(destination)
       "\"#{ File.expand_path(destination.path) }[0]\""
-    end
-
-    def bg_height
-      return 100
     end
 
   end
