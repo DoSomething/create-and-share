@@ -1,5 +1,5 @@
 <div data-id="<%= @post.id %>" class="post id-<%= @post.id %><%= @post.promoted ? ' promoted' : '' %>">
-  <% if admin? %><div class="flag-container"><%= link_to 'Flag', flag_post_path(@post, :campaign_path => params[:campaign_path]), :method => :post, :confirm => 'Flag this?' %> | <%= link_to 'Edit', edit_post_path(@post, :campaign_path => params[:campaign_path]) %></div><% end %>
+  <% if admin? %><div class="flag-container"><%= link_to 'Flag', flag_post_path(@post, :campaign_path => params[:campaign_path]), :method => :post, :confirm => 'Flag this?' %> | <%= link_to 'Edit', edit_path(@post, :campaign_path => params[:campaign_path]) %></div><% end %>
   <div class="share-container"><a href="#" class="facebook-share btn share medium" data-id="<%= @post.id %>"><span>Share Me</span></a><span class="share-count"><%= (@post.share_count ? @post.share_count : @post.real_share_count) || 0 %></span></div>
   <% if @post.promoted %><div class="promoted-container"><%= link_to 'promoted', '/featured', :class => 'promoted-badge'  %></div><% end %>
   <div class="image-container"><%= image_tag '/images/blank.gif', 'data-original' => @post.image(:gallery), :alt => @post.name + ' from ' + @post.city + ', ' + @post.state, :class => 'lazy' %></div>
