@@ -1,6 +1,5 @@
 class PostsController < ApplicationController
   include Services
-  include PostsHelper
 
   # Before everything runs, run an authentication check and an API key check.
   before_filter :is_not_authenticated, :verify_api_key, :campaign_closed

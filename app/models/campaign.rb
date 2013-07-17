@@ -3,7 +3,7 @@ class Campaign < ActiveRecord::Base
   :lead_email, :path, :start_date,
   :title, :gated, :description,
   :image, :mailchimp, :mobile_commons,
-  :email_signup, :email_submit
+  :email_signup, :email_submit, :meme_header
 
   has_many :posts
 

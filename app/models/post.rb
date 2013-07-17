@@ -44,6 +44,14 @@ class Post < ActiveRecord::Base
     10
   end
 
+  def self.build_post
+    self
+      .select('posts.*, COUNT(shares.*) AS real_share_count')
+      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
+      .where(campaign_id: $campaign.id, flagged: false)
+      .group('posts.id')
+  end
+
   def self.get_scroll(admin, params, state, filtered = false)
     prefix = admin ? 'admin-' : ''
     prefix += $campaign.id.to_s + '-' + state + '-'
@@ -207,7 +215,7 @@ class Post < ActiveRecord::Base
     Rails.cache.clear
   end
 
-  after_create :send_thx_email
+  # after_create :send_thx_email !!!UNCOMMENT!!!
   # Sends the "thanks for reporting back" email.
   def send_thx_email
     @user = User.where(:uid => self.uid).first

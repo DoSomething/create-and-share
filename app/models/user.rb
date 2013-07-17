@@ -84,22 +84,22 @@ class User < ActiveRecord::Base
   #   A valid phone number to send a txt to.
   ##
   def self.handle_mc(email = nil, mobile = nil)
-    if !email.nil?
-      if !@@campaign.mailchimp.nil?
-        logger.info "Sending mailchimp (#{@@campaign.mailchimp}) email to (#{email})"
-        Services::MailChimp.subscribe(email, @@campaign.mailchimp)
-      end
-      if !@@campaign.email_signup.nil?
-        logger.info "Sending mandrill (#{@@campaign.email_signup}) email to (#{email})"
-        Services::Mandrill.mail(email, @@campaign.email_signup)
-      end
-    end
+    # if !email.nil? !!!UNCOMMENT!!!
+    #   if !@@campaign.mailchimp.nil?
+    #     logger.info "Sending mailchimp (#{@@campaign.mailchimp}) email to (#{email})"
+    #     Services::MailChimp.subscribe(email, @@campaign.mailchimp)
+    #   end
+    #   if !@@campaign.email_signup.nil?
+    #     logger.info "Sending mandrill (#{@@campaign.email_signup}) email to (#{email})"
+    #     Services::Mandrill.mail(email, @@campaign.email_signup)
+    #   end
+    # end
 
-    if !mobile.nil?
-      if !@@campaign.mobile_commons.nil?
-        logger.info "Sending mobile commons (#{@@campaign.mobile_commons}) @@campaign to (#{mobile})"
-        Services::MobileCommons.subscribe(mobile, @@campaign.mobile_commons)
-      end
-    end
+    # if !mobile.nil?
+    #   if !@@campaign.mobile_commons.nil?
+    #     logger.info "Sending mobile commons (#{@@campaign.mobile_commons}) @@campaign to (#{mobile})"
+    #     Services::MobileCommons.subscribe(mobile, @@campaign.mobile_commons)
+    #   end
+    # end
   end
 end

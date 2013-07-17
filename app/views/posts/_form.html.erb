@@ -22,8 +22,8 @@
     <%= f.input :image, required: true, wrapper_html: { class: 'form-item-first-name' }, input_html: { accept: 'image/jpeg,image/gif,image/png' } %>
     <div id="image_error">Invalid file type.</div>
     <div id="allowed-types">Your image must be a <strong>.png, .gif or .jpg</strong> file, and be less than <strong>10MB</strong>.</div>
-
-    <%= f.input :meme_text, required: false, label: "Adopt me because... (optional)", wrapper_html: { class: 'form-item-meme-text', id: 'form-item-meme-text' } %>
+    <% meme_text_label = !get_campaign.meme_header.blank? ? get_campaign.meme_header : "Add a caption" %>
+    <%= f.input :meme_text, required: false, label: "#{meme_text_label} (optional)", wrapper_html: { class: 'form-item-meme-text', id: 'form-item-meme-text' } %>
     <%= f.input :meme_position, required: false, label: "Text position", wrapper_html: { class: 'form-item-meme-position', id: 'form-item-meme-position' }, :as => :select, :collection => [['Top', 'top'], ['Bottom', 'bottom']], include_blank: false, :selected => 'top' %>
 
     <!-- #hidden fields for cropping -->
@@ -33,12 +33,18 @@
 
     <div id="upload-preview">
       <div id="top_text" class="text-pos">
+        <% if !get_campaign.meme_header.blank? %>
+          <div><%= get_campaign.meme_header %></div>
+        <% end %>
         <div class="yours"></div>
       </div>
       <div id="placeholder_text">
         <span class="text">Upload an image and it will appear here.</span>
       </div>
       <div id="bottom_text" class="text-pos">
+        <% if !get_campaign.meme_header.blank? %>
+          <div><%= get_campaign.meme_header %></div>
+        <% end %>
         <div class="yours"></div>
       </div>
     </div>

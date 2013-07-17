@@ -44,9 +44,9 @@ module ApplicationHelper
   end
 
   class BsClass
-    attr_accessor :title, :path, :gated
+    attr_accessor :title, :path, :gated, :id, :meme_header
     def initialize(**args)
-      @title, @path, @gated = args[:title], args[:path], args[:gated]
+      @title, @path, @gated, @id, @meme_header = args[:title], args[:path], args[:gated], args[:id], args[:meme_header]
     end
     def gated?
       true
@@ -58,7 +58,7 @@ module ApplicationHelper
     return @campaign unless @campaign.nil?
 
     if params[:campaign_path].nil?
-      fake = BsClass.new({ title: 'DoSomething Campaigns', path: '', gated: true })
+      fake = BsClass.new({ meme_header: "fake", id: 0, title: 'DoSomething Campaigns', path: '', gated: true })
       return fake
     end
 

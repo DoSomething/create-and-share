@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130715191949) do
+ActiveRecord::Schema.define(:version => 20130717155757) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.string   "mobile_commons"
     t.string   "email_submit"
     t.string   "email_signup"
+    t.string   "meme_header"
   end
 
   create_table "posts", :force => true do |t|
