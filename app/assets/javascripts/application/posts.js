@@ -127,5 +127,8 @@ $(function() {
     }
   });
 
+  $(document).ready(function() {
+    $('img.lazy').lazyload();
+  });
   // END
 });
