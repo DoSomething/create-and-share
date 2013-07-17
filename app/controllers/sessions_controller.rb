@@ -31,7 +31,7 @@ class SessionsController < ApplicationController
     year     = sess[:year]
 
     # Campaign information
-    campaign = Campaign.find(sess[:campaign])
+    campaign = Campaign.find_by_id(sess[:campaign])
 
     if form == 'login' # logs in user if he/she exist
       if User.exists?(username)
@@ -115,7 +115,7 @@ class SessionsController < ApplicationController
           flash[:error] = "Facebook authentication failed."
         end
 
-        redirect_to login_path(:campaign_path => campaign.path || '')
+        redirect_to request.env['HTTP_REFERER']
       end
     end
 end
