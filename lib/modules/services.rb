@@ -88,8 +88,8 @@ module Services
          }
        ],
        :message => {
-         :from_name=> "Hilary at DoSomething.org",
-         :from_email => "animals@dosomething.org",
+         :from_name=> $campaign.lead + " at DoSomething.org",
+         :from_email => $campaign.lead_email,
          :subject => subject,
          :to => [
            {

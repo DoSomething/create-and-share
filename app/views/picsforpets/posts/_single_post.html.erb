@@ -3,7 +3,7 @@
   <div class="share-container"><a href="#" class="facebook-share btn share medium" data-id="<%= @post.id %>"><span>Share Me</span></a><span class="share-count"><%= (@post.share_count ? @post.share_count : @post.real_share_count) || 0 %></span></div>
   <% if @post.promoted %><div class="promoted-container"><%= link_to 'promoted', '/featured', :class => 'promoted-badge'  %></div><% end %>
   <% if @post.adopted %><%= image_tag '/images/adopted-badge.png', :alt => 'Adopted Pet', :class => 'adopted-badge' %><% end %>
-  <div class="image-container"><%= image_tag @post.image(:gallery) %></div>
+  <div class="image-container"><%= image_tag '/images/blank.gif', 'data-original' => @post.image(:gallery), :alt => @post.name + ' from ' + @post.city + ', ' + @post.state, :class => 'lazy' %></div>
   <div class="name-loc"><%= link_to show_post_path(@post, :campaign_path => params[:campaign_path]) do %><span class="name"><%= @post.name %></span>, <%= @post.state %><% end %></div>
   <div class="story"><%=raw simple_format(@post.story).gsub(/(\r|\n|\r\n)/, '') %></div>
   <div class="adopt-me">Adopt <%= @post.name %> at <%= link_to @post.extras[:shelter] ||= '' + ', ' + (!@post.city.nil? ? (@post.city + ', ') : '') + @post.state, 'http://www.adoptapet.com/animal-shelter-search?city_or_zip=' + (!@post.city.nil? ? (@post.city + ', ') : '') + @post.state + '&shelter_name=' + @post.extras[:shelter]||= ''  + '&distance=50&adopts_out=all', :target => '_blank' %></div>

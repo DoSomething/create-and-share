@@ -215,7 +215,7 @@ class Post < ActiveRecord::Base
     Rails.cache.clear
   end
 
-  # after_create :send_thx_email !!!UNCOMMENT!!!
+  after_create :send_thx_email !!!UNCOMMENT!!!
   # Sends the "thanks for reporting back" email.
   def send_thx_email
     @user = User.where(:uid => self.uid).first
