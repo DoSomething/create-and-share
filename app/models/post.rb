@@ -44,24 +44,24 @@ class Post < ActiveRecord::Base
     10
   end
 
-  def self.build_post
+  def self.build_post(campaign)
     self
       .select('posts.*, COUNT(shares.*) AS real_share_count')
       .joins('LEFT JOIN shares ON shares.post_id = posts.id')
-      .where(campaign_id: $campaign.id, flagged: false)
+      .where(campaign_id: campaign.id, flagged: false)
       .group('posts.id')
   end
 
-  def self.get_scroll(admin, params, state, filtered = false)
+  def self.get_scroll(campaign, admin, params, state, filtered = false)
     prefix = admin ? 'admin-' : ''
-    prefix += $campaign.id.to_s + '-' + state + '-'
+    prefix += campaign.id.to_s + '-' + state + '-'
 
     params[:page] ||= 0
 
     uncached_posts = self
       .select('posts.*, COUNT(shares.*) AS real_share_count')
       .joins('LEFT JOIN shares ON shares.post_id = posts.id')
-      .where(:campaign_id => $campaign.id)
+      .where(:campaign_id => campaign.id)
       .group('posts.id')
       .order('posts.created_at DESC')
 
@@ -76,7 +76,7 @@ class Post < ActiveRecord::Base
           .joins('LEFT JOIN shares ON shares.post_id = posts.id')
           .select('posts.*, COUNT(shares.*) AS real_share_count')
           .group('posts.id')
-          .where(:promoted => true, :flagged => false, :campaign_id => $campaign.id)
+          .where(:promoted => true, :flagged => false, :campaign_id => campaign.id)
           .order('RANDOM()')
           .limit(1)
           .all
@@ -103,7 +103,7 @@ class Post < ActiveRecord::Base
 
       total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
         self
-          .where(flagged: false, campaign_id: $campaign.id)
+          .where(flagged: false, campaign_id: campaign.id)
           .count
       end
     end
@@ -215,13 +215,13 @@ class Post < ActiveRecord::Base
     Rails.cache.clear
   end
 
-  after_create :send_thx_email !!!UNCOMMENT!!!
+  after_create :send_thx_email
   # Sends the "thanks for reporting back" email.
   def send_thx_email
     @user = User.where(:uid => self.uid).first
     if !@user.nil? && !@user.email.nil?
-      if !$campaign.email_submit.nil?
-        Services::Mandrill.mail(@user.email, $campaign.email_submit)
+      if !self.campaign.email_submit.nil?
+        Services::Mandrill.mail(@user.email, self.campaign.email_submit)
       end
     end
   end

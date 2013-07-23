@@ -1,6 +1,8 @@
 class SessionsController < ApplicationController
   include Services
 
+  before_filter :get_campaign, :only => [:new, :destroy]
+
   # Confirm that we're authenticated.
   before_filter :is_authenticated, :only => :new
   layout 'gate'
@@ -45,7 +47,7 @@ class SessionsController < ApplicationController
         flash[:error] = "A user with that account already exists."
         redirect_to :login
       else
-        if User.register(campaign, password, email, 0, first, last, cell, "#{month}/#{day}/#{year}")
+        if User.register(password, email, 0, first, last, cell, "#{month}/#{day}/#{year}")
           login(campaign, form, session, email, password, cell)
         else
           flash[:error] = "An error has occurred. Please register again."
@@ -82,7 +84,7 @@ class SessionsController < ApplicationController
   # GET /logout
   def destroy
     reset_session
-    redirect_to root_path(:campaign_path => get_campaign.path)
+    redirect_to root_path(:campaign_path => @campaign.path)
   end
 
   private
@@ -102,7 +104,7 @@ class SessionsController < ApplicationController
           flash[:message] = "You've logged in with Facebook successfully!"
         end
 
-        source = session[:source] ||= root_path(:campaign_path => get_campaign.path || '')
+        source = session[:source] ||= root_path(:campaign_path => campaign.path || '')
         session[:source] = nil
         redirect_to source
       else

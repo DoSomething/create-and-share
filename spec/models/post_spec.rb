@@ -1,38 +1,36 @@
 require 'spec_helper'
 
-describe Post do
+describe Post, :focus => true do
   it 'has a valid factory' do
     FactoryGirl.create(:post).should be_valid
   end
 
-  describe 'Model validations' do
-    before :each do
-      @post = FactoryGirl.build(:post)
-    end
+  describe 'validations' do
+    before { @post = FactoryGirl.build(:post) }
 
-    it 'is invalid without name' do
+    it 'is invalid without a name' do
       @post.name = nil
-      @post.should_not be_valid
+      @post.should_not be_valid      
     end
 
-    it 'is invalid without city' do
+    it 'is invalid without a city' do
       @post.city = nil
       @post.should_not be_valid
     end
 
-    context 'state' do
-      it 'is invalid without state' do
-        @post.state = nil
-        @post.should_not be_valid
-      end
-      it 'is invalid with a longer state' do
-        @post.state = 'PAX'
-        @post.should_not be_valid
-      end
-      it 'is invalid without a valid state' do
-        @post.state = '12'
-        @post.should_not be_valid
-      end
+    it 'is invalid without state' do
+      @post.state = nil
+      @post.should_not be_valid
+    end
+
+    it 'is invalid with a longer state' do
+      @post.state = 'PAX'
+      @post.should_not be_valid
+    end
+
+    it 'is invalid without a valid state' do
+      @post.state = '12'
+      @post.should_not be_valid
     end
 
     it 'is invalid without campaign_id' do
@@ -50,7 +48,6 @@ describe Post do
     before :each do
       @post = Post
       @real_post = FactoryGirl.create(:post)
-      @share = FactoryGirl.create(:share, post_id: @real_post.id)
     end
 
     it 'has a per page count' do
@@ -64,9 +61,6 @@ describe Post do
 
       it 'shows some posts' do
         @scroll.length.should be > 0
-      end
-      it 'has a share count' do
-        @scroll.first.real_share_count.to_i.should be > 0
       end
       it 'has an image' do
         @scroll.first.image.url(:gallery).should_not be nil

@@ -43,44 +43,29 @@ module ApplicationHelper
     end
   end
 
-  class BsClass
-    attr_accessor :title, :path, :gated, :id, :meme_header
-    def initialize(**args)
-      @title, @path, @gated, @id, @meme_header = args[:title], args[:path], args[:gated], args[:id], args[:meme_header]
-    end
-    def gated?
-      true
-    end
-  end
-
-  @campaign = nil
   def get_campaign
-    return @campaign unless @campaign.nil?
-
     if params[:campaign_path].nil?
-      fake = BsClass.new({ meme_header: "fake", id: 0, title: 'DoSomething Campaigns', path: '', gated: true })
-      return fake
+      return nil
     end
 
     path = params[:campaign_path]
 
     @campaign = Campaign.where(:path => path).first
-    @campaign
   end
 
-  def campaign_stylesheet_link_tag(stylesheet)
-    if File.exist? Rails.root.to_s + '/app/assets/stylesheets/campaigns/' + get_campaign.path + '/' + stylesheet + '.sass'
-      stylesheet_link_tag 'campaigns/' + get_campaign.path + '/application', :media => "all"
-    else
-      stylesheet_link_tag stylesheet, :media => "all"
-    end
+  def campaign_stylesheet_link_tag(stylesheet, campaign)
+    # if campaign && File.exist?(Rails.root.to_s + '/app/assets/stylesheets/campaigns/' + get_campaign.path + '/' + stylesheet + '.sass')
+    #   stylesheet_link_tag 'campaigns/' + get_campaign.path + '/application', :media => "all"
+    # else
+       stylesheet_link_tag stylesheet, :media => "all"
+    # end
   end
 
-  def campaign_javascript_include_tag(script)
-    if File.exist? Rails.root.to_s + '/app/assets/javascripts/campaigns/' + get_campaign.path + '/' + script + '.js'
-      javascript_include_tag 'campaigns/' + get_campaign.path + '/application'
-    else
-      javascript_include_tag script
-    end
+  def campaign_javascript_include_tag(script, campaign)
+    # if campaign && File.exist?(Rails.root.to_s + '/app/assets/javascripts/campaigns/' + get_campaign.path + '/' + script + '.js')
+    #   javascript_include_tag 'campaigns/' + get_campaign.path + '/application'
+    # else
+       javascript_include_tag script
+    # end
   end
 end

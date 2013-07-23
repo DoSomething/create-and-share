@@ -6,22 +6,11 @@ class ApplicationController < ActionController::Base
   # Handy little method that renders the "not found" message, instead of an error.
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
-  before_filter :find_view_path, :set_global_campaign
+  before_filter :find_view_path
   def find_view_path
     if !Rails.env.test? && !get_campaign.nil?
-      prepend_view_path 'app/views/' + get_campaign.path
+      prepend_view_path '/app/views/' + get_campaign.path
     end
-  end
-
-  def set_global_campaign
-    $campaign = Campaign.where(:path => params[:campaign_path]).first
-    $campaign ||= nil
-
-    $user = {
-      id: session[:drupal_user_id] || nil,
-      admin: (session[:drupal_user_role] && session[:drupal_user_role].values.include?('administrator')),
-      roles: session[:drupal_user_role] || nil
-    }
   end
 
   # Not found message.
@@ -32,9 +21,10 @@ class ApplicationController < ActionController::Base
   # Confirms that the user is authenticated.  Redirects to root (/) if so.
   # See SessionsController, line 5
   def is_authenticated
-    if authenticated? || !get_campaign.gated?
-      if get_campaign.path
-        redirect_to root_path(:campaign_path => get_campaign.path)
+    get_campaign
+    if authenticated? || @campaign && !@campaign.gated?
+      if @campaign && @campaign.path
+        redirect_to root_path(:campaign_path => @campaign.path)
       else
         redirect_to '/'
       end
@@ -45,7 +35,8 @@ class ApplicationController < ActionController::Base
   # or sending a :bypass parameter through the route (not applicable for standard users --
   # :bypass needs to be sent directly from code.)
   def is_not_authenticated
-    unless authenticated? || request.format.symbol == :json || params[:bypass] === true || !get_campaign.gated?
+    get_campaign
+    unless authenticated? || request.format.symbol == :json || params[:bypass] === true || @campaign && !@campaign.gated?
       session[:source] = request.path
       redirect_to :login
       false

@@ -9,7 +9,7 @@ module Paperclip
       @current_format = File.extname(@file.path)
       @basename = File.basename(@file.path, @current_format)
 
-      @header = @attachment.instance.campaign.meme_header.gsub(/'/, "'\"\'\"'")
+      @header = @attachment.instance.campaign ? @attachment.instance.campaign.meme_header.gsub(/'/, "'\"\'\"'") : ""
       @text = @attachment.instance.meme_text
       @pos = @attachment.instance.meme_position == "top" ? "North" : "South"
       @font = Rails.root.to_s + '/DINComp-Medium.ttf'

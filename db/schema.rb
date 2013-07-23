@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130717155757) do
+ActiveRecord::Schema.define(:version => 20130722164840) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -54,8 +54,6 @@ ActiveRecord::Schema.define(:version => 20130717155757) do
     t.datetime "creation_time"
     t.datetime "update_time"
     t.boolean  "adopted"
-    t.string   "top_text"
-    t.string   "bottom_text"
     t.datetime "created_at",                            :null => false
     t.datetime "updated_at",                            :null => false
     t.string   "image_file_name"

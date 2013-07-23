@@ -2,15 +2,16 @@
 
 FactoryGirl.define do
   factory :campaign do
-    title "Pics for Pets"
-    start_date "2013-07-05 11:47:46"
-    end_date "2015-07-05 11:47:46"
-    path "testpics"
-    lead "Test user"
-    lead_email "test+user@dosomething.org"
-    developers "mchittenden@dosomething.org"
-    description "Pics for pets is a campaign about pictures of pets."
+    title { Faker::Lorem.words.join(" ") }
+    start_date { Date.today.prev_month }
+    end_date { Date.today.next_month }
+    path { Faker::Internet.domain_word }
+    lead { Faker::Name.name }
+    lead_email { Faker::Internet.email }
+    developers { Faker::Internet.email }
+    description { Faker::Lorem.paragraph }
     image nil
     gated true
+    meme_header { Faker::Lorem.words.join(" ") }
   end
 end

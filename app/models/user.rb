@@ -14,8 +14,7 @@ class User < ActiveRecord::Base
   end
 
   # creates a new user with the given parameters in the DoSomething drupal database
-  def self.register(campaign, password, email, fbid, first, last, cell, birthday)
-    @@campaign = campaign
+  def self.register(password, email, fbid, first, last, cell, birthday)
     bday = Date.strptime(birthday, '%m/%d/%Y')
     response = Services::Auth.register(password, email, first, last, cell, bday.month, bday.day, bday.year)
     if response.code == 200 && response.kind_of?(Hash)
@@ -27,7 +26,6 @@ class User < ActiveRecord::Base
 
   # logs in a user with the given parameters and creates an entry in the rails database if one doesn't exist already
   def self.login(campaign, session, username, password, cell, fbid)
-    @@campaign = campaign
     if fbid != 0 # if logging in with Facebook
       uid = Services::Auth.check_admin(username).first
       if uid
@@ -63,7 +61,7 @@ class User < ActiveRecord::Base
       if !email.match(/\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i)
         email = nil
       end
-      User.handle_mc(email, cell)
+      User.handle_mc(campaign, email, cell)
     elsif fbid != 0 # adds a fbid if they are logging in with facebook for the first time
       ### UPDATE TO EDIT FACEBOOK ON DRUPAL AS WELL ###
       user.fbid = fbid
@@ -83,22 +81,23 @@ class User < ActiveRecord::Base
   # @param string mobile
   #   A valid phone number to send a txt to.
   ##
-  def self.handle_mc(email = nil, mobile = nil)
+  ############################
+  def self.handle_mc(campaign, email = nil, mobile = nil)
     if !email.nil?
-      if !@@campaign.mailchimp.nil?
-        logger.info "Sending mailchimp (#{@@campaign.mailchimp}) email to (#{email})"
-        Services::MailChimp.subscribe(email, @@campaign.mailchimp)
+      if !campaign.mailchimp.nil?
+        logger.info "Sending mailchimp (#{campaign.mailchimp}) email to (#{email})"
+        Services::MailChimp.subscribe(email, campaign.mailchimp)
       end
-      if !@@campaign.email_signup.nil?
-        logger.info "Sending mandrill (#{@@campaign.email_signup}) email to (#{email})"
-        Services::Mandrill.mail(email, @@campaign.email_signup)
+      if !campaign.email_signup.nil?
+        logger.info "Sending mandrill (#{campaign.email_signup}) email to (#{email})"
+        Services::Mandrill.mail(email, campaign.email_signup)
       end
     end
 
     if !mobile.nil?
-      if !@@campaign.mobile_commons.nil?
-        logger.info "Sending mobile commons (#{@@campaign.mobile_commons}) @@campaign to (#{mobile})"
-        Services::MobileCommons.subscribe(mobile, @@campaign.mobile_commons)
+      if !campaign.mobile_commons.nil?
+        logger.info "Sending mobile commons (#{campaign.mobile_commons}) @@campaign to (#{mobile})"
+        Services::MobileCommons.subscribe(mobile, campaign.mobile_commons)
       end
     end
   end
