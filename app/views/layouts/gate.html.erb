@@ -4,9 +4,9 @@
   <%= render 'partials/analytics' %>
 
   <title><%= get_campaign ? get_campaign.title : "DoSomething Create and Share Campaigns" %></title>
-  <%= campaign_stylesheet_link_tag 'gate', get_campaign %>
-  <%= campaign_javascript_include_tag 'application', get_campaign %>
-  <%= campaign_javascript_include_tag 'gate', get_campaign %>
+  <%= campaign_stylesheet_link_tag('gate', get_campaign) %>
+  <%= campaign_javascript_include_tag('application', get_campaign) %>
+  <%= campaign_javascript_include_tag('gate', get_campaign) %>
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />

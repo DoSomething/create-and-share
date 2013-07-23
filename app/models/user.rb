@@ -90,7 +90,7 @@ class User < ActiveRecord::Base
       end
       if !campaign.email_signup.nil?
         logger.info "Sending mandrill (#{campaign.email_signup}) email to (#{email})"
-        Services::Mandrill.mail(email, campaign.email_signup)
+        Services::Mandrill.mail(campaign.lead, campaign.lead_email, email, campaign.email_signup)
       end
     end
 

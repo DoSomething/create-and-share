@@ -90,7 +90,7 @@ class Post < ActiveRecord::Base
       cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
         uncached_posts
           .where('posts.id < ?', params[:last])
-          .where('posts.id != ?', promoted.id || 0)
+          .where('posts.id != ?', promoted ? promoted.id : 0)
           .limit(self.per_page)
           .all
       end
@@ -221,7 +221,7 @@ class Post < ActiveRecord::Base
     @user = User.where(:uid => self.uid).first
     if !@user.nil? && !@user.email.nil?
       if !self.campaign.email_submit.nil?
-        Services::Mandrill.mail(@user.email, self.campaign.email_submit)
+        Services::Mandrill.mail(self.campaign.lead, self.campaign.lead_email, @user.email, self.campaign.email_submit)
       end
     end
   end
