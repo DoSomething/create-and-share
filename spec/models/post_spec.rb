@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Post do
+  before { Services::Mandrill.stub(:mail) }
+
   it 'has a valid factory' do
     FactoryGirl.create(:post).should be_valid
   end
