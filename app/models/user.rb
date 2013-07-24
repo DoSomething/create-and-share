@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
       false
     elsif !Services::Auth.check_exists(email).first.nil? || (email.index('@').nil? && email.gsub(/[^0-9]/, '').length == 10)
       true
+    else
+      false
     end
   end
 

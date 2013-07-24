@@ -1,88 +1,100 @@
 require 'spec_helper'
 
-describe Post, :focus => true do
+describe Post do
   it 'has a valid factory' do
     FactoryGirl.create(:post).should be_valid
   end
 
   describe 'validations' do
-    before { @post = FactoryGirl.build(:post) }
-
     it 'is invalid without a name' do
-      @post.name = nil
-      @post.should_not be_valid      
+      FactoryGirl.build(:post, name: nil).should_not be_valid      
     end
 
     it 'is invalid without a city' do
-      @post.city = nil
-      @post.should_not be_valid
+      FactoryGirl.build(:post, city: nil).should_not be_valid
     end
 
     it 'is invalid without state' do
-      @post.state = nil
-      @post.should_not be_valid
+      FactoryGirl.build(:post, state: nil).should_not be_valid
     end
 
     it 'is invalid with a longer state' do
-      @post.state = 'PAX'
-      @post.should_not be_valid
+      FactoryGirl.build(:post, state: 'PAX').should_not be_valid
     end
 
     it 'is invalid without a valid state' do
-      @post.state = '12'
-      @post.should_not be_valid
+      FactoryGirl.build(:post, state: '12').should_not be_valid
     end
 
     it 'is invalid without campaign_id' do
-      @post.campaign_id = nil
-      @post.should_not be_valid
+      FactoryGirl.build(:post, campaign_id: nil).should_not be_valid
     end
 
     it 'is invalid without image' do
-      @post.image = nil
-      @post.should_not be_valid
+      FactoryGirl.build(:post, image: nil).should_not be_valid
     end
   end
 
   describe 'methods' do
-    before :each do
-      @post = Post
-      @real_post = FactoryGirl.create(:post)
+    it 'should be able to find by extra tagged fields' do
+      cat = FactoryGirl.create(:post, extras: { animal_type: "cat" })
+      dog = FactoryGirl.create(:post, extras: { animal_type: "dog" })
+      cats = Post.tagged({animal_type: "cat"})
+      cats.should include(cat)
+      cats.should_not include(dog)
     end
 
     it 'has a per page count' do
-      @post.per_page.should == 10
+      Post.per_page.should == 10
+    end
+
+    it 'should be able to count shares' do
+      share = FactoryGirl.create(:share)
+      post = share.post
+      post.total_shares.should be > 0
+    end
+
+    it 'should send an email after a post is created' do
+      user = FactoryGirl.create(:user)
+      post = FactoryGirl.build(:post, uid: user.uid)
+      Services::Mandrill.should_receive(:mail).with(post.campaign.lead, post.campaign.lead_email, user.email, post.campaign.email_submit)
+      post.save
     end
 
     context 'infinite scroll functionality' do
       before :each do
-        @scroll = @post.infinite_scroll(@real_post.campaign_id)
+        @post = FactoryGirl.create(:post)
+        @promoted = FactoryGirl.create(:post, campaign_id: @post.campaign.id, promoted: true)
+        @scroll = Post.get_scroll(@post.campaign, false, {}, "")[1]
       end
 
       it 'shows some posts' do
         @scroll.length.should be > 0
       end
+
       it 'has an image' do
         @scroll.first.image.url(:gallery).should_not be nil
       end
 
+      it 'will show a promoted post' do
+        @scroll.should include(@promoted)
+      end
+
       context 'pagination' do
         before :each do
+          @campaign = FactoryGirl.create(:campaign)
           20.times do
-            FactoryGirl.create(:post)
+            FactoryGirl.create(:post, campaign_id: @campaign.id)
           end
+          @posts = Post.build_post(@campaign)
         end
 
-        let (:scrolly) { @scroll.scrolly }
-
-        it 'Shows 9 results on the first page.' do
-          scrolly.length.should be 9
+        it 'shows 9 results on the first page.' do
+          @posts.scrolly.length.should be 9
         end
-        it 'shows 9  results on a subsequent page' do
+        it 'shows 9 results on a subsequent page' do
           last_id = Post.order('id DESC').limit(10).last.id
-          scrolly = @scroll.scrolly(last_id)
-
-          scrolly.length.should be 9
+          @posts.scrolly(last_id).length.should be 9
         end
       end
     end

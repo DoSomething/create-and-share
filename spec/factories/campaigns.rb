@@ -10,8 +10,12 @@ FactoryGirl.define do
     lead_email { Faker::Internet.email }
     developers { Faker::Internet.email }
     description { Faker::Lorem.paragraph }
-    image nil
+    image File.new(Rails.root + 'spec/mocks/ruby.png')
     gated true
     meme_header { Faker::Lorem.words.join(" ") }
+    email_submit { Faker::Lorem.word }
+    email_signup { Faker::Lorem.word }
+    mailchimp 'PicsforPets2013'
+    mobile_commons "158551"
   end
 end
