@@ -165,7 +165,7 @@ describe PostsController, :type => :controller do
   #   end
   # end
 
-  describe "extras", focus:true do
+  describe "extras" do
     describe "mine" do
       before :each do
         @mine = FactoryGirl.create(:post, campaign_id: campaign.id, uid: 1263777)
