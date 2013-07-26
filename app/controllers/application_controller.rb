@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :find_view_path
   def find_view_path
-    if !Rails.env.test? && !get_campaign.nil?
+    if !get_campaign.nil?
       prepend_view_path '/app/views/' + get_campaign.path
     end
   end
@@ -21,10 +21,10 @@ class ApplicationController < ActionController::Base
   # Confirms that the user is authenticated.  Redirects to root (/) if so.
   # See SessionsController, line 5
   def is_authenticated
-    get_campaign
-    if authenticated? || @campaign && !@campaign.gated?
-      if @campaign && @campaign.path
-        redirect_to root_path(:campaign_path => @campaign.path)
+    campaign = get_campaign
+    if authenticated? || campaign && !campaign.gated?
+      if campaign && campaign.path
+        redirect_to root_path(:campaign_path => campaign.path)
       else
         redirect_to '/'
       end
@@ -33,10 +33,15 @@ class ApplicationController < ActionController::Base
 
   # Checks if a user is *not* authenticated.
   def is_not_authenticated
-    get_campaign
-    unless authenticated? || request.format.symbol == :json || @campaign && !@campaign.gated?
+    campaign = get_campaign
+    unless authenticated? || request.format.symbol == :json || campaign && !campaign.gated?
+      flash[:error] = "you must be logged in to see that"
       session[:source] = request.path
-      redirect_to :login
+      if campaign && campaign.path
+        redirect_to "/#{campaign.path}/login"
+      else
+        redirect_to '/login'
+      end
       false
     end
   end
@@ -44,10 +49,10 @@ class ApplicationController < ActionController::Base
   # Checks if a user is an administrator.
   def admin
     unless admin? || request.format.symbol == :json
-      flash[:error] = "error: please login as admin to view this page"
+      flash[:error] = "please login as admin to view this page"
       if authenticated?
         reset_session
-        flash[:error] = "error: you have been logged out - please login as admin to view this page"
+        flash[:error] = "you have been logged out - please login as admin to view this page"
       end
 
       session[:source] = request.path

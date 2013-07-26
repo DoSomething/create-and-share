@@ -20,13 +20,27 @@ module ApplicationHelper
     ENV['facebook_app_id']
   end
 
+  # Gets current campaign via path
+  def get_campaign
+    if params[:campaign_path].nil?
+      return nil
+    end
+
+    path = params[:campaign_path]
+
+    @campaign = Campaign.where(:path => path).first
+  end
+
   # Did the user already submit something?
   def already_submitted?
     user_id = session[:drupal_user_id]
-    posts = Post.where(:uid => user_id)
-    shares = Share.where(:uid => user_id)
+    campaign = get_campaign
+    if user_id.nil? || campaign.nil?
+      return false
+    end
+    posts = Post.where(:uid => user_id, campaign_id: campaign.id)
 
-    (user_id && (!shares.nil? && shares.count > 0 || !posts.nil? && posts.count > 0))
+    !posts.nil? && posts.count > 0
   end
 
   # Prints a friendly error message depending on what path you're at.
@@ -41,16 +55,6 @@ module ApplicationHelper
     else
       "anything here"
     end
-  end
-
-  def get_campaign
-    if params[:campaign_path].nil?
-      return nil
-    end
-
-    path = params[:campaign_path]
-
-    @campaign = Campaign.where(:path => path).first
   end
 
   def campaign_stylesheet_link_tag(stylesheet, campaign)

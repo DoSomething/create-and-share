@@ -1,6 +1,6 @@
 <%= simple_form_for(:session, :url => sessions_path, :html => { :class => 'form form-login', :id => 'login-form' }) do |f| %>
   <div class="facebook-connect"><%= link_to image_tag('/images/facebook.png'), '/auth/facebook' %></div>
-  <%= f.hidden_field :campaign, :value => @campaign.id %>
+  <%= f.hidden_field :campaign, :value => @campaign ? @campaign.id : nil %>
   <%= f.hidden_field :source, :value => @source || '/' %>
   <%= f.input :username, label: 'Username, e-mail or cell' %>
   <%= f.input :password, input_html: { :id => 'login-password' } %>

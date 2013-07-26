@@ -62,7 +62,6 @@ class User < ActiveRecord::Base
       ###########
       ### FIX ###
       ###########
-
       # handle mailchimp and mobilecommons if email/cell are provided
       # email = username
       # if !email.match(/\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i)
