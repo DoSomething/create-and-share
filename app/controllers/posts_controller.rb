@@ -14,7 +14,7 @@ class PostsController < ApplicationController
   # Shows the static (closed) gallery when a campaign is finished, or not started yet.
   def campaign_closed
     now = Time.now
-    if @campaign.start_date > now || @campaign.end_date < now
+    if @campaign && (@campaign.start_date > now || @campaign.end_date < now)
       render 'static_pages/gallery'
       return
     end
@@ -101,7 +101,6 @@ class PostsController < ApplicationController
     end
 
     @post = Post.new(params[:post])
-
     respond_to do |format|
       if @post.save
         format.html { redirect_to show_post_path(@post, :campaign_path => @post.campaign.path) }
@@ -169,7 +168,7 @@ class PostsController < ApplicationController
       .first
 
     if @post.nil?
-      redirect_to :root
+      redirect_to root_path(campaign_path: @campaign.path)
     else
       render :show
     end
@@ -177,7 +176,7 @@ class PostsController < ApplicationController
 
   # GET /:campaign/show/cats-NY
   def filter
-    if Rails.application.config.filters[params[:campaign_path]].nil?
+    if Rails.application.config.filters[@campaign].nil?
       redirect_to :root
       return
     end

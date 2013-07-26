@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe PostsController, :type => :controller do
   let(:key) { FactoryGirl.create(:api_key) }
-  let(:campaign) { FactoryGirl.create(:campaign) }
+  let(:campaign) { FactoryGirl.create(:campaign, path: "picsforpets") }
 
   describe 'GET #index.json' do
     it 'fails' do

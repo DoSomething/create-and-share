@@ -7,8 +7,8 @@ FactoryGirl.define do
 		meme_text { Faker::Lorem.sentence }
 		meme_position 'bottom'
 		flagged false
-		image File.new(Rails.root + 'spec/mocks/ruby.png')
-		name { Faker::Name.name }
+		image Rack::Test::UploadedFile.new(Rails.root + 'spec/mocks/ruby.png', 'image/png')
+		name { Faker::Name.first_name }
 		promoted false
 		share_count 0
 		state { Faker::Address.state_abbr }
@@ -18,5 +18,9 @@ FactoryGirl.define do
 		}
 		story { Faker::Lorem.paragraph }
 		campaign
+
+		factory :promo do
+			promoted true
+		end
 	end
 end

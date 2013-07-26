@@ -9,7 +9,7 @@ class UsersController < ApplicationController
     user.intent = true
     user.save
 
-    # Bring them to the real submit path.
+    # Bring them to the real submit path
     redirect_to :start
   end
 end

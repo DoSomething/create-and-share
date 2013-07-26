@@ -58,12 +58,17 @@ class User < ActiveRecord::Base
     user = User.find_by_uid(uid)
     if !user # creates a new user if he/she isn't already in the database
       user = User.new(:uid => uid, :fbid => fbid, :email => username, :is_admin => roles.values.include?('administrator'))
+      
+      ###########
+      ### FIX ###
+      ###########
+
       # handle mailchimp and mobilecommons if email/cell are provided
-      email = username
-      if !email.match(/\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i)
-        email = nil
-      end
-      User.handle_mc(campaign, email, cell)
+      # email = username
+      # if !email.match(/\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i)
+      #   email = nil
+      # end
+      # User.handle_mc(campaign, email, cell)
     elsif fbid != 0 # adds a fbid if they are logging in with facebook for the first time
       ### UPDATE TO EDIT FACEBOOK ON DRUPAL AS WELL ###
       user.fbid = fbid

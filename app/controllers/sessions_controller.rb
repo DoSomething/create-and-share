@@ -40,12 +40,12 @@ class SessionsController < ApplicationController
         login(campaign, form, session, username, password, nil)
       else
         flash[:error] = 'Invalid username / password.'
-        redirect_to :login
+        redirect_to campaign ? "/#{campaign.path}/login" : "/login"
       end
     elsif form == 'register' # registers user if they don't exist in the DoSomething drupal database and then logs in him/her
       if User.exists?(email)
         flash[:error] = "A user with that account already exists."
-        redirect_to :login
+        redirect_to campaign ? "/#{campaign.path}/login" : "/login"
       else
         if User.register(password, email, 0, first, last, cell, "#{month}/#{day}/#{year}")
           login(campaign, form, session, email, password, cell)
@@ -58,12 +58,11 @@ class SessionsController < ApplicationController
 
   # GET /auth/facebook/callback
   def fboauth
+    p env['omniauth.auth']
     auth = env['omniauth.auth']['extra']['raw_info'] # data from Facebook
 
     # Try and find the campaign by the path specified in source.
     campaign = Campaign.find_by_path(session[:source].gsub('/', ''))
-    # if no, try and return 
-    campaign ||= nil
 
     if !User.exists?(auth['email']) # registers user if he/she isn't already in the drupal database
       password = (0...50).map{ ('a'..'z').to_a[rand(26)] }.join
@@ -84,7 +83,7 @@ class SessionsController < ApplicationController
   # GET /logout
   def destroy
     reset_session
-    redirect_to root_path(:campaign_path => @campaign.path)
+    redirect_to root_path(:campaign_path => '')
   end
 
   private
@@ -104,7 +103,7 @@ class SessionsController < ApplicationController
           flash[:message] = "You've logged in with Facebook successfully!"
         end
 
-        source = session[:source] ||= root_path(:campaign_path => campaign.path || '')
+        source = session[:source] ||= root_path(:campaign_path => campaign ? campaign.path : '')
         session[:source] = nil
         redirect_to source
       else

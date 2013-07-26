@@ -31,12 +31,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # Checks if a user is *not* authenticated.  This is bypassed by using the JSON format,
-  # or sending a :bypass parameter through the route (not applicable for standard users --
-  # :bypass needs to be sent directly from code.)
+  # Checks if a user is *not* authenticated.
   def is_not_authenticated
     get_campaign
-    unless authenticated? || request.format.symbol == :json || params[:bypass] === true || @campaign && !@campaign.gated?
+    unless authenticated? || request.format.symbol == :json || @campaign && !@campaign.gated?
       session[:source] = request.path
       redirect_to :login
       false
@@ -45,7 +43,7 @@ class ApplicationController < ActionController::Base
 
   # Checks if a user is an administrator.
   def admin
-    unless admin? || request.format.symbol == :json || params[:bypass] === true
+    unless admin? || request.format.symbol == :json
       flash[:error] = "error: please login as admin to view this page"
       if authenticated?
         reset_session
@@ -75,12 +73,5 @@ class ApplicationController < ActionController::Base
         end
       end
     end
-  end
-
-  # Fixes a bug with the flashbag.
-  alias :std_redirect_to :redirect_to
-  def redirect_to(*args)
-    flash.keep
-    std_redirect_to *args
   end
 end

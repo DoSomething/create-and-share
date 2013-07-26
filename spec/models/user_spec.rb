@@ -46,7 +46,7 @@ describe User do
 		    response = HTTParty::Response.new(@request_object, response_object, @parsed_response)
 			Services::Auth.stub(:register).and_return(response)
 
-			User.register("test", "test@suject.com", "123456789", "test", "test", "1234567890", "10/05/2000")
+			User.register("test", "test@subject.com", "123456789", "test", "test", "1234567890", "10/05/2000")
 			User.exists?("test@suject.com").should eq true
 		end
 
@@ -63,39 +63,56 @@ describe User do
 
 	describe 'login' do
 		before :each do
-			@user = FactoryGirl.create(:user)
+			@user = FactoryGirl.build(:user)
 			@session = {}
 			@campaign = FactoryGirl.create(:campaign)
 		end
 
-		it 'logs in existing users' do
-			User.login(@campaign, @session, @user.email, "test", "", 0)
-			@session[:drupal_user_id].should eq @user.uid.to_s
-		end
+		describe 'logs in existing users' do
+			before :each do
+				request_object = HTTParty::Request.new Net::HTTP::Get, '/'
+				parsed_response = lambda { {"user" => {"uid" => "1263777", "roles" => {"values" => "test"}}, "profile" => {"field_user_mobile" => ""}} }
+				response_object = Net::HTTPOK.new('1.1', 200, 'OK')
+				response_object.stub(:body => "{foo:'bar'}")
+				response = HTTParty::Response.new(request_object, response_object, parsed_response)
+				Services::Auth.stub(:login).and_return(response)
+			end
 
-		it 'logs in existing users with cell phone' do
-			User.login(@campaign, @session, "5714906806", "doitdiditdone", "", 0)
-			@session[:drupal_user_id].should eq "1234184"
-		end
+			it 'logs in existing users' do
+				User.login(@campaign, @session, @user.email, "test", "", 0)
+				@session[:drupal_user_id].should eq @user.uid.to_s
+			end
 
-		it 'logs in through Facebook' do
-			User.login(@campaign, @session, @user.email, "test", "", 123)
-			@session[:drupal_user_id].should eq @user.uid.to_s
+			it 'logs in through Facebook' do
+				User.login(@campaign, @session, @user.email, "test", "", 123)
+				@session[:drupal_user_id].should eq @user.uid.to_s
+			end
 		end
 
 		it 'does not login nonexistent users' do
+			# fakes failed login
+			request_object = HTTParty::Request.new Net::HTTP::Get, '/'
+			parsed_response = lambda { {"foo" => "bar"} }
+			response_object = Net::HTTPOK.new('1.1', 404, 'OK')
+			response_object.stub(:body => "{foo:'bar'}")
+			response = HTTParty::Response.new(request_object, response_object, parsed_response)
+			Services::Auth.stub(:login).and_return(response)
+
 			User.login(@campaign, @session, "awoefj@aofeij.com", "awefsd", "", 0).should eq false
 		end
 
 		context 'logging in new CAS users' do
 			before :each do
-				@email = 'void-' + Time.now.to_i.to_s + '@dosomething.org'
-				@phone = "1234567890"
-				User.register("test", @email, "123456789", "test", "test", @phone, "10/05/2000")
+				request_object = HTTParty::Request.new Net::HTTP::Get, '/'
+				parsed_response = lambda { {"user" => {"uid" => "1263777", "roles" => {"values" => "test"}}, "profile" => {"field_user_mobile" => ""}} }
+				response_object = Net::HTTPOK.new('1.1', 200, 'OK')
+				response_object.stub(:body => "{foo:'bar'}")
+				response = HTTParty::Response.new(request_object, response_object, parsed_response)
+				Services::Auth.stub(:login).and_return(response)
 			end
 
 			it 'adds users who are not in the CAS database' do
-				User.login(@campaign, @session, @email, "test", "", 0)
+				User.login(@campaign, @session, "test@subject.com", "test", "", 0)
 				User.find_by_uid(@session[:drupal_user_id]).should_not eq nil
 			end
 
@@ -105,18 +122,18 @@ describe User do
 			end
 
 			describe 'contacts users if they have not done the campaign yet' do
-				after { User.login(@campaign, @session, @email, "test", @phone, 0) }
+				after { User.login(@campaign, @session, "test@subject.com", "test", "1234567890", 0) }
 				
 				it 'through Mailchimp' do
-					Services::MailChimp.should_receive(:subscribe).with(@email, @campaign.mailchimp)
+					Services::MailChimp.should_receive(:subscribe).with("test@subject.com", @campaign.mailchimp)
 				end
 				
 				it 'through Mandrill' do
-					Services::Mandrill.should_receive(:mail).with(@campaign.lead, @campaign.lead_email, @email, @campaign.email_signup)
+					Services::Mandrill.should_receive(:mail).with(@campaign.lead, @campaign.lead_email, "test@subject.com", @campaign.email_signup)
 				end
 				
 				it 'through MobileCommons' do
-					Services::MobileCommons.should_receive(:subscribe).with(@phone, @campaign.mobile_commons)
+					Services::MobileCommons.should_receive(:subscribe).with("1234567890", @campaign.mobile_commons)
 				end
 			end
 		end
