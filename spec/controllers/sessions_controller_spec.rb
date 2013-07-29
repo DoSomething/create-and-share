@@ -51,16 +51,16 @@ describe SessionsController, :type => :controller do
             post :create, @params
           end
 
-          it 'login' do
-            # Make sure it redirects us to root
-            expect(response).to redirect_to root_path(:campaign_path => @campaign.path)
+          specify 'login' do
+            # Make sure it redirects us to participation
+            expect(response).to redirect_to participation_path(:campaign_path => @campaign.path)
 
             # Make sure session was set
             session["drupal_user_id"].should eq @user.uid.to_s
             flash[:message].should eq "You've logged in successfully!"
           end
 
-          it 'logout' do
+          specify 'logout' do
             delete :destroy
             session["drupal_user_id"].should eq nil
             expect(response).to redirect_to root_path(:campaign_path => '')
@@ -72,7 +72,7 @@ describe SessionsController, :type => :controller do
             post :create, @params
           end
 
-          it 'login' do
+          specify 'login' do
             # Make sure it redirects us to root
             expect(response).to redirect_to root_path(:campaign_path => '')
 
@@ -81,7 +81,7 @@ describe SessionsController, :type => :controller do
             flash[:message].should eq "You've logged in successfully!"
           end
 
-          it 'logout' do
+          specify 'logout' do
             delete :destroy
             session["drupal_user_id"].should eq nil
             expect(response).to redirect_to root_path(:campaign_path => '')
@@ -95,7 +95,7 @@ describe SessionsController, :type => :controller do
           @params[:session][:email] = @user.email
         end
 
-        it 'with campaign' do
+        specify 'with campaign' do
           @params[:session][:campaign] = @campaign.id
           post :create, @params
 
@@ -107,7 +107,7 @@ describe SessionsController, :type => :controller do
           flash[:error].should eq "A user with that account already exists."
         end
 
-        it 'without campaign' do
+        specify 'without campaign' do
           post :create, @params
 
           # Make sure it redirects to login
@@ -126,13 +126,13 @@ describe SessionsController, :type => :controller do
         Services::Auth.stub(:check_exists).and_return([])
       end
 
-      describe 'logs in user' do
+      describe 'does not login user' do
         before :each do
           @params = login_params
           @params[:session][:username] = @user.email
         end
 
-        it 'with campaign' do
+        specify 'with campaign' do
           @params[:session][:campaign] = @campaign.id
           post :create, @params
 
@@ -144,7 +144,7 @@ describe SessionsController, :type => :controller do
           flash[:error].should eq "Invalid username / password."
         end
 
-        it 'without campaign' do
+        specify 'without campaign' do
           post :create, @params
 
           # Make sure it redirects us to login
@@ -156,25 +156,25 @@ describe SessionsController, :type => :controller do
         end
       end
 
-      describe 'does not register user' do
+      describe 'registers user' do
         before :each do
           @params = register_params
           @params[:session][:email] = @user.email
         end
 
-        it 'with campaign' do
+        specify 'with campaign' do
           @params[:session][:campaign] = @campaign.id
           post :create, @params
 
-          # Make sure it redirects to root
-          expect(response).to redirect_to root_path(:campaign_path => @campaign.path)
+          # Make sure it redirects to participation
+          expect(response).to redirect_to participation_path(:campaign_path => @campaign.path)
 
           # Make sure session was set
           session["drupal_user_id"].should eq @user.uid.to_s
           flash[:message].should eq "You've registered successfully!"
         end
 
-        it 'without campaign' do
+        specify 'without campaign' do
           post :create, @params
 
           # Make sure it redirects to root

@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  attr_accessible :email, :fbid, :uid, :is_admin
+  attr_accessible :email, :fbid, :uid, :is_admin, :mobile
   cattr_accessor :campaign
 
   has_many :campaigns, through: :participations
@@ -51,7 +51,7 @@ class User < ActiveRecord::Base
         uid = response['user']['uid']
         roles = response['user']['roles']
         if !response["profile"]["field_user_mobile"].empty?
-          cell = response["profile"]["field_user_mobile"]["und"][0]["value"]
+          mobile = response["profile"]["field_user_mobile"]["und"][0]["value"]
         end
       else
         return false
@@ -60,17 +60,7 @@ class User < ActiveRecord::Base
 
     user = User.find_by_uid(uid)
     if !user # creates a new user if he/she isn't already in the database
-      user = User.new(:uid => uid, :fbid => fbid, :email => username, :is_admin => roles.values.include?('administrator'))
-      
-      ###########
-      ### FIX ###
-      ###########
-      # handle mailchimp and mobilecommons if email/cell are provided
-      # email = username
-      # if !email.match(/\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i)
-      #   email = nil
-      # end
-      # User.handle_mc(campaign, email, cell)
+      user = User.new(:uid => uid, :fbid => fbid, :email => username, :mobile => mobile, :is_admin => roles.values.include?('administrator'))
     elsif fbid != 0 # adds a fbid if they are logging in with facebook for the first time
       ### UPDATE TO EDIT FACEBOOK ON DRUPAL AS WELL ###
       user.fbid = fbid
@@ -90,23 +80,22 @@ class User < ActiveRecord::Base
   # @param string mobile
   #   A valid phone number to send a txt to.
   ##
-  ############################
-  def self.handle_mc(campaign, email = nil, mobile = nil)
-    if !email.nil?
+  def handle_mc(campaign)
+    if !self.email.nil? && email.match(/\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i)
       if !campaign.mailchimp.nil?
-        logger.info "Sending mailchimp (#{campaign.mailchimp}) email to (#{email})"
-        Services::MailChimp.subscribe(email, campaign.mailchimp)
+        logger.info "Sending mailchimp (#{campaign.mailchimp}) email to (#{self.email})"
+        Services::MailChimp.subscribe(self.email, campaign.mailchimp)
       end
       if !campaign.email_signup.nil?
-        logger.info "Sending mandrill (#{campaign.email_signup}) email to (#{email})"
-        Services::Mandrill.mail(campaign.lead, campaign.lead_email, email, campaign.email_signup)
+        logger.info "Sending mandrill (#{campaign.email_signup}) email to (#{self.email})"
+        Services::Mandrill.mail(campaign.lead, campaign.lead_email, self.email, campaign.email_signup)
       end
     end
 
-    if !mobile.nil?
+    if !self.mobile.nil?
       if !campaign.mobile_commons.nil?
-        logger.info "Sending mobile commons (#{campaign.mobile_commons}) @@campaign to (#{mobile})"
-        Services::MobileCommons.subscribe(mobile, campaign.mobile_commons)
+        logger.info "Sending mobile commons (#{campaign.mobile_commons}) text to (#{self.mobile})"
+        Services::MobileCommons.subscribe(self.mobile, campaign.mobile_commons)
       end
     end
   end

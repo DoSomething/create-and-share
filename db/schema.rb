@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130729175603) do
+ActiveRecord::Schema.define(:version => 20130729211527) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -122,7 +122,7 @@ ActiveRecord::Schema.define(:version => 20130729175603) do
     t.datetime "created_at",              :null => false
     t.datetime "updated_at",              :null => false
     t.boolean  "is_admin"
-    t.boolean  "intent"
+    t.string   "mobile"
   end
 
 end

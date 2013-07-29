@@ -40,7 +40,10 @@ CreateAndShare::Application.routes.draw do
     get 'faq',          to: 'static_pages#faq', as: :faq
     get 'gallery',      to: 'static_pages#gallery', as: :gallery
     get 'start',        to: 'static_pages#start', as: :start
+
+    # User pages
     get 'submit/guide', to: 'users#intent', as: :intent
+    get 'participation', to: 'users#participation', as: :participation
 
     get 'submit', to: 'posts#new', as: :submit
     get ':id/edit', to: 'posts#edit', as: :edit

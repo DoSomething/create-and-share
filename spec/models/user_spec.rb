@@ -104,7 +104,7 @@ describe User do
 			User.login(@campaign, @session, "awoefj@aofeij.com", "awefsd", "", 0).should eq false
 		end
 
-		context 'logging in new CAS users' do
+		describe 'logging in new CAS users' do
 			before :each do
 				request_object = HTTParty::Request.new Net::HTTP::Get, '/'
 				parsed_response = lambda { {"user" => {"uid" => "1263777", "roles" => {"values" => "test"}}, "profile" => {"field_user_mobile" => ""}} }
@@ -123,25 +123,26 @@ describe User do
 				user = FactoryGirl.create(:user)
 				expect{ User.login(@campaign, @session, user.email, "test", "", 0) }.to_not change{ User.count }.by(1)
 			end
+		end
+	end
 
-			###########
-			### FIX ###
-			###########
-			# describe 'contacts users if they have not done the campaign yet', focus:true do
-			# 	after { User.login(@campaign, @session, "test@subject.com", "test", "1234567890", 0) }
-				
-			# 	it 'through Mailchimp' do
-			# 		Services::MailChimp.should_receive(:subscribe).with("test@subject.com", @campaign.mailchimp)
-			# 	end
-				
-			# 	it 'through Mandrill' do
-			# 		Services::Mandrill.should_receive(:mail).with(@campaign.lead, @campaign.lead_email, "test@subject.com", @campaign.email_signup)
-			# 	end
-				
-			# 	it 'through MobileCommons' do
-			# 		Services::MobileCommons.should_receive(:subscribe).with("1234567890", @campaign.mobile_commons)
-			# 	end
-			# end
+	describe 'Mailchimp and MobileCommons' do
+		before :each do
+			@user = FactoryGirl.create(:user)
+			@campaign = FactoryGirl.create(:campaign)
+		end
+		after { @user.handle_mc(@campaign) }
+		
+		it 'through Mailchimp' do
+			Services::MailChimp.should_receive(:subscribe).with(@user.email, @campaign.mailchimp)
+		end
+		
+		it 'through Mandrill' do
+			Services::Mandrill.should_receive(:mail).with(@campaign.lead, @campaign.lead_email, @user.email, @campaign.email_signup)
+		end
+		
+		it 'through MobileCommons' do
+			Services::MobileCommons.should_receive(:subscribe).with(@user.mobile, @campaign.mobile_commons)
 		end
 	end
 end

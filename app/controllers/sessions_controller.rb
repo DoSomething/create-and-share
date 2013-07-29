@@ -103,9 +103,13 @@ class SessionsController < ApplicationController
           flash[:message] = "You've logged in with Facebook successfully!"
         end
 
-        source = session[:source] ||= root_path(:campaign_path => campaign ? campaign.path : '')
-        session[:source] = nil
-        redirect_to source
+        if campaign
+          redirect_to participation_path(campaign_path: campaign.path)
+        else
+          source = session[:source] ||= root_path(campaign_path: '')
+          session[:source] = nil
+          redirect_to source
+        end
       else
         case form
         when 'login'
