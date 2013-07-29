@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130722164840) do
+ActiveRecord::Schema.define(:version => 20130729175603) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -42,6 +42,18 @@ ActiveRecord::Schema.define(:version => 20130722164840) do
     t.string   "email_signup"
     t.string   "meme_header"
   end
+
+  create_table "participations", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "campaign_id"
+    t.boolean  "intent"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "participations", ["campaign_id"], :name => "index_participations_on_campaign_id"
+  add_index "participations", ["user_id", "campaign_id"], :name => "index_participations_on_user_id_and_campaign_id", :unique => true
+  add_index "participations", ["user_id"], :name => "index_participations_on_user_id"
 
   create_table "posts", :force => true do |t|
     t.string   "image"

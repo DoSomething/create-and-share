@@ -5,6 +5,9 @@ describe Campaign do
     FactoryGirl.create(:campaign).should be_valid
   end
 
+  it { FactoryGirl.create(:campaign).should respond_to(:participations) }
+  it { FactoryGirl.create(:campaign).should respond_to(:users) }
+
   describe 'validations' do
     it 'is invalid without a title' do
       FactoryGirl.build(:campaign, title: nil).should_not be_valid      

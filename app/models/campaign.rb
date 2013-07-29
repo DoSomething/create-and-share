@@ -7,6 +7,9 @@ class Campaign < ActiveRecord::Base
 
   has_many :posts
 
+  has_many :users, through: :participations
+  has_many :participations, dependent: :destroy
+
   validates_presence_of :developers, :end_date, :lead,
   :lead_email, :path, :start_date,
   :title, :description,

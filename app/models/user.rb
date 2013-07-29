@@ -2,6 +2,9 @@ class User < ActiveRecord::Base
   attr_accessible :email, :fbid, :uid, :is_admin
   cattr_accessor :campaign
 
+  has_many :campaigns, through: :participations
+  has_many :participations, dependent: :destroy
+
   include Services
 
   # checks if a user with the given email exists in the DoSomething drupal database

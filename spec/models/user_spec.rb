@@ -13,6 +13,9 @@ describe User do
 		FactoryGirl.create(:user).should be_valid
 	end
 
+	it { FactoryGirl.create(:user).should respond_to(:participations) }
+	it { FactoryGirl.create(:user).should respond_to(:campaigns) }
+
 	describe 'existence' do
 		before :each do
 			@user = FactoryGirl.build(:user)
