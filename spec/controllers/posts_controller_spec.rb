@@ -152,18 +152,36 @@ describe PostsController, :type => :controller do
     end
   end
 
-  ### NOT WORKING ATM
-  # describe "filter" do
-  #   context "by state", focus:true do
-  #     before :each do
-  #       @ny = FactoryGirl.create(:post, campaign_id: campaign.id, state: "NY")
-  #       @va = FactoryGirl.create(:post, campaign_id: campaign.id, state: "VA")
-  #     end
-  #     it 'filters posts' do
+  describe 'filter' do
+    before :each do
+      @caliCat = FactoryGirl.create(:post, state: "CA", extras: { :animal_type => 'cat' }, campaign_id: campaign.id)
+      CreateAndShare::Application.config.filters = { campaign.path => { ":atype-:state" => { "constraints" => { ":atype" => "(?<atype>cat|dog|other)s?", ":state" => "(?<state>[A-Z]{2})" }, "where" => { "animal_type" => "atype", "state" => "state" } } } }
+    end
 
-  #     end
-  #   end
-  # end
+    describe 'filters posts' do
+      specify 'includes' do
+        get :filter, { campaign_path: campaign.path, filter: "cats-CA" }, session
+        assigns(:posts).should include(@caliCat)
+      end
+
+      specify 'does not includes' do
+        get :filter, { campaign_path: campaign.path, filter: "cats-VA" }, session
+        assigns(:posts).should_not include(@caliCat)
+      end
+    end
+
+    it 'redirects to root if no filters' do
+      CreateAndShare::Application.config.filters[campaign.path] = nil
+      get :filter, { campaign_path: campaign.path, filter: "cats-VA" }, session
+      expect(response).to redirect_to root_path(campaign_path: campaign.path)
+    end
+
+    it 'redirects to root if there is an error in Post.filtered' do
+      Post.stub(:filtered).and_raise("well, shit")
+      get :filter, { campaign_path: campaign.path, filter: "cats-VA" }, session
+      expect(response).to redirect_to root_path(campaign_path: campaign.path)
+    end
+  end
 
   describe "extras" do
     describe "mine" do

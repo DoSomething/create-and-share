@@ -176,7 +176,7 @@ class PostsController < ApplicationController
 
   # GET /:campaign/show/cats-NY
   def filter
-    if Rails.application.config.filters[@campaign].nil?
+    if Rails.application.config.filters[@campaign.path].nil?
       redirect_to :root
       return
     end

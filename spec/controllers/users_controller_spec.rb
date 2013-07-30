@@ -12,12 +12,12 @@ describe UsersController, :type => :controller do
 
 	describe 'intent' do
 		it 'redirects to start' do
+			@user.participations.create(intent: false, campaign_id: campaign.id)
 			get :intent, { :campaign_path => campaign.path }, @params
-
 			expect(response).to redirect_to start_path(campaign_path: campaign.path)
 		end
 
-		it 'saves the intent', focus:true do
+		it 'saves the intent' do
 			get :participation, { :campaign_path => campaign.path }, @params
 			expect { get :intent, { :campaign_path => campaign.path }, @params }.to change { @user.participations.where(campaign_id: campaign.id).first.intent }.from(false).to(true)
 		end

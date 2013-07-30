@@ -63,7 +63,7 @@ describe Post do
       post.save
     end
 
-    context 'infinite scroll functionality' do
+    describe 'infinite scroll functionality' do
       before :each do
         @post = FactoryGirl.create(:post)
         @promoted = FactoryGirl.create(:post, campaign_id: @post.campaign.id, promoted: true)
@@ -101,7 +101,20 @@ describe Post do
       end
     end
 
-    context 'cleaning' do
+    describe 'filtering' do
+      before :each do
+        @caliCat = FactoryGirl.create(:post, state: "CA", extras: { :animal_type => 'cat' })
+        @campaign = FactoryGirl.create(:campaign, path: "picsforpets")
+        CreateAndShare::Application.config.filters = { @campaign.path => { ":atype-:state" => { "constraints" => { ":atype" => "(?<atype>cat|dog|other)s?", ":state" => "(?<state>[A-Z]{2})" }, "where" => { "animal_type" => "atype", "state" => "state" } } } }
+      end
+
+      it 'filters posts' do
+        results = Post.filtered({ campaign_path: @campaign.path, filter: "cats-CA" })
+        results.should include(@caliCat)
+      end
+    end
+
+    describe 'cleaning' do
       it 'strips bad tags from name' do
         new_post = FactoryGirl.create(:post, name: '<b>Spot</b>')
         new_post.name.should eq 'Spot'

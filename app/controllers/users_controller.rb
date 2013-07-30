@@ -8,9 +8,10 @@ class UsersController < ApplicationController
 
     # Save the intent to related participation.
     user = User.find_by_uid(session[:drupal_user_id])
-    participation = user.participations.where(campaign_id: @campaign.id).first
-    participation.intent = true
-    participation.save
+    if participation = user.participations.where(campaign_id: @campaign.id).first
+      participation.intent = true
+      participation.save
+    end
 
     # Bring them to the real submit path
     redirect_to :start
