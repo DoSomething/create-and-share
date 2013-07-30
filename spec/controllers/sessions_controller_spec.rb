@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe SessionsController, :type => :controller do
+  let(:user) { FactoryGirl.create(:user) }
   let(:login_params) { { :form => 'login', :session => { :password => 'test' } } }
   let(:register_params) { {
           :form => 'register',
@@ -23,7 +24,7 @@ describe SessionsController, :type => :controller do
     Services::MobileCommons.stub(:subscribe)
     Services::Auth.stub(:check_admin).and_return([])
     request_object = HTTParty::Request.new Net::HTTP::Get, '/'
-    parsed_response = lambda { {"user" => {"uid" => "1263777", "roles" => {"values" => "test"}}, "profile" => {"field_user_mobile" => ""}} }
+    parsed_response = lambda { {"user" => {"uid" => user.uid, "roles" => {"values" => "test"}}, "profile" => {"field_user_mobile" => ""}} }
     response_object = Net::HTTPOK.new('1.1', 200, 'OK')
     response_object.stub(:body => "{foo:'bar'}")
     response = HTTParty::Response.new(request_object, response_object, parsed_response)
@@ -36,7 +37,7 @@ describe SessionsController, :type => :controller do
     context 'user exists' do
       before :each do
         @user = FactoryGirl.build(:user)
-        Services::Auth.stub(:check_exists).and_return([{"uid" => "1263777"}])
+        Services::Auth.stub(:check_exists).and_return([{"uid" => user.uid}])
       end
 
       describe 'logs in user' do
@@ -56,7 +57,7 @@ describe SessionsController, :type => :controller do
             expect(response).to redirect_to participation_path(:campaign_path => @campaign.path)
 
             # Make sure session was set
-            session["drupal_user_id"].should eq @user.uid.to_s
+            session["drupal_user_id"].should eq @user.uid
             flash[:message].should eq "You've logged in successfully!"
           end
 
@@ -77,7 +78,7 @@ describe SessionsController, :type => :controller do
             expect(response).to redirect_to root_path(:campaign_path => '')
 
             # Make sure session was set
-            session["drupal_user_id"].should eq @user.uid.to_s
+            session["drupal_user_id"].should eq @user.uid
             flash[:message].should eq "You've logged in successfully!"
           end
 
@@ -170,7 +171,7 @@ describe SessionsController, :type => :controller do
           expect(response).to redirect_to participation_path(:campaign_path => @campaign.path)
 
           # Make sure session was set
-          session["drupal_user_id"].should eq @user.uid.to_s
+          session["drupal_user_id"].should eq @user.uid
           flash[:message].should eq "You've registered successfully!"
         end
 
@@ -181,7 +182,7 @@ describe SessionsController, :type => :controller do
           expect(response).to redirect_to root_path(:campaign_path => '')
 
           # Make sure session was set
-          session["drupal_user_id"].should eq @user.uid.to_s
+          session["drupal_user_id"].should eq @user.uid
           flash[:message].should eq "You've registered successfully!"
         end
       end

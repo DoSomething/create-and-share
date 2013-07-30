@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe PostsController, :type => :controller do
+  let(:user) { FactoryGirl.create(:user) }
   let(:campaign) { FactoryGirl.create(:campaign, path: "picsforpets") }
-  let(:session) { { drupal_user_id: '1263777', drupal_user_role: { test: 'authenticated user', blah: 'administrator' } } }
+  let(:session) { { drupal_user_id: user.uid, drupal_user_role: { test: 'authenticated user', blah: 'administrator' } } }
 
   before { @post = FactoryGirl.create(:post, campaign_id: campaign.id) }
 
@@ -186,7 +187,7 @@ describe PostsController, :type => :controller do
   describe "extras" do
     describe "mine" do
       before :each do
-        @mine = FactoryGirl.create(:post, campaign_id: campaign.id, uid: 1263777)
+        @mine = FactoryGirl.create(:post, campaign_id: campaign.id, uid: user.uid)
         @notMine = FactoryGirl.create(:post, campaign_id: campaign.id, uid: 9999999)
         get :extras, { campaign_path: campaign.path, run: "mine" }, session
       end

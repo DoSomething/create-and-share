@@ -28,8 +28,9 @@ describe ApplicationController do
     end
   end
 
+  let(:user) { FactoryGirl.create(:user) }
   let(:campaign) { FactoryGirl.create(:campaign) }
-  let(:session) { { drupal_user_id: '1263777', drupal_user_role: { test: 'authenticated user', blah: 'administrator' } } }
+  let(:session) { { drupal_user_id: user.uid, drupal_user_role: { test: 'authenticated user', blah: 'administrator' } } }
 
   describe 'authorization' do
     before { @session = { drupal_user_role: {} } }
