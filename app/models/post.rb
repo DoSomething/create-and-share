@@ -69,7 +69,7 @@ class Post < ActiveRecord::Base
 
     if !filtered
       promoted = Rails.cache.fetch prefix + 'posts-' + state + '-promoted' do
-        Post
+        self
           .build_post(campaign)
           .where(:promoted => true)
           .order('RANDOM()')
