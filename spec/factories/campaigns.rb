@@ -12,6 +12,7 @@ FactoryGirl.define do
     description { Faker::Lorem.paragraph }
     image Rack::Test::UploadedFile.new(Rails.root + 'spec/mocks/ruby.png', 'image/png')
     gated true
+    meme true
     meme_header { Faker::Lorem.words.join(" ") }
     email_submit { Faker::Lorem.word }
     email_signup { Faker::Lorem.word }

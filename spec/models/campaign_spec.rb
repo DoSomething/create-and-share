@@ -45,10 +45,6 @@ describe Campaign do
       FactoryGirl.build(:campaign, email_submit: nil).should_not be_valid      
     end
 
-    it 'is invalid without a meme header' do
-      FactoryGirl.build(:campaign, meme_header: nil).should_not be_valid      
-    end
-
     it 'is invalid without a lead email' do
       FactoryGirl.build(:campaign, lead_email: nil).should_not be_valid      
     end
@@ -68,6 +64,11 @@ describe Campaign do
     it 'has unique paths' do
       FactoryGirl.create(:campaign, path: 'used')
       FactoryGirl.build(:campaign, path: 'used').should_not be_valid
+    end
+
+    it 'does not have a meme_header if meme is false' do
+      campaign = FactoryGirl.create(:campaign, meme_header: "should not be here", meme: false)
+      campaign.meme_header.should eq ""
     end
   end
 
