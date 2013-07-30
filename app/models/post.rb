@@ -59,11 +59,8 @@ class Post < ActiveRecord::Base
     params[:page] ||= 0
 
     uncached_posts = self
-      .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
-      .where(:campaign_id => campaign.id)
-      .group('posts.id')
-      .order('posts.created_at DESC')
+      .build_post(campaign)
+      .order('created_at DESC')
 
     if filtered
       uncached_posts = uncached_posts
@@ -73,10 +70,8 @@ class Post < ActiveRecord::Base
     if !filtered
       promoted = Rails.cache.fetch prefix + 'posts-' + state + '-promoted' do
         Post
-          .joins('LEFT JOIN shares ON shares.post_id = posts.id')
-          .select('posts.*, COUNT(shares.*) AS real_share_count')
-          .group('posts.id')
-          .where(:promoted => true, :flagged => false, :campaign_id => campaign.id)
+          .build_post(campaign)
+          .where(:promoted => true)
           .order('RANDOM()')
           .limit(1)
           .all

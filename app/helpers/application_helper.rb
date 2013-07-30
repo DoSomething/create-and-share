@@ -38,7 +38,7 @@ module ApplicationHelper
     if user_id.nil? || campaign.nil?
       return false
     end
-    posts = Post.where(:uid => user_id, campaign_id: campaign.id)
+    posts = Post.where(uid: user_id, campaign_id: campaign.id)
 
     !posts.nil? && posts.count > 0
   end
@@ -58,16 +58,16 @@ module ApplicationHelper
   end
 
   def campaign_stylesheet_link_tag(stylesheet, campaign)
-    if campaign && File.exist?(Rails.root.to_s + '/app/assets/stylesheets/campaigns/' + get_campaign.path + '/' + stylesheet + '.sass')
-      stylesheet_link_tag 'campaigns/' + get_campaign.path + '/application', :media => "all"
+    if campaign && File.exist?(Rails.root.to_s + '/app/assets/stylesheets/campaigns/' + campaign.path + '/' + stylesheet + '.sass')
+      stylesheet_link_tag 'campaigns/' + campaign.path + '/application', :media => "all"
     else
       stylesheet_link_tag stylesheet, :media => "all"
     end
   end
 
   def campaign_javascript_include_tag(script, campaign)
-    if campaign && File.exist?(Rails.root.to_s + '/app/assets/javascripts/campaigns/' + get_campaign.path + '/' + script + '.js')
-      javascript_include_tag 'campaigns/' + get_campaign.path + '/application'
+    if campaign && File.exist?(Rails.root.to_s + '/app/assets/javascripts/campaigns/' + campaign.path + '/' + script + '.js')
+      javascript_include_tag 'campaigns/' + campaign.path + '/application'
     else
       javascript_include_tag script
     end

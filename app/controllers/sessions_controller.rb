@@ -58,7 +58,6 @@ class SessionsController < ApplicationController
 
   # GET /auth/facebook/callback
   def fboauth
-    p env['omniauth.auth']
     auth = env['omniauth.auth']['extra']['raw_info'] # data from Facebook
 
     # Try and find the campaign by the path specified in source.
