@@ -47,12 +47,17 @@ Spork.prefork do
     # the seed, which is printed after each run.
     #     --seed 1234
     config.order = "random"
+
+    config.filter_run :focus => true
+    config.run_all_when_everything_filtered = true
+
+    OmniAuth.config.test_mode = true
   end
 end
 
 Spork.each_run do
   # This code will be run each time you run your specs.
-
+  FactoryGirl.reload
 end
 
 # --- Instructions ---

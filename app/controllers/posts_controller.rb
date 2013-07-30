@@ -1,6 +1,8 @@
 class PostsController < ApplicationController
   include Services
-  include PostsHelper
+
+  # Get campaign
+  before_filter :get_campaign, only: [:campaign_closed, :index, :filter, :extras, :show, :vanity]
 
   # Before everything runs, run an authentication check and an API key check.
   before_filter :is_not_authenticated, :verify_api_key, :campaign_closed
@@ -12,7 +14,7 @@ class PostsController < ApplicationController
   # Shows the static (closed) gallery when a campaign is finished, or not started yet.
   def campaign_closed
     now = Time.now
-    if $campaign.start_date > now || $campaign.end_date < now
+    if @campaign && (@campaign.start_date > now || @campaign.end_date < now)
       render 'static_pages/gallery'
       return
     end
@@ -21,7 +23,7 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
-    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(admin?, params, 'index')
+    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
 
     respond_to do |format|
       format.js
@@ -65,7 +67,7 @@ class PostsController < ApplicationController
   # GET /posts/1.json
   def show
     @post = Post
-      .build_post
+      .build_post(@campaign)
       .where(id: params[:id])
       .limit(1)
       .first
@@ -99,7 +101,6 @@ class PostsController < ApplicationController
     end
 
     @post = Post.new(params[:post])
-
     respond_to do |format|
       if @post.save
         format.html { redirect_to show_post_path(@post, :campaign_path => @post.campaign.path) }
@@ -160,14 +161,14 @@ class PostsController < ApplicationController
   # GET /:campaign/henri
   def vanity
     @post = Post
-      .build_post
+      .build_post(@campaign)
       .where(promoted: true)
       .where('LOWER(name) = ?', params[:vanity].downcase)
       .limit(1)
       .first
 
     if @post.nil?
-      redirect_to :root
+      redirect_to root_path(campaign_path: @campaign.path)
     else
       render :show
     end
@@ -175,13 +176,13 @@ class PostsController < ApplicationController
 
   # GET /:campaign/show/cats-NY
   def filter
-    if Rails.application.config.filters[params[:campaign_path]].nil?
+    if Rails.application.config.filters[@campaign.path].nil?
       redirect_to :root
       return
     end
 
     begin
-      @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(admin?, params, params[:filter], true)
+      @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, params[:filter], true)
       @filter = params[:filter]
     rescue
       redirect_to :root
@@ -205,7 +206,7 @@ class PostsController < ApplicationController
     @admin = ''
     @page = 0.to_s
 
-    @posts = Post.build_post
+    @posts = Post.build_post(@campaign)
     if params[:run] == 'mine'
       @posts = @posts.where(:uid => session[:drupal_user_id])
     elsif params[:run] == 'featured'

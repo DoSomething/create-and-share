@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130715191949) do
+ActiveRecord::Schema.define(:version => 20130730200400) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -38,10 +38,23 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.datetime "image_updated_at"
     t.string   "mailchimp"
     t.string   "mobile_commons"
-    t.string   "mailchimp_submit"
     t.string   "email_submit"
     t.string   "email_signup"
+    t.string   "meme_header"
+    t.boolean  "meme"
   end
+
+  create_table "participations", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "campaign_id"
+    t.boolean  "intent"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "participations", ["campaign_id"], :name => "index_participations_on_campaign_id"
+  add_index "participations", ["user_id", "campaign_id"], :name => "index_participations_on_user_id_and_campaign_id", :unique => true
+  add_index "participations", ["user_id"], :name => "index_participations_on_user_id"
 
   create_table "posts", :force => true do |t|
     t.string   "image"
@@ -54,8 +67,6 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.datetime "creation_time"
     t.datetime "update_time"
     t.boolean  "adopted"
-    t.string   "top_text"
-    t.string   "bottom_text"
     t.datetime "created_at",                            :null => false
     t.datetime "updated_at",                            :null => false
     t.string   "image_file_name"
@@ -112,7 +123,7 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.datetime "created_at",              :null => false
     t.datetime "updated_at",              :null => false
     t.boolean  "is_admin"
-    t.boolean  "intent"
+    t.string   "mobile"
   end
 
 end

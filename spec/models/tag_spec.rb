@@ -40,4 +40,10 @@ describe Tag do
       @tag.should_not be_valid
     end
   end
+
+  it 'can create tags for a record' do
+    post = FactoryGirl.create(:post, extras: { "test" => "this is a test" })
+    tags = Tag.create_tags(post)
+    Tag.where(post_id: post.id).count.should be > 0
+  end
 end

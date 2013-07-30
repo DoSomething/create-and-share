@@ -20,6 +20,7 @@ $(document).ready(function() {
           $('.inview').remove();
           $('<div></div>').addClass('inview').appendTo($('.post-list'));
 
+          $('img.lazy').lazyload();
           // Reload Facebook click event
           load_facebook();
           // Running count += returned count
@@ -39,6 +40,7 @@ $(document).ready(function() {
           $('.inview').remove();
           $('<div></div>').addClass('inview').appendTo($('.post-list'));
 
+          $('img.lazy').lazyload();
           // Load Facebook
           load_facebook();
           // Running count += returned count
