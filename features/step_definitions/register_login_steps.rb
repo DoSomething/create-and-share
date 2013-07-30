@@ -59,7 +59,7 @@ When /I login with (.*)/ do |provider|
         :last_name => "Dummy"
       }
     }
-  });
+  })
   visit "/auth/#{provider.downcase}"
 end
 

@@ -12,14 +12,6 @@ describe CampaignsController, :type => :controller do
     end
   end
 
-# describe "GET show" do
-#    it "assigns the requested campaign as @campaign" do
-#      campaign = Campaign.create! valid_attributes
-#      get :show, {:campaign => campaign.path}
-#      assigns(:campaign).should eq(campaign)
-#    end
-#  end
-
   describe "GET new" do
     it "assigns a new campaign as @campaign" do
       get :new, {}, valid_session
@@ -38,9 +30,7 @@ describe CampaignsController, :type => :controller do
   describe "POST create" do
     describe "with valid params" do
       it "creates a new Campaign" do
-        expect {
-          post :create, {:campaign => valid_attributes}, valid_session
-        }.to change(Campaign, :count).by(1)
+        expect { post :create, {:campaign => valid_attributes}, valid_session }.to change(Campaign, :count).by(1)
       end
 
       it "assigns a newly created campaign as @campaign" do
@@ -56,16 +46,16 @@ describe CampaignsController, :type => :controller do
     end
 
     describe "with invalid params" do
+      before { Campaign.any_instance.stub(:save).and_return(false) }
+
       it "assigns a newly created but unsaved campaign as @campaign" do
         # Trigger the behavior that occurs when invalid params are submitted
-        Campaign.any_instance.stub(:save).and_return(false)
         post :create, {:campaign => { "title" => "invalid value" }}, valid_session
         assigns(:campaign).should be_a_new(Campaign)
       end
 
       it "re-renders the 'new' template" do
         # Trigger the behavior that occurs when invalid params are submitted
-        Campaign.any_instance.stub(:save).and_return(false)
         post :create, {:campaign => { "title" => "invalid value" }}, valid_session
         response.should render_template("new")
       end
@@ -74,43 +64,42 @@ describe CampaignsController, :type => :controller do
 
   describe "PUT update" do
     describe "with valid params" do
+      before { @campaign = Campaign.create! valid_attributes }
+
       it "updates the requested campaign" do
-        campaign = Campaign.create! valid_attributes
         # Assuming there are no other campaigns in the database, this
         # specifies that the Campaign created on the previous line
         # receives the :update_attributes message with whatever params are
         # submitted in the request.
         Campaign.any_instance.should_receive(:update_attributes).with({ "title" => "MyString" })
-        put :update, {:id => campaign.to_param, :campaign => { "title" => "MyString" }}, valid_session
+        put :update, {:id => @campaign.to_param, :campaign => { "title" => "MyString" }}, valid_session
       end
 
       it "assigns the requested campaign as @campaign" do
-        campaign = Campaign.create! valid_attributes
-        put :update, {:id => campaign.to_param, :campaign => valid_attributes}, valid_session
-        assigns(:campaign).should eq(campaign)
+        put :update, {:id => @campaign.to_param, :campaign => valid_attributes}, valid_session
+        assigns(:campaign).should eq @campaign
       end
 
       it "redirects to the campaign" do
-        campaign = Campaign.create! valid_attributes
-        put :update, {:id => campaign.to_param, :campaign => valid_attributes}, valid_session
-        response.should redirect_to(root_path(:campaign_path => campaign.path))
+        put :update, {:id => @campaign.to_param, :campaign => valid_attributes}, valid_session
+        response.should redirect_to(root_path(:campaign_path => @campaign.path))
       end
     end
 
     describe "with invalid params" do
-      it "assigns the campaign as @campaign" do
-        campaign = Campaign.create! valid_attributes
-        # Trigger the behavior that occurs when invalid params are submitted
+      before :each do
+        @campaign = Campaign.create! valid_attributes
         Campaign.any_instance.stub(:save).and_return(false)
-        put :update, {:id => campaign.to_param, :campaign => { "title" => "invalid value" }}, valid_session
-        assigns(:campaign).should eq(campaign)
+        put :update, {:id => @campaign.to_param, :campaign => { "title" => "invalid value" }}, valid_session
+      end
+
+      it "assigns the campaign as @campaign" do
+        # Trigger the behavior that occurs when invalid params are submitted
+        assigns(:campaign).should eq @campaign
       end
 
       it "re-renders the 'edit' template" do
-        campaign = Campaign.create! valid_attributes
         # Trigger the behavior that occurs when invalid params are submitted
-        Campaign.any_instance.stub(:save).and_return(false)
-        put :update, {:id => campaign.to_param, :campaign => { "title" => "invalid value" }}, valid_session
         response.should render_template("edit")
       end
     end

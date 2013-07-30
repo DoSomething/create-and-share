@@ -39,6 +39,7 @@ group :development, :test do
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'passenger'
   gem 'spork'
+  gem 'faker'
 
   #guard!
   gem 'guard-rspec'
