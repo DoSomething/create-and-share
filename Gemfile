@@ -34,7 +34,6 @@ group :development, :test do
   gem 'capybara'
   gem 'selenium-webdriver'
   gem 'headless'
-  gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'passenger'
@@ -43,7 +42,6 @@ group :development, :test do
 
   #guard!
   gem 'guard-rspec'
-  gem 'guard-cucumber'
   gem 'guard-livereload'
   gem 'rack-livereload'
   #gem 'guard-compass'
