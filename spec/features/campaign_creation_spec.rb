@@ -9,11 +9,11 @@ feature 'Campaign creation' do
   scenario 'Admin can create a valid campaign' do
     page.should have_content 'Add New Campaign'
     click_link 'Add New Campaign'
-    fill_campaign_form
+    campaign = fill_campaign_form
     click_button 'Create Campaign'
     page.should have_content 'We don\'t have anything here!'
     visit '/'
-    page.should have_css '.campaign'
+    page.should have_content campaign.description
   end
 
   scenario 'Admin gets errors when submitting an invalid form' do
