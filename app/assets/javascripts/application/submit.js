@@ -189,6 +189,10 @@ $(document).ready(function() {
     $("body").keydown(function(e) {
       if((e.which) == 27)
         reset_img(e);
+      if((e.which) == 13) {
+        e.preventDefault();
+        $("#crop-button").click();
+      }
     });
   };
 

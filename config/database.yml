@@ -19,6 +19,3 @@ production:
   encoding: unicode
   pool: 5
   database: create_and_share_campaigns
-
-cucumber:
-  <<: *test
