@@ -24,6 +24,7 @@ class PostsController < ApplicationController
   # GET /posts.json
   def index
     @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
+    @user = User.find_by_uid(session[:drupal_user_id])
 
     respond_to do |format|
       format.js
@@ -71,6 +72,8 @@ class PostsController < ApplicationController
       .where(id: params[:id])
       .limit(1)
       .first
+
+    @user = User.find_by_uid(session[:drupal_user_id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -224,15 +227,35 @@ class PostsController < ApplicationController
     render :index
   end
 
-  # POST /:campaign/posts/1/thumbs_up
-  def thumbs_up
-    Post.increment_counter(:thumbs_up_count, params[:id])
-    render json: { success: true }
-  end
+  # POST /:campaign/posts/1/thumbs
+  def thumbs
+    user = User.find_by_uid(session[:drupal_user_id])
+    post = Post.find(params[:id])
 
-  # POST /:campaign/posts/1/thumbs_down
-  def thumbs_down
-    Post.increment_counter(:thumbs_down_count, params[:id])
-    render json: { success: true }
+    color = true
+
+    if params[:type] == 'up'
+      if !user.voted_on?(post)
+        user.vote_for(post)
+      elsif user.voted_against?(post)
+        user.vote_exclusively_for(post)
+      else
+        user.unvote_for(post)
+        color = false
+      end
+    else
+      if !user.voted_on?(post)
+        user.vote_against(post)
+      elsif user.voted_for?(post)
+        user.vote_exclusively_against(post)
+      else
+        user.unvote_for(post)
+        color = false
+      end
+    end
+
+    @score = post.plusminus
+
+    render :json => { score: @score, color: color }
   end
 end

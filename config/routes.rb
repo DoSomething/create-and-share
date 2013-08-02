@@ -21,8 +21,7 @@ CreateAndShare::Application.routes.draw do
     resources :posts do
       member do
         post 'flag'
-        post 'thumbs_up'
-        post 'thumbs_down'
+        post 'thumbs'
       end
 
       collection do

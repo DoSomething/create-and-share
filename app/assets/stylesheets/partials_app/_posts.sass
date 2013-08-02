@@ -112,9 +112,27 @@ $first: 600px
       width: 450px
       @media only screen and (max-width: $first)
         width: 96%
+  .promoted /* Flip the background on promoted posts */
+    background: $promoted-sbg
 
-.post.promoted /* Flip the background on promoted posts */
-  background: $promoted-sbg
+  .votes
+    margin: 4% 0 2% 3%
+    .thumbs-up, .thumbs-down, .count
+      background-color: #dfdfde
+      padding: 5px 10px
+      border-radius: 10px
+      margin: 0 2px
+      img
+        position: relative
+        top: 3px
+    .count
+      background-color: #587ebe
+      color: white
+      margin: 0 2px 0 0
+    .thumbs-up.voted
+      background-color: #53e68b
+    .thumbs-down.voted
+      background-color: #e77
 
 
 // POST META-DATA

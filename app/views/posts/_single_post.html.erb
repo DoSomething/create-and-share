@@ -7,7 +7,8 @@
   <div class="story"><%=raw simple_format(@post.story).gsub(/(\r|\n|\r\n)/, '') %></div>
 
   <div class="votes">
-    <a href="#" class="thumbs" data-direction="up">Thumbs up</a>
-    <a href="#" class="thumbs" data-direction="down">Thumbs Down</a>
+    <span class="count"><%= @post.plusminus %></span>
+    <a href="#" class="thumbs-up<%= @user.voted_for?(@post) ? ' voted' : '' %>" data-type="up"><%= image_tag 'vote_yes.png' %></a>
+    <a href="#" class="thumbs-down<%= @user.voted_against?(@post) ? ' voted' : '' %>" data-type="down"><%= image_tag 'vote_no.png' %></a>
   </div>
 </div>

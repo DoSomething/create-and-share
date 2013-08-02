@@ -13,6 +13,7 @@ describe PostsController, :type => :controller do
 
       get :index, { :campaign_path => campaign.path }, session
 
+      assigns(:user).should eq user
       expect(assigns(:promoted)).to eq Post.find_by_promoted(true)
       expect(assigns(:posts)).to include(@post)
       expect(assigns(:count)).to eq 2
@@ -24,6 +25,7 @@ describe PostsController, :type => :controller do
     it 'assigns post' do
       get :show, { :campaign_path => campaign.path, :id => @post.id }, session
 
+      assigns(:user).should eq user
       expect(assigns(:post)).to eq @post
     end
   end
@@ -214,6 +216,46 @@ describe PostsController, :type => :controller do
 
       it 'does not display regular pets' do
         assigns(:posts).should_not include(@notPromoted)
+      end
+    end
+  end
+
+  describe "thumbs" do
+    before :each do
+      @post = FactoryGirl.create(:post)
+      @up = { type: 'up', id: @post.id }
+      @down = { type: 'down', id: @post.id }
+    end
+
+    after :each do
+      assigns(:score).should eq @post.plusminus
+      JSON.parse(response.body)["score"].should eq @post.plusminus
+    end
+
+    it 'thumbs up posts' do
+      xhr :post, :thumbs, @up, session
+      user.voted_on?(@post).should eq true
+    end
+
+    it 'thumbs down posts' do
+      xhr :post, :thumbs, @down, session
+      user.voted_against?(@post).should eq true
+    end
+
+    describe "already voted" do
+      before :each do
+        user.vote_for(@post)
+      end
+
+      it 'unvotes if already voted for the same type' do
+        xhr :post, :thumbs, @up, session
+        user.voted_on?(@post).should eq false
+      end
+
+      it 'changes vote if already voted for the other type' do
+        xhr :post, :thumbs, @down, session
+        user.voted_for?(@post).should eq false
+        user.voted_against?(@post).should eq true
       end
     end
   end

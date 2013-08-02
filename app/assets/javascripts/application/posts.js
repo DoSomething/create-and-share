@@ -98,15 +98,18 @@ $(function() {
     return false;
   });
 
-  $('.thumbs').click(function() {
-    var $direction = $(this).attr('data-direction');
-    var $id = $(this).parent().parent().attr('data-id');
-
-    $.post('/' + campaign.path + '/posts/' + $id + '/thumbs_' + $direction, {}, function(response) {
-      // Do Something...hahaha
+  $('.thumbs-up, .thumbs-down').click(function(e) {
+    e.preventDefault();
+    var type = $(this).data("type");
+    var id = $(this).parent().parent().data("id");
+    $.post('/' + campaign.path + '/posts/' + id + '/thumbs',
+      { type: type },
+      function(response) {
+        $('.post[data-id="' + id + '"] .count').text(response["score"]);
+        $('.thumbs-up, .thumbs-down').removeClass("voted");
+        if(response["color"])
+          $(".thumbs-" + type).addClass("voted");
     });
-
-    return false;
   });
 
   // FACEBOOK POST SHARING FUNCTIONALITY

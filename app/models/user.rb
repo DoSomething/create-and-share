@@ -5,6 +5,8 @@ class User < ActiveRecord::Base
   has_many :campaigns, through: :participations
   has_many :participations, dependent: :destroy
 
+  acts_as_voter
+
   include Services
 
   # checks if a user with the given email exists in the DoSomething drupal database
