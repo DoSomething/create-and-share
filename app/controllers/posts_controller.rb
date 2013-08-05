@@ -203,6 +203,8 @@ class PostsController < ApplicationController
   # GET /:campaign/mine
   # GET /:campaign/featured
   def extras
+    @user = User.find_by_uid(session[:drupal_user_id])
+    
     @result = nil
     @where = {}
     @real_path = params[:filter] ||= Pathname.new(request.fullpath).basename.to_s.gsub(/\.[a-z]+/, '')

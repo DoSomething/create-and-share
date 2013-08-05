@@ -24,11 +24,15 @@ feature 'Voting on a post for the first time', js:true do
 end
 
 ### NOT WORKING ###
-feature 'Modifying votes on a post', js:true, focus:true do
+feature 'Modifying votes on a post', js:true do
   background do
     @user = login(:user)
     @post = FactoryGirl.create(:post)
-    @user.vote_for(@post)
+    visit "/#{@post.campaign.path}"
+    within(:css, ".id-#{@post.id}") do
+      find(:css, '.thumbs-up').click
+    end
+    visit "/"
     @score = @post.plusminus
     visit "/#{@post.campaign.path}"
   end
@@ -36,7 +40,6 @@ feature 'Modifying votes on a post', js:true, focus:true do
   scenario 'User can revoke his or her vote' do
     within(:css, ".id-#{@post.id}") do
       find(:css, '.thumbs-up').click
-      sleep 5
       page.should have_content("#{@score - 1}")
     end
   end
@@ -44,7 +47,6 @@ feature 'Modifying votes on a post', js:true, focus:true do
   scenario 'User can change his or her vote' do
     within(:css, ".id-#{@post.id}") do
       find(:css, '.thumbs-down').click
-      sleep 5
       page.should have_content("#{@score - 2}")
     end
   end
