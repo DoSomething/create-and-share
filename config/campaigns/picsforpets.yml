@@ -24,3 +24,6 @@ filters:
   "adopted":
     where:
       "adopted": "true"
+
+popups:
+  5: "test"

@@ -258,6 +258,8 @@ class PostsController < ApplicationController
 
     @score = post.plusminus
 
-    render :json => { score: @score, color: color }
+    popup = color ? get_popup : ""
+
+    render :json => { score: @score, color: color, popup: popup }
   end
 end

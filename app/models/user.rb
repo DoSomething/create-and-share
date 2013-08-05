@@ -101,4 +101,15 @@ class User < ActiveRecord::Base
       end
     end
   end
+
+  def action_count(campaign_id)
+    share_count = 0
+    vote_count = 0
+    Post.where(campaign_id: campaign_id).each do |post|
+      share_count += post.shares.where(uid: self.uid).count
+      vote_count += post.voted_by?(self) ? 1 : 0
+    end
+
+    share_count + vote_count
+  end
 end

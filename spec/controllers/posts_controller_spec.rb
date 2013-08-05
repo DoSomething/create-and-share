@@ -167,7 +167,7 @@ describe PostsController, :type => :controller do
         assigns(:posts).should include(@caliCat)
       end
 
-      specify 'does not includes' do
+      specify 'does not include' do
         get :filter, { campaign_path: campaign.path, filter: "cats-VA" }, session
         assigns(:posts).should_not include(@caliCat)
       end
@@ -223,8 +223,8 @@ describe PostsController, :type => :controller do
   describe "thumbs" do
     before :each do
       @post = FactoryGirl.create(:post)
-      @up = { type: 'up', id: @post.id }
-      @down = { type: 'down', id: @post.id }
+      @up = { type: 'up', id: @post.id, campaign_path: campaign.path }
+      @down = { type: 'down', id: @post.id, campaign_path: campaign.path }
     end
 
     after :each do
@@ -235,11 +235,13 @@ describe PostsController, :type => :controller do
     it 'thumbs up posts' do
       xhr :post, :thumbs, @up, session
       user.voted_on?(@post).should eq true
+      JSON.parse(response.body)["color"].should eq true
     end
 
     it 'thumbs down posts' do
       xhr :post, :thumbs, @down, session
       user.voted_against?(@post).should eq true
+      JSON.parse(response.body)["color"].should eq true
     end
 
     describe "already voted" do
@@ -250,12 +252,39 @@ describe PostsController, :type => :controller do
       it 'unvotes if already voted for the same type' do
         xhr :post, :thumbs, @up, session
         user.voted_on?(@post).should eq false
+        JSON.parse(response.body)["color"].should eq false
       end
 
       it 'changes vote if already voted for the other type' do
         xhr :post, :thumbs, @down, session
         user.voted_for?(@post).should eq false
         user.voted_against?(@post).should eq true
+        JSON.parse(response.body)["color"].should eq true
+      end
+    end
+
+    describe "popups" do
+      context "action count does not correspond to a popup" do
+        it 'assigns a blank string to popup' do
+          User.any_instance.stub(:action_count).and_return(0)
+          xhr :post, :thumbs, @up, session
+          JSON.parse(response.body)["popup"].should be_blank
+        end
+      end
+
+      context "action count does correspond to a popup" do
+        it 'assigns "test" to popup if action count is 5' do
+          User.any_instance.stub(:action_count).and_return(5)
+          xhr :post, :thumbs, @up, session
+          JSON.parse(response.body)["popup"].should eq "test"
+        end
+
+        it 'assigns a blank string if the updated action count is because of a revoked vote' do
+          User.any_instance.stub(:action_count).and_return(5)
+          user.vote_for(@post)
+          xhr :post, :thumbs, @up, session
+          JSON.parse(response.body)["popup"].should be_blank
+        end
       end
     end
   end
