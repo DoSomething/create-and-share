@@ -57,5 +57,8 @@ CreateAndShare::Application.routes.draw do
     # Individual posts
     get ':id',     to: 'posts#show', constraints: { id: /\d+/ }, as: :show_post
     get ':vanity', to: 'posts#vanity', constraints: { vanity: /\w+/ }, as: :vanity_post
+  
+    # Popups
+    get 'popups/:popup', to: 'campaigns#popups'
   end
 end

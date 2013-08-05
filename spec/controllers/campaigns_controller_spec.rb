@@ -119,5 +119,4 @@ describe CampaignsController, :type => :controller do
       response.should redirect_to(campaigns_url)
     end
   end
-
 end

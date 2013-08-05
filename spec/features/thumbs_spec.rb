@@ -23,7 +23,6 @@ feature 'Voting on a post for the first time', js:true do
   end
 end
 
-### NOT WORKING ###
 feature 'Modifying votes on a post', js:true do
   background do
     @user = login(:user)

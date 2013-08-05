@@ -23,12 +23,32 @@ $(function() {
         if (response && response.post_id) {
           var new_count = ++settings['share_count'];
           settings['share_elm'].text(new_count);
-          $.post('/' + campaign.path + '/shares', { 'share': { 'post_id': settings['id'] }, 'new_count': new_count }, function(res) {});
+          $.post('/' + campaign.path + '/shares', { 'share': { 'post_id': settings['id'] }, 'new_count': new_count }, function(res) {
+            render_popup(response["popup"]);
+          });
         }
         $('html,body').animate({ scrollTop: $('.id-' + settings['id']).offset().top }, 'fast');
       });
     }
   });
+
+  // POPUPS
+  render_popup = function(popup) {
+    if(popup != "") {
+      var overlay = $("<div class='popup-overlay'></div>")
+      overlay.appendTo("body");
+      var container = $("<div class='popup-container'></div>")
+      container.appendTo("body");
+      container.load('/' + campaign.path + '/popups/' + popup + " #popup", function() {
+        var close = $("<div class='popup-close'>x</div>")
+        close.appendTo(container);
+        close.click(function() {
+          overlay.remove();
+          container.remove();
+        });
+      });
+    }
+  }
 
   // AUTOMATICALLY FORM IMAGE SIZE ON RESIZE
   maintain_ratio = function(target) {
@@ -98,6 +118,7 @@ $(function() {
     return false;
   });
 
+  // THUMBS UP & THUMBS DOWN
   $('.thumbs-up, .thumbs-down').click(function(e) {
     e.preventDefault();
     var type = $(this).data("type");
@@ -109,6 +130,7 @@ $(function() {
         $('.thumbs-up, .thumbs-down').removeClass("voted");
         if(response["color"])
           $(".thumbs-" + type).addClass("voted");
+        render_popup(response["popup"]);
     });
   });
 

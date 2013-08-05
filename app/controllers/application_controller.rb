@@ -83,9 +83,11 @@ class ApplicationController < ActionController::Base
   def get_popup
     get_campaign
     action_count = User.find_by_uid(session[:drupal_user_id]).action_count(@campaign.id)
-    Rails.application.config.popups[@campaign.path].each do |count, template|
-      if count == action_count
-        return template
+    if Rails.application.config.popups[@campaign.path]
+      Rails.application.config.popups[@campaign.path].each do |count, template|
+        if count == action_count
+          return template
+        end
       end
     end
     ""
