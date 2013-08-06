@@ -1,4 +1,4 @@
-<div class="post id-<%= @post.id %><%= @post.promoted ? ' promoted' : '' %><%= @post.adopted? ? ' adopted' : '' %>">
+<div data-id="<%= @post.id %>" class="post id-<%= @post.id %><%= @post.promoted ? ' promoted' : '' %><%= @post.adopted? ? ' adopted' : '' %>">
   <% if admin? %><div class="flag-container"><%= link_to 'Flag', flag_post_path(@post, :campaign_path => params[:campaign_path]), :method => :post, :confirm => 'Flag this?' %> | <%= link_to 'Edit', edit_path(@post, :campaign_path => params[:campaign_path]) %></div><% end %>
   <div class="share-container"><a href="#" class="facebook-share btn share medium" data-id="<%= @post.id %>"><span>Share Me</span></a><span class="share-count"><%= (@post.share_count ? @post.share_count : @post.real_share_count) || 0 %></span></div>
   <% if @post.promoted %><div class="promoted-container"><%= link_to 'promoted', '/featured', :class => 'promoted-badge'  %></div><% end %>
@@ -7,4 +7,12 @@
   <div class="name-loc"><%= link_to show_post_path(@post, :campaign_path => params[:campaign_path]) do %><span class="name"><%= @post.name %></span>, <%= @post.state %><% end %></div>
   <div class="story"><%=raw simple_format(@post.story).gsub(/(\r|\n|\r\n)/, '') %></div>
   <div class="adopt-me">Adopt <%= @post.name %> at <%= link_to @post.extras[:shelter] ||= '' + ', ' + (!@post.city.nil? ? (@post.city + ', ') : '') + @post.state, 'http://www.adoptapet.com/animal-shelter-search?city_or_zip=' + (!@post.city.nil? ? (@post.city + ', ') : '') + @post.state + '&shelter_name=' + @post.extras[:shelter]||= ''  + '&distance=50&adopts_out=all', :target => '_blank' %></div>
+
+  <div class="votes">
+    <span class="count"><%= @post.plusminus %></span>
+    <span class="thumbs-up-count-wrapper"><span class="thumbs-up-count"><%= @post.votes_for %></span></span>
+    <a href="#" class="thumbs-up<%= @user.voted_for?(@post) ? ' voted' : '' %>" data-type="up"><%= image_tag 'vote_yes.png' %></a>
+    <span class="thumbs-down-count-wrapper"><span class="thumbs-down-count"><%= @post.votes_against %></span></span>
+    <a href="#" class="thumbs-down<%= @user.voted_against?(@post) ? ' voted' : '' %>" data-type="down"><%= image_tag 'vote_no.png' %></a>
+  </div>
 </div>

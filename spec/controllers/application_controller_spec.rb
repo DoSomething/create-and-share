@@ -26,10 +26,15 @@ describe ApplicationController do
     def destroy
       render :nothing => true
     end
+
+    def popup
+      @popup = get_popup
+      render :nothing => true
+    end
   end
 
   let(:user) { FactoryGirl.create(:user) }
-  let(:campaign) { FactoryGirl.create(:campaign) }
+  let(:campaign) { FactoryGirl.create(:campaign, path: "picsforpets") }
   let(:session) { { drupal_user_id: user.uid, drupal_user_role: { test: 'authenticated user', blah: 'administrator' } } }
 
   describe 'authorization' do
@@ -179,6 +184,24 @@ describe ApplicationController do
     it 'without a campaign' do
       get :index
       assigns(:view_paths).should eq 1
+    end
+  end
+
+  describe 'returns popup if there is one' do
+    before :each do
+      routes.draw { get "popup" => "anonymous#popup" }
+    end
+
+    it 'returns a popup template name at appropriate action count' do
+      User.any_instance.stub(:action_count).and_return(5)
+      get :popup, { campaign_path: campaign.path }, session
+      assigns(:popup).should eq "test"
+    end
+
+    it 'returns a blank string if not at a proper action count' do
+      User.any_instance.stub(:action_count).and_return(0)
+      get :popup, { campaign_path: campaign.path }, session
+      assigns(:popup).should be_blank
     end
   end
 end

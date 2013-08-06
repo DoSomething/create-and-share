@@ -76,4 +76,10 @@ class CampaignsController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  before_filter :get_campaign, only: [:popups]
+  # GET /:campaign/popups/:popup
+  def popups
+    render Rails.root.to_s + "/app/views/#{@campaign.path}/popups/#{params[:popup]}"
+  end
 end

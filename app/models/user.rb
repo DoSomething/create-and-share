@@ -5,6 +5,8 @@ class User < ActiveRecord::Base
   has_many :campaigns, through: :participations
   has_many :participations, dependent: :destroy
 
+  acts_as_voter
+
   include Services
 
   # checks if a user with the given email exists in the DoSomething drupal database
@@ -98,5 +100,16 @@ class User < ActiveRecord::Base
         Services::MobileCommons.subscribe(self.mobile, campaign.mobile_commons)
       end
     end
+  end
+
+  def action_count(campaign_id)
+    share_count = 0
+    vote_count = 0
+    Post.where(campaign_id: campaign_id).each do |post|
+      share_count += post.shares.where(uid: self.uid).count
+      vote_count += post.voted_by?(self) ? 1 : 0
+    end
+
+    share_count + vote_count
   end
 end
