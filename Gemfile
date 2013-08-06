@@ -16,6 +16,8 @@ gem 'chronic'
 gem 'dalli'
 gem 'mailchimp'
 
+gem 'thumbs_up'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do

@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe User do
+	let(:campaign) { FactoryGirl.create(:campaign) }
+
 	before :each do
 		@user = FactoryGirl.build(:user)
 		Services::MailChimp.stub(:subscribe)
@@ -138,6 +140,26 @@ describe User do
 		
 		it 'through MobileCommons' do
 			Services::MobileCommons.should_receive(:subscribe).with(@user.mobile, @campaign.mobile_commons)
+		end
+	end
+
+	describe 'action count' do
+		before :each do
+			@user = FactoryGirl.create(:user)
+			@post = FactoryGirl.create(:post, campaign_id: campaign.id)
+		end
+
+		it 'increases on voting' do
+			expect { @user.vote_for(@post) }.to change { @user.action_count(campaign.id) }.by(1)
+		end
+
+		it 'increases on sharing' do
+			expect { FactoryGirl.create(:share, uid: @user.uid, post_id: @post.id) }.to change { @user.action_count(campaign.id) }.by(1)
+		end
+
+		it 'does not change count for other campaigns' do
+			otherCampaign = FactoryGirl.create(:campaign)
+			expect { @user.vote_for(@post) }.to_not change { @user.action_count(otherCampaign.id) }
 		end
 	end
 end

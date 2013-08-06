@@ -69,9 +69,11 @@ $(document).ready(function() {
     //append necessary html and style
     var overlay = $("<div></div>");
     overlay.attr("id", "crop-overlay");
+    overlay.addClass("popup-overlay");
     overlay.appendTo("body");
     var container = $("<div></div>");
     container.attr("id", "crop-container");
+    container.addClass("popup-container");
     container.appendTo("body");
     var header = $('<h2>Squarify your image!</h2>');
     header.appendTo("#crop-container");
