@@ -14,7 +14,9 @@ feature 'Voting on a post for the first time', js:true do
     within(:css, ".id-#{@post.id}") do
       find(:css, '.thumbs-up').click
       within(:css, ".count") { page.should have_content("#{@score + 1}") }
+      page.execute_script('$(".thumbs-up").trigger("mouseover")')
       within(:css, ".thumbs-up-count") { page.should have_content("#{@up + 1}") }
+      page.execute_script('$(".thumbs-down").trigger("mouseover")')
       within(:css, ".thumbs-down-count") { page.should have_content("#{@down}") }
     end
   end
@@ -23,7 +25,9 @@ feature 'Voting on a post for the first time', js:true do
     within(:css, ".id-#{@post.id}") do
       find(:css, '.thumbs-down').click
       within(:css, ".count") { page.should have_content("#{@score - 1}") }
+      page.execute_script('$(".thumbs-up").trigger("mouseover")')
       within(:css, ".thumbs-up-count") { page.should have_content("#{@up}") }
+      page.execute_script('$(".thumbs-down").trigger("mouseover")')
       within(:css, ".thumbs-down-count") { page.should have_content("#{@down + 1}") }
     end
   end
@@ -48,7 +52,9 @@ feature 'Modifying votes on a post', js:true do
     within(:css, ".id-#{@post.id}") do
       find(:css, '.thumbs-up').click
       within(:css, ".count") { page.should have_content("#{@score - 1}") }
+      page.execute_script('$(".thumbs-up").trigger("mouseover")')
       within(:css, ".thumbs-up-count") { page.should have_content("#{@up - 1}") }
+      page.execute_script('$(".thumbs-down").trigger("mouseover")')
       within(:css, ".thumbs-down-count") { page.should have_content("#{@down}") }
     end
   end
@@ -57,7 +63,9 @@ feature 'Modifying votes on a post', js:true do
     within(:css, ".id-#{@post.id}") do
       find(:css, '.thumbs-down').click
       within(:css, ".count") { page.should have_content("#{@score - 2}") }
+      page.execute_script('$(".thumbs-up").trigger("mouseover")')
       within(:css, ".thumbs-up-count") { page.should have_content("#{@up - 1}") }
+      page.execute_script('$(".thumbs-down").trigger("mouseover")')
       within(:css, ".thumbs-down-count") { page.should have_content("#{@down + 1}") }
     end
   end

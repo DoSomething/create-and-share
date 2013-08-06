@@ -139,12 +139,12 @@ $(function() {
     var type = $(this).data("type");
     var id = $(this).parent().parent().data("id");
     var post = '.post[data-id="' + id + '"] '
-    $(post + '.thumbs-' + type + '-count-wrapper').css({ display: "inline" });
+    $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "visible" });
   }).mouseout(function() {
     var type = $(this).data("type");
     var id = $(this).parent().parent().data("id");
     var post = '.post[data-id="' + id + '"] '
-    $(post + '.thumbs-' + type + '-count-wrapper').css({ display: "none" });
+    $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "hidden" });
   });
 
   // FACEBOOK POST SHARING FUNCTIONALITY
