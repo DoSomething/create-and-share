@@ -256,10 +256,12 @@ class PostsController < ApplicationController
       end
     end
 
-    @score = post.plusminus
+    score = post.plusminus
+    up = post.votes_for
+    down = post.votes_against
 
     popup = color ? get_popup : ""
 
-    render :json => { score: @score, color: color, popup: popup }
+    render :json => { score: score, up: up, down: down, color: color, popup: popup }
   end
 end

@@ -118,6 +118,7 @@ $first: 600px
   .votes
     margin: 4% 0 2% 3%
     .thumbs-up, .thumbs-down, .count
+      text-decoration: none
       background-color: #dfdfde
       padding: 5px 10px
       border-radius: 10px
@@ -126,13 +127,16 @@ $first: 600px
         position: relative
         top: 3px
     .count
-      background-color: #587ebe
       color: white
+      background-color: #587ebe
       margin: 0 2px 0 0
     .thumbs-up.voted
       background-color: #53e68b
     .thumbs-down.voted
       background-color: #e77
+    .thumbs-up-count, .thumbs-down-count
+      margin-left: 3px
+      color: white
 
 
 // POST META-DATA

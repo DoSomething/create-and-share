@@ -156,5 +156,10 @@ describe User do
 		it 'increases on sharing' do
 			expect { FactoryGirl.create(:share, uid: @user.uid, post_id: @post.id) }.to change { @user.action_count(campaign.id) }.by(1)
 		end
+
+		it 'does not change count for other campaigns' do
+			otherCampaign = FactoryGirl.create(:campaign)
+			expect { @user.vote_for(@post) }.to_not change { @user.action_count(otherCampaign.id) }
+		end
 	end
 end

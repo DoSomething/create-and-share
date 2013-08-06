@@ -228,8 +228,10 @@ describe PostsController, :type => :controller do
     end
 
     after :each do
-      assigns(:score).should eq @post.plusminus
-      JSON.parse(response.body)["score"].should eq @post.plusminus
+      json = JSON.parse(response.body)
+      json["score"].should eq @post.plusminus
+      json["up"].should eq @post.votes_for
+      json["down"].should eq @post.votes_against
     end
 
     it 'thumbs up posts' do

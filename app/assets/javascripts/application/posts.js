@@ -126,10 +126,13 @@ $(function() {
     $.post('/' + campaign.path + '/posts/' + id + '/thumbs',
       { type: type },
       function(response) {
-        $('.post[data-id="' + id + '"] .count').text(response["score"]);
-        $('.thumbs-up, .thumbs-down').removeClass("voted");
+        var post = '.post[data-id="' + id + '"] '
+        $(post + '.count').text(response["score"]);
+        $(post + '.thumbs-up-count').text(response["up"]);
+        $(post + '.thumbs-down-count').text(response["down"]);
+        $(post + '.thumbs-up, ' + post + '.thumbs-down').removeClass("voted");
         if(response["color"])
-          $(".thumbs-" + type).addClass("voted");
+          $(post + '.thumbs-' + type).addClass("voted");
         render_popup(response["popup"]);
     });
   });
