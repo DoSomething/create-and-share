@@ -135,6 +135,16 @@ $(function() {
           $(post + '.thumbs-' + type).addClass("voted");
         render_popup(response["popup"]);
     });
+  }).mouseover(function() {
+    var type = $(this).data("type");
+    var id = $(this).parent().parent().data("id");
+    var post = '.post[data-id="' + id + '"] '
+    $(post + '.thumbs-' + type + '-count-wrapper').css({ display: "inline" });
+  }).mouseout(function() {
+    var type = $(this).data("type");
+    var id = $(this).parent().parent().data("id");
+    var post = '.post[data-id="' + id + '"] '
+    $(post + '.thumbs-' + type + '-count-wrapper').css({ display: "none" });
   });
 
   // FACEBOOK POST SHARING FUNCTIONALITY

@@ -130,14 +130,44 @@ $first: 600px
       color: white
       background-color: #587ebe
       margin: 0 2px 0 0
-    .thumbs-up.voted
+    .thumbs-up.voted, .thumbs-up-count-wrapper
       background-color: #53e68b
-    .thumbs-down.voted
+    .thumbs-down.voted, .thumbs-down-count-wrapper
       background-color: #e77
-    .thumbs-up-count, .thumbs-down-count
-      margin-left: 3px
-      color: white
-
+    .thumbs-up-count-wrapper, .thumbs-down-count-wrapper
+      display: none
+      width: 36px
+      height: 35px
+      position: absolute
+      text-align: center
+      border-radius: 10px
+      margin: 0 2px
+      .thumbs-up-count, .thumbs-down-count
+        position: relative
+        top: 11px
+        color: white
+    .thumbs-up-count-wrapper
+      bottom: 64px
+    .thumbs-up-count-wrapper:after
+      content: ""
+      position: absolute
+      top: 35px
+      left: 12px
+      width: 0
+      border-top: 6px solid #53e68b
+      border-left: 6px solid transparent
+      border-right: 6px solid transparent
+    .thumbs-down-count-wrapper
+      bottom: -22px
+    .thumbs-down-count-wrapper:after
+      content: ""
+      position: absolute
+      bottom: 35px
+      left: 12px
+      width: 0
+      border-bottom: 6px solid #e77
+      border-left: 6px solid transparent
+      border-right: 6px solid transparent
 
 // POST META-DATA
 // --------------
