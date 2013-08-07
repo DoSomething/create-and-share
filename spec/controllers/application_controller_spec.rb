@@ -175,7 +175,7 @@ describe ApplicationController do
     end
   end
 
-  describe 'getting proper view paths' do
+  describe 'getting proper view paths', focus:true do
     it 'with a campaign' do
       get :index, { campaign_path: campaign.path }
       assigns(:view_paths).should eq 2
