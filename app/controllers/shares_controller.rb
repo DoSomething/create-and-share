@@ -17,13 +17,15 @@ class SharesController < ApplicationController
     end
     @post.save
 
+    popup = get_popup
+
     respond_to do |format|
       if @share.save
-        format.html { render json: { 'success' => true } }
-        format.json { render json: { 'success' => true } }
+        format.html { render json: { 'success' => true, popup: popup } }
+        format.json { render json: { 'success' => true, popup: popup } }
       else
-        format.html { render json: { 'success' => true } }
-        format.json { render json: { 'success' => false } }
+        format.html { render json: { 'success' => true, popup: popup } }
+        format.json { render json: { 'success' => false, popup: popup } }
       end
     end
   end

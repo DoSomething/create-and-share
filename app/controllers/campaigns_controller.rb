@@ -9,7 +9,7 @@ class CampaignsController < ApplicationController
   # GET /campaigns
   # GET /campaigns.json
   def index
-    @campaigns = Campaign.all
+    @campaigns = Campaign.order('created_at DESC').all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -75,5 +75,11 @@ class CampaignsController < ApplicationController
       format.html { redirect_to campaigns_url }
       format.json { head :no_content }
     end
+  end
+
+  before_filter :get_campaign, only: [:popups]
+  # GET /:campaign/popups/:popup
+  def popups
+    render Rails.root.to_s + "/app/views/campaigns/#{@campaign.path}/popups/#{params[:popup]}"
   end
 end

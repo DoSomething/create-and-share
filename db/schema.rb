@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130715191949) do
+ActiveRecord::Schema.define(:version => 20130802134554) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -41,7 +41,21 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.string   "mailchimp_submit"
     t.string   "email_submit"
     t.string   "email_signup"
+    t.string   "meme_header"
+    t.boolean  "meme"
   end
+
+  create_table "participations", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "campaign_id"
+    t.boolean  "intent"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "participations", ["campaign_id"], :name => "index_participations_on_campaign_id"
+  add_index "participations", ["user_id", "campaign_id"], :name => "index_participations_on_user_id_and_campaign_id", :unique => true
+  add_index "participations", ["user_id"], :name => "index_participations_on_user_id"
 
   create_table "posts", :force => true do |t|
     t.string   "image"
@@ -54,8 +68,6 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.datetime "creation_time"
     t.datetime "update_time"
     t.boolean  "adopted"
-    t.string   "top_text"
-    t.string   "bottom_text"
     t.datetime "created_at",                            :null => false
     t.datetime "updated_at",                            :null => false
     t.string   "image_file_name"
@@ -68,8 +80,6 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.string   "city"
     t.integer  "campaign_id"
     t.text     "extras"
-    t.integer  "thumbs_up_count",    :default => 0
-    t.integer  "thumbs_down_count",  :default => 0
   end
 
   add_index "posts", ["campaign_id"], :name => "index_posts_on_campaign_id"
@@ -112,7 +122,21 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.datetime "created_at",              :null => false
     t.datetime "updated_at",              :null => false
     t.boolean  "is_admin"
-    t.boolean  "intent"
+    t.string   "mobile"
   end
+
+  create_table "votes", :force => true do |t|
+    t.boolean  "vote",          :default => false, :null => false
+    t.integer  "voteable_id",                      :null => false
+    t.string   "voteable_type",                    :null => false
+    t.integer  "voter_id"
+    t.string   "voter_type"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+  end
+
+  add_index "votes", ["voteable_id", "voteable_type"], :name => "index_votes_on_voteable_id_and_voteable_type"
+  add_index "votes", ["voter_id", "voter_type", "voteable_id", "voteable_type"], :name => "fk_one_vote_per_user_per_entity", :unique => true
+  add_index "votes", ["voter_id", "voter_type"], :name => "index_votes_on_voter_id_and_voter_type"
 
 end

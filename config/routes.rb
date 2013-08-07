@@ -3,9 +3,6 @@ CreateAndShare::Application.routes.draw do
   resources :campaigns, except: [:index, :show]
   get '/campaigns', to: redirect('/')
 
-  # DASHBOARD
-  match '/dashboard', to: 'dashboard#index'
-
   # Sessions business
   resources :sessions, only: [:new, :create, :destroy]
   resources :users, only: [:create]
@@ -20,9 +17,8 @@ CreateAndShare::Application.routes.draw do
 
     resources :posts do
       member do
-        post 'flag', constraints: lambda { is_admin? }
-        post 'thumbs_up'
-        post 'thumbs_down'
+        post 'flag'
+        post 'thumbs'
       end
 
       collection do
@@ -40,9 +36,13 @@ CreateAndShare::Application.routes.draw do
     get 'faq',          to: 'static_pages#faq', as: :faq
     get 'gallery',      to: 'static_pages#gallery', as: :gallery
     get 'start',        to: 'static_pages#start', as: :start
+
+    # User pages
     get 'submit/guide', to: 'users#intent', as: :intent
+    get 'participation', to: 'users#participation', as: :participation
 
     get 'submit', to: 'posts#new', as: :submit
+    get ':id/edit', to: 'posts#edit', as: :edit
 
     # General paths
     get 'featured', to: 'posts#extras', run: 'featured', as: :featured
@@ -54,5 +54,8 @@ CreateAndShare::Application.routes.draw do
     # Individual posts
     get ':id',     to: 'posts#show', constraints: { id: /\d+/ }, as: :show_post
     get ':vanity', to: 'posts#vanity', constraints: { vanity: /\w+/ }, as: :vanity_post
+  
+    # Popups
+    get 'popups/:popup', to: 'campaigns#popups'
   end
 end

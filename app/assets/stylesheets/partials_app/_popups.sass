@@ -1,0 +1,35 @@
+.popup-overlay
+	position: fixed
+	top: 0
+	left: 0
+	height: 100%
+	width: 100%
+	background: rgba(0,0,0,0.7)
+	z-index: 999
+
+.popup-container
+	position: fixed
+	top: 50%
+	left: 50%
+	background: white
+	border: 25px solid white
+	border-radius: 10px
+	transform: translate(-50%, -50%)
+	-ms-transform: translate(-50%, -50%)
+	-webkit-transform: translate(-50%, -50%)
+	-moz-transform: translate(-50%, -50%)
+	z-index: 1000
+
+.popup-close
+	background-color: $global-sbg
+	color: $bg-light
+	border: 5px solid $grey-subtle
+	position: absolute
+	width: 1em
+	height: 1em
+	font-size: 2em
+	text-align: center
+	top: -45px
+	right: -45px
+	border-radius: 9001px
+	cursor: pointer

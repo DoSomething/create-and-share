@@ -78,7 +78,7 @@ module Services
   module Mandrill
     include Mailchimp
 
-    def self.mail(email, template, subject = '')
+    def self.mail(lead, lead_email, email, template, subject = '')
       @mandrill = Mailchimp::Mandrill.new(ENV['MANDRILL_APIKEY'])
       response = @mandrill.messages_send_template({
        :template_name => template,
@@ -88,8 +88,8 @@ module Services
          }
        ],
        :message => {
-         :from_name=> "Hilary at DoSomething.org",
-         :from_email => "animals@dosomething.org",
+         :from_name=> lead + " at DoSomething.org",
+         :from_email => lead_email,
          :subject => subject,
          :to => [
            {

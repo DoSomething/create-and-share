@@ -31,6 +31,9 @@ GEM
       i18n (= 0.6.1)
       multi_json (~> 1.0)
     arel (3.0.2)
+    better_errors (0.9.0)
+      coderay (>= 1.0.0)
+      erubis (>= 2.6.6)
     builder (3.0.4)
     capybara (2.1.0)
       mime-types (>= 1.16)
@@ -60,16 +63,6 @@ GEM
       sass (~> 3.1)
     compass-rails (1.0.3)
       compass (>= 0.12.2, < 0.14)
-    cucumber (1.3.2)
-      builder (>= 2.1.2)
-      diff-lcs (>= 1.1.3)
-      gherkin (~> 2.12.0)
-      multi_json (~> 1.3)
-    cucumber-rails (1.3.1)
-      capybara (>= 1.1.2)
-      cucumber (>= 1.2.0)
-      nokogiri (>= 1.5.0)
-      rails (~> 3.0)
     daemon_controller (1.1.4)
     dalli (2.6.4)
     database_cleaner (1.0.1)
@@ -86,13 +79,13 @@ GEM
     factory_girl_rails (4.2.1)
       factory_girl (~> 4.2.0)
       railties (>= 3.0.0)
+    faker (1.1.2)
+      i18n (~> 0.5)
     faraday (0.8.7)
       multipart-post (~> 1.1)
     ffi (1.9.0)
     formatador (0.2.4)
     fssm (0.2.10)
-    gherkin (2.12.0)
-      multi_json (~> 1.3)
     gibbon (0.4.6)
       httparty
       multi_json (>= 1.3.4)
@@ -102,9 +95,6 @@ GEM
       lumberjack (>= 1.0.2)
       pry (>= 0.9.10)
       thor (>= 0.14.6)
-    guard-cucumber (1.4.0)
-      cucumber (>= 1.2.0)
-      guard (>= 1.1.0)
     guard-livereload (1.4.0)
       em-websocket (>= 0.5.0)
       guard (>= 1.8.0)
@@ -253,10 +243,14 @@ GEM
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
+    statistics2 (0.54)
     therubyracer (0.11.4)
       libv8 (~> 3.11.8.12)
       ref
     thor (0.18.1)
+    thumbs_up (0.6.5)
+      activerecord
+      statistics2
     tilt (1.4.1)
     treetop (1.4.14)
       polyglot
@@ -274,16 +268,16 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers
+  better_errors
   capybara
   chronic
   coffee-rails (~> 3.2.1)
   compass-rails
-  cucumber-rails
   dalli
   database_cleaner
   factory_girl_rails (~> 4.0)
+  faker
   gibbon
-  guard-cucumber
   guard-livereload
   guard-passenger
   guard-rspec
@@ -306,4 +300,5 @@ DEPENDENCIES
   simple_form
   spork
   therubyracer
+  thumbs_up
   uglifier (>= 1.0.3)

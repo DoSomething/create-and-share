@@ -20,13 +20,27 @@ module ApplicationHelper
     ENV['facebook_app_id']
   end
 
+  # Gets current campaign via path
+  def get_campaign
+    if params[:campaign_path].nil?
+      return nil
+    end
+
+    path = params[:campaign_path]
+
+    @campaign = Campaign.where(:path => path).first
+  end
+
   # Did the user already submit something?
   def already_submitted?
     user_id = session[:drupal_user_id]
-    posts = Post.where(:uid => user_id)
-    shares = Share.where(:uid => user_id)
+    campaign = get_campaign
+    if user_id.nil? || campaign.nil?
+      return false
+    end
+    posts = Post.where(uid: user_id, campaign_id: campaign.id)
 
-    (user_id && (!shares.nil? && shares.count > 0 || !posts.nil? && posts.count > 0))
+    !posts.nil? && posts.count > 0
   end
 
   # Prints a friendly error message depending on what path you're at.
@@ -43,42 +57,17 @@ module ApplicationHelper
     end
   end
 
-  class BsClass
-    attr_accessor :title, :path, :gated
-    def initialize(**args)
-      @title, @path, @gated = args[:title], args[:path], args[:gated]
-    end
-    def gated?
-      true
-    end
-  end
-
-  @campaign = nil
-  def get_campaign
-    return @campaign unless @campaign.nil?
-
-    if params[:campaign_path].nil?
-      fake = BsClass.new({ title: 'DoSomething Campaigns', path: '', gated: true })
-      return fake
-    end
-
-    path = params[:campaign_path]
-
-    @campaign = Campaign.where(:path => path).first
-    @campaign
-  end
-
-  def campaign_stylesheet_link_tag(stylesheet)
-    if File.exist? Rails.root.to_s + '/app/assets/stylesheets/campaigns/' + get_campaign.path + '/' + stylesheet + '.sass'
-      stylesheet_link_tag 'campaigns/' + get_campaign.path + '/application', :media => "all"
+  def campaign_stylesheet_link_tag(stylesheet, campaign)
+    if campaign && File.exist?(Rails.root.to_s + '/app/assets/stylesheets/campaigns/' + campaign.path + '/' + stylesheet + '.sass')
+      stylesheet_link_tag 'campaigns/' + campaign.path + '/application', :media => "all"
     else
       stylesheet_link_tag stylesheet, :media => "all"
     end
   end
 
-  def campaign_javascript_include_tag(script)
-    if File.exist? Rails.root.to_s + '/app/assets/javascripts/campaigns/' + get_campaign.path + '/' + script + '.js'
-      javascript_include_tag 'campaigns/' + get_campaign.path + '/application'
+  def campaign_javascript_include_tag(script, campaign)
+    if campaign && File.exist?(Rails.root.to_s + '/app/assets/javascripts/campaigns/' + campaign.path + '/' + script + '.js')
+      javascript_include_tag 'campaigns/' + campaign.path + '/application'
     else
       javascript_include_tag script
     end

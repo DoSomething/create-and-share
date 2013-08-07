@@ -23,12 +23,32 @@ $(function() {
         if (response && response.post_id) {
           var new_count = ++settings['share_count'];
           settings['share_elm'].text(new_count);
-          $.post('/' + campaign.path + '/shares', { 'share': { 'post_id': settings['id'] }, 'new_count': new_count }, function(res) {});
+          $.post('/' + campaign.path + '/shares', { 'share': { 'post_id': settings['id'] }, 'new_count': new_count }, function(res) {
+            render_popup(response["popup"]);
+          });
         }
         $('html,body').animate({ scrollTop: $('.id-' + settings['id']).offset().top }, 'fast');
       });
     }
   });
+
+  // POPUPS
+  render_popup = function(popup) {
+    if(popup != "") {
+      var overlay = $("<div class='popup-overlay'></div>")
+      overlay.appendTo("body");
+      var container = $("<div class='popup-container'></div>")
+      container.appendTo("body");
+      container.load('/' + campaign.path + '/popups/' + popup + " #popup", function() {
+        var close = $("<div class='popup-close'>x</div>")
+        close.appendTo(container);
+        close.click(function() {
+          overlay.remove();
+          container.remove();
+        });
+      });
+    }
+  }
 
   // AUTOMATICALLY FORM IMAGE SIZE ON RESIZE
   maintain_ratio = function(target) {
@@ -98,15 +118,33 @@ $(function() {
     return false;
   });
 
-  $('.thumbs').click(function() {
-    var $direction = $(this).attr('data-direction');
-    var $id = $(this).parent().parent().attr('data-id');
-
-    $.post('/' + campaign.path + '/posts/' + $id + '/thumbs_' + $direction, {}, function(response) {
-      // Do Something...hahaha
+  // THUMBS UP & THUMBS DOWN
+  $('.thumbs-up, .thumbs-down').click(function(e) {
+    e.preventDefault();
+    var type = $(this).data("type");
+    var id = $(this).parent().parent().data("id");
+    $.post('/' + campaign.path + '/posts/' + id + '/thumbs',
+      { type: type },
+      function(response) {
+        var post = '.post[data-id="' + id + '"] '
+        $(post + '.count').text(response["score"]);
+        $(post + '.thumbs-up-count').text(response["up"]);
+        $(post + '.thumbs-down-count').text(response["down"]);
+        $(post + '.thumbs-up, ' + post + '.thumbs-down').removeClass("voted");
+        if(response["color"])
+          $(post + '.thumbs-' + type).addClass("voted");
+        render_popup(response["popup"]);
     });
-
-    return false;
+  }).mouseover(function() {
+    var type = $(this).data("type");
+    var id = $(this).parent().parent().data("id");
+    var post = '.post[data-id="' + id + '"] '
+    $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "visible" });
+  }).mouseout(function() {
+    var type = $(this).data("type");
+    var id = $(this).parent().parent().data("id");
+    var post = '.post[data-id="' + id + '"] '
+    $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "hidden" });
   });
 
   // FACEBOOK POST SHARING FUNCTIONALITY
@@ -127,5 +165,8 @@ $(function() {
     }
   });
 
+  $(document).ready(function() {
+    $('img.lazy').lazyload();
+  });
   // END
 });

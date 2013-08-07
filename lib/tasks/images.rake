@@ -1,47 +1,51 @@
-namespace :images do
-  namespace :fix do
-    task :one => :environment do
-      abort 'No Post ID specified.' if ARGV[1].nil?
-      post_id = ARGV[1].to_i
+####################################
+### REWRITE FOR NEW IMAGE WRITER ###
+####################################
 
-      # Find the post and the image associated with it.
-      @post = Post.find(post_id)
-      if @post.nil?
-        abort "No post with ID #{ARGV[1]} exists."
-      end
+# namespace :images do
+#   namespace :fix do
+#     task :one => :environment do
+#       abort 'No Post ID specified.' if ARGV[1].nil?
+#       post_id = ARGV[1].to_i
 
-      image = @post.image.url(:gallery)
-      image = '/public' + image.gsub(/\?.*/, '')
+#       # Find the post and the image associated with it.
+#       @post = Post.find(post_id)
+#       if @post.nil?
+#         abort "No post with ID #{ARGV[1]} exists."
+#       end
 
-      # Rewrite the image.
-      if File.exists? Rails.root.to_s + image
-        PostsHelper.image_writer(image, @post.meme_text, @post.meme_position)
-      end
+#       image = @post.image.url(:gallery)
+#       image = '/public' + image.gsub(/\?.*/, '')
 
-      abort 'Done.'
-    end
+#       # Rewrite the image.
+#       if File.exists? Rails.root.to_s + image
+#         PostsHelper.image_writer(image, @post.meme_text, @post.meme_position)
+#       end
 
-    # GET /fix
-    # Fixes all images should they lose their text.
-    task :all => :environment do
-      # Get all posts.
-      @posts = Post.all
-      if @posts.nil?
-        abort 'There are no posts yet!'
-      end
+#       abort 'Done.'
+#     end
 
-      @posts.each do |post|
-        # Get the actual image path.
-        image = post.image.url(:gallery)
-        image = '/public' + image.gsub(/\?.*/, '')
+#     # GET /fix
+#     # Fixes all images should they lose their text.
+#     task :all => :environment do
+#       # Get all posts.
+#       @posts = Post.all
+#       if @posts.nil?
+#         abort 'There are no posts yet!'
+#       end
 
-        # Assuming the file exists, write the text.
-        if File.exists? Rails.root.to_s + image
-          PostsHelper.image_writer(image, post.meme_text, meme_position)
-        end
-      end
+#       @posts.each do |post|
+#         # Get the actual image path.
+#         image = post.image.url(:gallery)
+#         image = '/public' + image.gsub(/\?.*/, '')
 
-      abort 'Done.'
-    end
-  end
-end
+#         # Assuming the file exists, write the text.
+#         if File.exists? Rails.root.to_s + image
+#           PostsHelper.image_writer(image, post.meme_text, meme_position)
+#         end
+#       end
+
+#       abort 'Done.'
+#     end
+#   end
+# end
