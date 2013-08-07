@@ -1,16 +1,17 @@
 require 'spec_helper'
 
 feature 'Popups occur when user shares or votes', js:true do
-  let(:campaign) { FactoryGirl.create(:campaign, path: "picsforpets") }
-
   background do
+    @campaign = FactoryGirl.create(:campaign)
+    add_config(@campaign.path)
     @user = login(:user)
     @posts = []
     5.times do
-      @posts << FactoryGirl.create(:post, campaign_id: campaign.id)
+      @posts << FactoryGirl.create(:post, campaign_id: @campaign.id)
     end
-    visit "/#{campaign.path}"
+    visit "/#{@campaign.path}"
   end
+  after { remove_config(@campaign.path) }
 
   scenario 'One action does not do anything' do
     within(:css, ".id-#{@posts[0].id}") do
