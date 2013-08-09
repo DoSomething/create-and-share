@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   before_filter :find_view_path
   def find_view_path
     if !get_campaign.nil?
-      prepend_view_path 'app/views/campaign' + get_campaign.path
+      prepend_view_path 'app/views/campaigns/' + get_campaign.path
     end
   end
 
