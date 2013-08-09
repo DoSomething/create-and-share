@@ -3,9 +3,6 @@ CreateAndShare::Application.routes.draw do
   resources :campaigns, except: [:index, :show]
   get '/campaigns', to: redirect('/')
 
-  # DASHBOARD
-  match '/dashboard', to: 'dashboard#index'
-
   # Sessions business
   resources :sessions, only: [:new, :create, :destroy]
   resources :users, only: [:create]

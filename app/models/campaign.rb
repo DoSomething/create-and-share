@@ -22,7 +22,7 @@ class Campaign < ActiveRecord::Base
   validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif'] }
 
   before_save do
-    if !self.meme
+    if !self.meme || !self.meme_header
       self.meme_header = ""
     end
   end

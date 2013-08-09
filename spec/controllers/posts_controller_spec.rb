@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe PostsController, :type => :controller do
   let(:user) { FactoryGirl.create(:user) }
-  let(:campaign) { FactoryGirl.create(:campaign, path: "picsforpets") }
+  let(:campaign) { FactoryGirl.create(:campaign) }
   let(:session) { { drupal_user_id: user.uid, drupal_user_role: { test: 'authenticated user', blah: 'administrator' } } }
 
   before { @post = FactoryGirl.create(:post, campaign_id: campaign.id) }
@@ -266,6 +266,9 @@ describe PostsController, :type => :controller do
     end
 
     describe "popups" do
+      before { add_config(campaign.path) }
+      after { remove_config(campaign.path) }
+      
       context "action count does not correspond to a popup" do
         it 'assigns a blank string to popup' do
           User.any_instance.stub(:action_count).and_return(0)

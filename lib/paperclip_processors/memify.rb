@@ -12,7 +12,7 @@ module Paperclip
       @header = @attachment.instance.campaign ? @attachment.instance.campaign.meme_header.gsub(/'/, "'\"\'\"'") : ""
       @text = @attachment.instance.meme_text
       @pos = @attachment.instance.meme_position == "top" ? "North" : "South"
-      @font = Rails.root.to_s + '/DINComp-Medium.ttf'
+      @font = Rails.root.to_s + '/app/assets/fonts/DINComp-Medium.ttf'
     end
 
     def make

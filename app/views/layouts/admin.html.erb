@@ -11,7 +11,7 @@
 <body class="wrapper">
 
 <aside>
-  <%= link_to '//www.dosomething.org' do %><%= image_tag '/images/logo-ds.png', alt: 'DoSomething.org' %><% end %>
+  <%= link_to '//www.dosomething.org' do %><%= image_tag 'logo-ds.png', alt: 'DoSomething.org' %><% end %>
   <p>DoSomething.org is the largest organization for Teens and Social Change in the United States.  We strive to make the world a better place by fulfilling teens with actions and campaigns that they can take part in, and make their own change.</p>
   <% if admin? %><%= link_to 'Add New Campaign', new_campaign_path, id: 'add-campaign' %><% end %>
 </aside>
