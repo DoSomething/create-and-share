@@ -82,12 +82,10 @@ describe Post do
         @scroll.should include(@promoted)
       end
 
-      context 'pagination' do
+      context 'pagination', focus:true do
         before :each do
           @campaign = FactoryGirl.create(:campaign)
-          20.times do
-            FactoryGirl.create(:post, campaign_id: @campaign.id)
-          end
+          FactoryGirl.create_list(:post, 20, campaign_id: @campaign.id)
           @posts = Post.build_post(@campaign)
         end
 
