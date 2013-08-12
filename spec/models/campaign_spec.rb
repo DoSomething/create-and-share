@@ -76,12 +76,12 @@ describe Campaign do
     before { @campaign = FactoryGirl.create(:campaign) }
 
     it 'is gated' do
-      @campaign.gated?.should eq true
+      @campaign.gated?('all').should eq true
     end
 
     it 'is not gated' do
       @campaign.gated = false
-      @campaign.gated?. should eq false
+      @campaign.gated?('all').should eq false
 
     end
   end

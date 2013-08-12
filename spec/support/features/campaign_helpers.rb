@@ -24,7 +24,7 @@ module Features
         fill_in 'campaign_meme_header', with: campaign.meme_header
       end
       if campaign.gated
-        check 'campaign_gated'
+        select 'Gate entire campaign', from: 'campaign_gated'
       end
       campaign
     end

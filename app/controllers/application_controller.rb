@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
     campaign = get_campaign
     params[:campaign] = campaign
 
-    if authenticated? || !campaign.is_gated?(params, session)
+    if authenticated? || campaign && !campaign.is_gated?(params, session)
       if campaign && campaign.path
         redirect_to root_path(:campaign_path => campaign.path)
       else
@@ -38,7 +38,7 @@ class ApplicationController < ActionController::Base
     campaign = get_campaign
     params[:campaign] = campaign
 
-    unless authenticated? || request.format.symbol == :json || !campaign.is_gated?(params, session)
+    unless authenticated? || request.format.symbol == :json || campaign && !campaign.is_gated?(params, session)
       flash[:error] = "you must be logged in to see that"
       session[:source] = request.path
       if campaign && campaign.path

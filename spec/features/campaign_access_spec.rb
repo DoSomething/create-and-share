@@ -2,8 +2,8 @@ require 'spec_helper'
 
 feature 'View campaigns gated / ungated' do
   background do
-    @gated = FactoryGirl.create(:campaign, gated: true)
-    @ungated = FactoryGirl.create(:campaign, gated: false)
+    @gated = FactoryGirl.create(:campaign, gated: 'all')
+    @ungated = FactoryGirl.create(:campaign, gated: '')
   end
 
   scenario 'user is logged in' do
