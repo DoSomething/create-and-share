@@ -2,11 +2,15 @@ facebook:
   # title: Facebook post title
   # caption: Caption
   # description: Description
-  
+
 filters:
-  # Put your filters here.  e.g.
+  # Put your filters here, e.g.:
   # ":state":
   #   constraints:
   #     ":state": "(?<state>[A-Z]{2})"
   #   where:
   #     "state": "state"
+
+popups:
+  # Put your popups here, e.g.:
+  # 5: "test"

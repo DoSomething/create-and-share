@@ -80,6 +80,6 @@ class CampaignsController < ApplicationController
   before_filter :get_campaign, only: [:popups]
   # GET /:campaign/popups/:popup
   def popups
-    render Rails.root.to_s + "/app/views/#{@campaign.path}/popups/#{params[:popup]}"
+    render Rails.root.to_s + "/app/views/campaigns/#{@campaign.path}/popups/#{params[:popup]}"
   end
 end

@@ -1,0 +1,41 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ */
+
+// General-use libraries and globals
+@import 'compass/css3'
+@import 'globals/reset'
+
+// Variables, mixins and general classes
+@import 'globals/din'
+@import 'globals/variables'
+@import 'globals/mixins'
+@import 'globals/typography'
+@import 'globals/buttons'
+@import 'globals/base'
+
+// Application partials
+@import 'partials_app/utility_bar'
+@import 'partials_app/header'
+@import 'partials_app/cta'
+@import 'partials_app/filters'
+@import 'partials_app/posts'
+@import 'partials_app/popups'
+@import 'partials_app/form'
+@import 'partials_app/start'
+@import 'partials_app/footer'
+@import 'partials_app/friend_selector'
+@import 'partials_app/faq'
+
+// Campaign specific
+// Put your campaign specific styles here, e.g.:
+// @import 'campaigns/campaign_name/blah'
