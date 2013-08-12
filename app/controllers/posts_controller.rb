@@ -2,7 +2,7 @@ class PostsController < ApplicationController
   include Services
 
   # Get campaign
-  before_filter :get_campaign, only: [:campaign_closed, :index, :filter, :extras, :show, :vanity]
+  before_filter :get_campaign, only: [:campaign_closed, :index, :filter, :extras, :show, :vanity, :new]
 
   # Before everything runs, run an authentication check and an API key check.
   before_filter :is_not_authenticated, :verify_api_key, :campaign_closed
