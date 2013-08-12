@@ -187,7 +187,8 @@ class PostsController < ApplicationController
     begin
       @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, params[:filter], true)
       @filter = params[:filter]
-    rescue
+    rescue => e
+      logger.error("Exception: #{e.message}")
       redirect_to :root
       return
     end

@@ -49,7 +49,8 @@ class Post < ActiveRecord::Base
   def self.build_post(campaign)
     self
       .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
+      .joins('LEFT JOIN shares ON (shares.post_id = posts.id)')
+      .joins('LEFT JOIN votes ON (votes.voteable_id = posts.id)')
       .where(campaign_id: campaign.id, flagged: false)
       .group('posts.id')
   end
@@ -125,6 +126,7 @@ class Post < ActiveRecord::Base
       ret = Regexp.new "^#{ret}$"
       if @result = params[:filter].match(ret)
         @where = config['where']
+        @order = config['order']
         break
       end
     end
@@ -161,6 +163,13 @@ class Post < ActiveRecord::Base
           .joins('INNER JOIN tags ' + col_alias + ' ON (' + col_alias + '.post_id = posts.id)')
           .where(col_alias + '.column = ? and ' + col_alias + '.value = ?', column, value)
         i += 1
+      end
+    end
+
+    if !@order.nil? && @order.count > 0
+      @results = @results.reorder('')
+      @order.each do |o|
+        @results = @results.order(o)
       end
     end
 
