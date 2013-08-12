@@ -75,14 +75,20 @@ describe Campaign do
   describe 'tells you if it is gated' do
     before { @campaign = FactoryGirl.create(:campaign) }
 
-    it 'is gated' do
+    it 'is fully gated' do
       @campaign.gated?('all').should eq true
     end
 
-    it 'is not gated' do
-      @campaign.gated = false
+    it 'is gated on the submit page' do
+      @campaign.gated = 'submit'
       @campaign.gated?('all').should eq false
+      @campaign.gated?('submit').should eq true
+    end
 
+    it 'is not gated' do
+      @campaign.gated = ''
+      @campaign.gated?('all').should eq false
+      @campaign.gated?('submit').should eq false
     end
   end
 end
