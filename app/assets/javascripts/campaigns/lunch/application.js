@@ -17,3 +17,4 @@
 //= require tdfriendselector.js
 //= require jquery.lazyload
 //= require_tree .
+//= require ../../pages
