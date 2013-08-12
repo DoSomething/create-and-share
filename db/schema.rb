@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130812174837) do
+ActiveRecord::Schema.define(:version => 20130812191121) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(:version => 20130812174837) do
     t.string   "developers"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
-    t.boolean  "gated"
+    t.string   "gated",              :null => false
     t.text     "description"
     t.string   "image"
     t.string   "image_file_name"

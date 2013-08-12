@@ -22,7 +22,9 @@ class ApplicationController < ActionController::Base
   # See SessionsController, line 5
   def is_authenticated
     campaign = get_campaign
-    if authenticated? || campaign && !campaign.gated?
+    params[:campaign] = campaign
+
+    if authenticated? || !campaign.is_gated?(params, session)
       if campaign && campaign.path
         redirect_to root_path(:campaign_path => campaign.path)
       else
@@ -34,7 +36,9 @@ class ApplicationController < ActionController::Base
   # Checks if a user is *not* authenticated.
   def is_not_authenticated
     campaign = get_campaign
-    unless authenticated? || request.format.symbol == :json || campaign && !campaign.gated?
+    params[:campaign] = campaign
+
+    unless authenticated? || request.format.symbol == :json || !campaign.is_gated?(params, session)
       flash[:error] = "you must be logged in to see that"
       session[:source] = request.path
       if campaign && campaign.path

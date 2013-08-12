@@ -4,13 +4,13 @@ class UsersController < ApplicationController
   before_filter :get_campaign
 
   def intent
-    render :status => :forbidden unless authenticated?
-
-    # Save the intent to related participation.
-    user = User.find_by_uid(session[:drupal_user_id])
-    if participation = user.participations.where(campaign_id: @campaign.id).first
-      participation.intent = true
-      participation.save
+    if authenticated?
+      # Save the intent to related participation.
+      user = User.find_by_uid(session[:drupal_user_id])
+      if participation = user.participations.where(campaign_id: @campaign.id).first
+        participation.intent = true
+        participation.save
+      end
     end
 
     # Bring them to the real submit path

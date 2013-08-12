@@ -28,7 +28,18 @@ class Campaign < ActiveRecord::Base
     end
   end
 
-  def gated?
-    self.gated == true
+  def gated? type
+    self.gated == type
+  end
+
+  def is_gated? (params, session)
+    is_on_login_page = (params[:controller] == 'sessions' && params[:action] == 'new')
+    campaign_exists = !params[:campaign].nil?
+    entire_campaign_is_gated = self.gated? 'all'
+    on_submit_page = (params[:action] == 'new' && params[:controller] == 'posts')
+    submit_page_is_gated = self.gated? 'submit'
+    campaign_is_not_gated = self.gated? ''
+
+    campaign_exists && ((entire_campaign_is_gated || (submit_page_is_gated && on_submit_page)) && !campaign_is_not_gated) || is_on_login_page
   end
 end
