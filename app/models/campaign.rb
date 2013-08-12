@@ -3,7 +3,8 @@ class Campaign < ActiveRecord::Base
   :lead_email, :path, :start_date,
   :title, :gated, :description,
   :image, :mailchimp, :mobile_commons,
-  :email_signup, :email_submit, :meme_header, :meme
+  :email_signup, :email_submit, :meme_header, :meme,
+  :paged_form
 
   has_many :posts
 
@@ -18,7 +19,7 @@ class Campaign < ActiveRecord::Base
 
   validates :path, uniqueness: { case_sensitive: false }
 
-  has_attached_file :image, :styles => { :campaign => '250x141!' }, :default_url => '/images/:style/default.png'
+  has_attached_file :image, :styles => { :campaign => '250x141!' }, :default_url => '/images/:style/default.png', :preserve_files => true
   validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif'] }
 
   before_save do

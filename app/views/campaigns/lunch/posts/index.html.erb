@@ -1,0 +1,23 @@
+<% cache @admin + 'posts-index-home' do %>
+<script type="text/javascript">
+<!--
+	var count = <%= @count %>;
+	var latest = <%= @last %>;
+-->
+</script>
+
+<section class="posts">
+  <div class="section-container">
+    <h2>EAT SANDWICHES</h2>
+    <p>This will be the default index page, unless you overwrite it with 'app/views/campaigns/<%= @campaign.path %>/posts/index.html.erb'.</p>
+    <div class="post-list">
+      <% if @posts.length > 0 %>
+        <%=raw render('post').gsub(/\n/, '') %>
+        <div class="inview"></div>
+      <% else %>
+        <%= render 'not_found' %>
+      <% end %>
+    </div>
+  </div>
+</section>
+<% end %>

@@ -61,6 +61,7 @@
   <%= f.input :name, required: true, label: "Name?", wrapper_html: { class: 'form-item-name' } %>
   <%= f.input :city, required: true, label: "City?", wrapper_html: { class: 'form-item-city' } %>
   <%= f.input :state, required: true, label: "State?", wrapper_html: { class: 'form-item-state' }, as: :select, collection: get_states.invert, prompt: 'Choose a state', include_blank: false %>
+
   </div>
   <div class="page" data-page="2">
   <% if admin? %>
