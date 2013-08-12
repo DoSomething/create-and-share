@@ -1,0 +1,76 @@
+<!-- #hidden fields for cropping -->
+<% content_for(:head) do %>
+  <%= stylesheet_link_tag 'jquery.Jcrop.min' %>
+<% end %>
+
+<h2>tell us about your animal</h2>
+<%= simple_form_for(@post, :url => { :action => params[:action] == 'edit' ? 'update' : 'create' }, :html => { :multipart => true, :class => "form form-submit right" }) do |f| %>
+  <%= f.hidden_field :campaign_id, :value => @campaign.id %>
+  <% if @post.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@post.errors.count, "error") %> prohibited this post from being saved:</h2>
+
+      <ul id="errors">
+      <% @post.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="first-page page" data-page="1">
+  <% if !@post.image_file_name or @post.errors.any? %>
+    <%= f.input :image, required: true, wrapper_html: { class: 'form-item-first-name' }, input_html: { accept: 'image/jpeg,image/gif,image/png' } %>
+    <div id="image_error">Invalid file type.</div>
+    <div id="allowed-types">Your image must be a <strong>.png, .gif or .jpg</strong> file, and be less than <strong>10MB</strong>.</div>
+    <% if @campaign.meme %>
+      <% meme_text_label = !@campaign.meme_header.blank? ? @campaign.meme_header : "Add a caption" %>
+      <%= f.input :meme_text, required: false, label: "#{meme_text_label} (optional)", wrapper_html: { class: 'form-item-meme-text', id: 'form-item-meme-text' } %>
+      <%= f.input :meme_position, required: false, label: "Text position", wrapper_html: { class: 'form-item-meme-position', id: 'form-item-meme-position' }, :as => :select, :collection => [['Top', 'top'], ['Bottom', 'bottom']], include_blank: false, :selected => 'top' %>
+    <% end %>
+
+    <!-- #hidden fields for cropping -->
+    <% for attribute in [:crop_x, :crop_y, :crop_w, :crop_h, :crop_dim_w] %>
+    <%= f.hidden_field attribute, :id => attribute %>
+    <% end %>
+
+    <div id="upload-preview">
+      <% if @campaign.meme %>
+        <div id="top_text" class="text-pos">
+          <% if !@campaign.meme_header.blank? %>
+            <div><%= @campaign.meme_header %></div>
+          <% end %>
+          <div class="yours"></div>
+        </div>
+        <div id="placeholder_text">
+          <span class="text">Upload an image and it will appear here.</span>
+        </div>
+        <div id="bottom_text" class="text-pos">
+          <% if !@campaign.meme_header.blank? %>
+            <div><%= @campaign.meme_header %></div>
+          <% end %>
+          <div class="yours"></div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div id="upload-preview">
+      <%= image_tag @post.image.url(:gallery) %>
+    </div>
+  <% end %>
+  <%= f.input :name, required: true, label: "Name?", wrapper_html: { class: 'form-item-name' } %>
+  <%= f.input :city, required: true, label: "City?", wrapper_html: { class: 'form-item-city' } %>
+  <%= f.input :state, required: true, label: "State?", wrapper_html: { class: 'form-item-state' }, as: :select, collection: get_states.invert, prompt: 'Choose a state', include_blank: false %>
+  </div>
+  <div class="page" data-page="2">
+  <% if admin? %>
+    <%= f.input :story, label: "Compelling story? Why not.", required: false, wrapper_html: { class: 'form-item-story' } %>
+    <%= f.input :flagged, label: 'Flagged', :as => :boolean %>
+    <%= f.input :promoted, label: 'Promoted', :as => :boolean %>
+    <%= f.input :share_count, label: 'Share count' %>
+  <% end %>
+  </div>
+
+  <%= f.submit 'next_page', as: 'button', value: 'Next Page', id: 'next-page', class: 'btn primary large' %>
+  <%= f.submit 'submit', :value => 'Submit', :id => 'edit-final-submit', :class => 'btn primary large' %>
+<% end %>
