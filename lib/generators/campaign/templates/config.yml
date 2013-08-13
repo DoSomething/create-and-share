@@ -3,6 +3,17 @@ facebook:
   # caption: Caption
   # description: Description
 
+home:
+  # Put homepage configuration here.  This follows
+  # the same principal as "filters", except for
+  # "constraints".  e.g.:
+  #
+  # order:
+  #   - "COUNT(votes.id) ASC"
+  #   - "created_at DESC"
+  # where:
+  #   "state": "NY"
+
 filters:
   # Put your filters here, e.g.:
   # ":state":

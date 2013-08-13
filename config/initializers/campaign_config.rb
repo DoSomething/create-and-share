@@ -1,6 +1,7 @@
 filters = {}
 facebook = {}
 popups = {}
+home = {}
 files = Dir["#{Rails.root}/config/campaigns/*.yml"]
 files.each do |file|
   k = Pathname.new(file).basename.to_s.gsub('.yml', '')
@@ -9,11 +10,13 @@ files.each do |file|
   popups[k] ||= []
 
   f = YAML::load(File.open(file))
+  home[k] = f['home'] || {}
   filters[k] = f['filters'] || {}
   facebook[k] = f['facebook'] || {}
   popups[k] = f['popups'] || {}
 end
 
+CreateAndShare::Application.config.home = home
 CreateAndShare::Application.config.filters = filters
 CreateAndShare::Application.config.facebook = facebook
 CreateAndShare::Application.config.popups = popups
