@@ -71,10 +71,12 @@ class Post < ActiveRecord::Base
       if !Rails.application.config.home[params[:campaign_path]].nil?
         home_config = Rails.application.config.home[params[:campaign_path]]
         # Make sure we don't bug out.
+        home_config['fields'] ||= {}
+        home_config['joins'] ||= {}
         home_config['where'] ||= {}
         home_config['order'] ||= {}
 
-        uncached_posts = uncached_posts.build_config_params(uncached_posts, {}, home_config['where'], home_config['order'])
+        uncached_posts = uncached_posts.build_config_params(uncached_posts, {}, home_config['fields'], home_config['joins'], home_config['where'], home_config['order'])
       end
     end
 
@@ -151,44 +153,48 @@ class Post < ActiveRecord::Base
       return
     end
 
+    self.build_config_params(self, {}, @fields, @joins, @where, @order)
+  end
+
+  def self.build_config_params(query, result = {}, fields = [], joins = [], where = [], order = [])
     cols = Post.column_names
     i = 0
-    @results = self
+    results = self
 
-    unless @fields.nil?
-      @results = @results.select('posts.*')
-      @fields.each do |f|
-        @results = @results.select(f)
+    unless fields.nil?
+      results = results.select('posts.*')
+      fields.each do |f|
+        results = results.select(f)
       end
     end
 
-    unless @joins.nil?
-      @joins.each do |j|
-        @results = @results.joins(j)
+    unless joins.nil?
+      joins.each do |j|
+        results = results.joins(j)
       end
     end
 
-    unless @where.nil?
-      @where.each do |column, value|
+    unless where.nil?
+      where.each do |column, value|
         if cols.include? column
-          if @result.names.length > 0
-            if !@result[value].nil?
-              @results = @results.where(column.to_sym => @result[value])
+          if !result.empty? && !result.nil? && result.names.length > 0
+            if !result[value].nil?
+              results = results.where(column.to_sym => result[value])
             end
           else
-            @results = @results.where(column.to_sym => value)
+            results = results.where(column.to_sym => value)
           end
         else
           col_alias = "t#{i.to_s}"
-          if @result.names.length > 0
-            if !@result[value].nil?
-              value = @result[value]
+          if !result.empty? && !result.nil? && result.names.length > 0
+            if !result[value].nil?
+              value = result[value]
             end
           else
             value = value
           end
 
-          @results = @results
+          results = results
             .joins('INNER JOIN tags ' + col_alias + ' ON (' + col_alias + '.post_id = posts.id)')
             .where(col_alias + '.column = ? and ' + col_alias + '.value = ?', column, value)
           i += 1
@@ -196,48 +202,7 @@ class Post < ActiveRecord::Base
       end
     end
 
-    unless @order.nil? || @order.count == 0
-      @results = @results.reorder('')
-      @order.each do |o|
-        @results = @results.order(o)
-      end
-    end
-
-    @results
-  end
-
-  def self.build_config_params(query, result = {}, where = [], order = [])
-    cols = Post.column_names
-    i = 0
-    results = self
-
-    where.each do |column, value|
-      if cols.include? column
-        if !result.empty? && !result.nil? && result.names.length > 0
-          if !result[value].nil?
-            results = results.where(column.to_sym => result[value])
-          end
-        else
-          results = results.where(column.to_sym => value)
-        end
-      else
-        col_alias = "t#{i.to_s}"
-        if result.names.length > 0
-          if !result[value].nil?
-            value = result[value]
-          end
-        else
-          value = value
-        end
-
-        results = results
-          .joins('INNER JOIN tags ' + col_alias + ' ON (' + col_alias + '.post_id = posts.id)')
-          .where(col_alias + '.column = ? and ' + col_alias + '.value = ?', column, value)
-        i += 1
-      end
-    end
-
-    if !order.nil? && order.count > 0
+    unless order.nil? || order.count == 0
       results = results.reorder('')
       order.each do |o|
         results = results.order(o)
