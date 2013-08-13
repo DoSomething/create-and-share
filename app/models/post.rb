@@ -51,7 +51,6 @@ class Post < ActiveRecord::Base
       .select('posts.*, COUNT(shares.*) AS real_share_count')
       .joins('LEFT JOIN shares ON (shares.post_id = posts.id)')
       .joins('LEFT JOIN votes ON (votes.voteable_id = posts.id)')
-      .includes(:votes)
       .where(campaign_id: campaign.id, flagged: false)
       .group('posts.id')
   end
@@ -139,6 +138,8 @@ class Post < ActiveRecord::Base
       if @result = params[:filter].match(ret)
         @where = config['where']
         @order = config['order']
+        @fields = config['fields']
+        @joins = config['joins']
         break
       end
     end
@@ -151,6 +152,19 @@ class Post < ActiveRecord::Base
     cols = Post.column_names
     i = 0
     @results = self
+
+    unless @fields.nil?
+      @results = @results.select('posts.*')
+      @fields.each do |f|
+        @results = @results.select(f)
+      end
+    end
+
+    unless @joins.nil?
+      @joins.each do |j|
+        @results = @results.joins(j)
+      end
+    end
 
     unless @where.nil?
       @where.each do |column, value|
