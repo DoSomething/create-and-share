@@ -5,11 +5,13 @@ class Post < ActiveRecord::Base
     :story, :update_time,
     :meme_text, :meme_position,
     :crop_x, :crop_y, :crop_w, :crop_h, :crop_dim_w,
-    :campaign_id, :extras
+    :campaign_id, :extras, :processed_from_url
 
   serialize :extras, Hash
 
-  attr_accessor :crop_x, :crop_y, :crop_w, :crop_h, :reprocessed, :crop_dim_w, :real_share_count
+  attr_accessor :crop_x, :crop_y, :crop_w, :crop_h,
+    :reprocessed, :crop_dim_w, :real_share_count,
+    :processed_from_url
 
   validates :name,    :presence => true
   validates :city,    :presence => true
@@ -298,6 +300,27 @@ class Post < ActiveRecord::Base
       if !self.campaign.email_submit.nil?
         Services::Mandrill.mail(self.campaign.lead, self.campaign.lead_email, @user.email, self.campaign.email_submit)
       end
+    end
+  end
+
+  # Remove the temporary image created when we
+  after_create :remove_url_tmp_image, if: :loading_from_url?
+  def loading_from_url?
+    !self.processed_from_url.nil?
+  end
+  def remove_url_tmp_image
+    if File.exists?(self.processed_from_url)
+      FileUtils.rm_f(self.processed_from_url)
+    end
+  end
+
+  after_create :remove_real_tmp_image, unless: :loading_from_url?
+  def remove_real_tmp_image
+    filename = self.image.instance['image_file_name']
+    dir = 'public/system/tmp/'
+
+    if File.exists?(dir + filename)
+      FileUtils.rm(dir + filename)
     end
   end
 

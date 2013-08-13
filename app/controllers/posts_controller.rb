@@ -103,11 +103,24 @@ class PostsController < ApplicationController
       params[:post][:uid] = session[:drupal_user_id]
     end
 
+    require 'uri'
+    if params[:post][:image] =~ URI::regexp
+      real_filename = File.basename(params[:post][:image])
+      tmp_file = Rails.root.to_s + '/public/tmp/' + real_filename
+
+      File.open(tmp_file, 'wb') do |file|
+        file.write open(params[:post][:image]).read
+      end
+
+      params[:post][:processed_from_url] = tmp_file
+      params[:post][:image] = File.new(tmp_file)
+    end
+
     @post = Post.new(params[:post])
     respond_to do |format|
       if @post.save
         format.html { redirect_to show_post_path(@post, :campaign_path => @post.campaign.path) }
-        format.json { render json: @post, status: :created, location: @post }
+        format.json { render json: @post, status: :created }
       else
         format.html { render action: "new" }
         format.json { render json: @post.errors, status: :unprocessable_entity }
