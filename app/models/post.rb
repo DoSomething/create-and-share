@@ -153,7 +153,7 @@ class Post < ActiveRecord::Base
       return
     end
 
-    self.build_config_params(self, {}, @fields, @joins, @where, @order)
+    self.build_config_params(self, @result, @fields, @joins, @where, @order)
   end
 
   def self.build_config_params(query, result = {}, fields = [], joins = [], where = [], order = [])
@@ -177,7 +177,7 @@ class Post < ActiveRecord::Base
     unless where.nil?
       where.each do |column, value|
         if cols.include? column
-          if !result.empty? && !result.nil? && result.names.length > 0
+          if !result.nil? && !result.names.nil? && result.names.length > 0
             if !result[value].nil?
               results = results.where(column.to_sym => result[value])
             end
@@ -186,7 +186,7 @@ class Post < ActiveRecord::Base
           end
         else
           col_alias = "t#{i.to_s}"
-          if !result.empty? && !result.nil? && result.names.length > 0
+          if !result.nil? && !result.names.nil? && result.names.length > 0
             if !result[value].nil?
               value = result[value]
             end
