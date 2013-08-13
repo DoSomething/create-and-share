@@ -308,6 +308,7 @@ DEPENDENCIES
   pg
   rack-livereload
   rails (= 3.2.13)
+  rake (= 10.1.0)
   rspec-rails
   sass-rails (~> 3.2.3)
   selenium-webdriver
