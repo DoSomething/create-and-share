@@ -5,7 +5,8 @@ class Post < ActiveRecord::Base
     :story, :update_time,
     :meme_text, :meme_position,
     :crop_x, :crop_y, :crop_w, :crop_h, :crop_dim_w,
-    :campaign_id, :extras, :processed_from_url
+    :campaign_id, :extras, :processed_from_url,
+    :school_id
 
   serialize :extras, Hash
 
@@ -16,6 +17,8 @@ class Post < ActiveRecord::Base
   validates :name,    :presence => true
   validates :city,    :format => { :with => /[A-Za-z0-9\-\_\s]+/ },
                       :allow_blank => true
+  validates :school_id,  :numericality => true,
+                         :allow_blank => true
   validates :state,   :presence => true,
                       :length => { :maximum => 2 },
                       :format => { :with => /[A-Z]{2}/ }
@@ -27,6 +30,7 @@ class Post < ActiveRecord::Base
   has_many :shares
   belongs_to :campaign
   belongs_to :user, foreign_key: 'uid', primary_key: 'uid'
+  has_one :school
 
   acts_as_voteable
 

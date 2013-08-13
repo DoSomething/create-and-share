@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130812191121) do
+ActiveRecord::Schema.define(:version => 20130813212946) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -81,9 +81,20 @@ ActiveRecord::Schema.define(:version => 20130812191121) do
     t.string   "city"
     t.integer  "campaign_id"
     t.text     "extras"
+    t.integer  "school_id"
   end
 
   add_index "posts", ["campaign_id"], :name => "index_posts_on_campaign_id"
+
+  create_table "schools", :force => true do |t|
+    t.integer  "gsid"
+    t.string   "title"
+    t.string   "state"
+    t.string   "city"
+    t.string   "zip"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false

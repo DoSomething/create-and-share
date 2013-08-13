@@ -60,6 +60,7 @@
   <% end %>
   <%= f.input :name, required: true, label: "Name?", wrapper_html: { class: 'form-item-name' } %>
   <%= f.input :state, required: true, label: "State?", wrapper_html: { class: 'form-item-state' }, as: :select, collection: get_states.invert, prompt: 'Choose a state', include_blank: false %>
+  <%= f.input :school_id, required: true, label: 'Your school', wrapper_html: { class: 'form-item-school-id' }, as: 'string' %>
 
   </div>
   <div class="page" data-page="2">
