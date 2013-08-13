@@ -37,7 +37,6 @@ group :development, :test do
   gem 'selenium-webdriver'
   gem 'headless'
   gem 'database_cleaner'
-  gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'passenger'
   gem 'spork'
   gem 'faker'
