@@ -1,0 +1,37 @@
+facebook:
+  # title: Facebook post title
+  # caption: Caption
+  # description: Description
+
+home:
+  order:
+    - "COUNT(votes.id) ASC"
+    - "posts.created_at DESC"
+
+filters:
+  ":state":
+    constraints:
+      ":state": "(?<state>[A-Z]{2})"
+    where:
+      "state": "state"
+    order:
+      - "COUNT(votes.id) DESC"
+      - "posts.created_at DESC"
+  "delish":
+    fields:
+      - "COUNT(up.*) as upcount"
+    joins:
+      - "LEFT JOIN votes up on (up.voteable_id = posts.id and up.vote = 't')"
+    order:
+      - "upcount DESC"
+  "gross":
+    fields:
+      - "COUNT(down.*) as downcount"
+    joins:
+      - "LEFT JOIN votes down on (down.voteable_id = posts.id and down.vote = 'f')"
+    order:
+      - "downcount DESC"
+
+popups:
+  # Put your popups here, e.g.:
+  # 5: "test"
