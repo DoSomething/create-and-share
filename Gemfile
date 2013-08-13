@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '3.2.13'
+gem 'rake', '10.1.0'
 
 gem 'pg'
 gem 'paperclip'
@@ -67,7 +68,7 @@ gem 'active_model_serializers'
 # gem 'unicorn'
 
 # Deploy with Capistrano
-# gem 'capistrano'
+gem 'capistrano'
 
 # To use debugger
 # gem 'debugger'
