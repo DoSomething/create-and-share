@@ -14,7 +14,8 @@ class Post < ActiveRecord::Base
     :processed_from_url
 
   validates :name,    :presence => true
-  validates :city,    :presence => true
+  validates :city,    :format => { :with => /[A-Za-z0-9\-\_\s]+/ },
+                      :allow_blank => true
   validates :state,   :presence => true,
                       :length => { :maximum => 2 },
                       :format => { :with => /[A-Z]{2}/ }

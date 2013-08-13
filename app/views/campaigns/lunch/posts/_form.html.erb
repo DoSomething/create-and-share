@@ -59,7 +59,6 @@
     </div>
   <% end %>
   <%= f.input :name, required: true, label: "Name?", wrapper_html: { class: 'form-item-name' } %>
-  <%= f.input :city, required: true, label: "City?", wrapper_html: { class: 'form-item-city' } %>
   <%= f.input :state, required: true, label: "State?", wrapper_html: { class: 'form-item-state' }, as: :select, collection: get_states.invert, prompt: 'Choose a state', include_blank: false %>
 
   </div>
@@ -71,7 +70,7 @@
     <% end %>
   </div>
   <div class="page" data-page="3">
-    <%= f.simple_fields_for :extra do |extra| %>
+    <%= f.simple_fields_for :extras do |extra| %>
       <%= extra.input :how_satisfied, label: 'How satisfied have you been with the taste of your school lunch over the past 4 weeks?', as: 'radio', collection: ['Very satisfied', 'Somewhat satisfied', 'Not satisfied', 'Very unsatisfied'] %>
       <%= extra.input :how_do_you_feel, label: 'After eating your school lunch, how do you feel?', as: 'check_boxes', collection: ['Energetic', 'Hungry', 'Full', 'Sick', 'Tired', 'Healthy', 'Sluggish', 'Smart'] %>
       <%= extra.input :nutrition_information, label: 'Is nutrition information visible in your school cafeteria?', as: 'radio', collection: ['Yes', 'No'] %>

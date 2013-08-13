@@ -12,8 +12,8 @@ describe Post do
       FactoryGirl.build(:post, name: nil).should_not be_valid      
     end
 
-    it 'is invalid without a city' do
-      FactoryGirl.build(:post, city: nil).should_not be_valid
+    it 'is invalid without a valid city' do
+      FactoryGirl.build(:post, city: '#@#()$*@#$').should_not be_valid
     end
 
     it 'is invalid without state' do
