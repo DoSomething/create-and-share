@@ -290,6 +290,8 @@ class PostsController < ApplicationController
     render :json => { score: score, up: up, down: down, color: color, popup: popup }
   end
 
+  # GET /:campaign_path/posts/school_lookup?term=[term]
+  # POST /:campaign_path/posts/school_lookup
   def school_lookup
     if @campaign.has_school_field === false
       raise 'This campaign does not have a school field'
@@ -306,8 +308,11 @@ class PostsController < ApplicationController
       { gsid: 2, name: 'Blah blah School', city: 'Wesminster', state: 'MD', zip: '11225' }
     ]
 
-    mapped = search.map { |e| { label: e[:name], value: "#{e[:name]} (#{e[:gsid]})" } }
-    results = mapped.find_all { |result| result[:label] =~ Regexp.new(params[:term], 'i') }
+    results = search.inject([]) do |res, elm|
+      result = { label: elm[:name], value: "#{elm[:name]} (#{elm[:gsid]})" }
+      res << result if result[:label] =~ Regexp.new(params[:term], 'i')
+      res
+    end
 
     render json: results, root: false, response: 200
   end
