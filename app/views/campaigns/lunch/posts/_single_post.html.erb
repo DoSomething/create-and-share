@@ -8,8 +8,8 @@
 
   <div class="votes">
     <span class="thumbs-up-count-wrapper"><span class="thumbs-up-count"><%= @post.votes_for %></span></span>
-    <a href="#" class="thumbs-up<%= !@user.nil? && @user.voted_for?(@post) ? ' voted' : '' %>" data-type="up">Delish</a>
+    <a href="#" class="thumbs-up<%= !@user.nil? && @user.voted_for?(@post) ? ' voted' : '' %>" data-type="up">EAT IT</a>
     <span class="thumbs-down-count-wrapper"><span class="thumbs-down-count"><%= @post.votes_against %></span></span>
-    <a href="#" class="thumbs-down<%= !@user.nil? && @user.voted_against?(@post) ? ' voted' : '' %>" data-type="down">Gross</a>
+    <a href="#" class="thumbs-down<%= !@user.nil? && @user.voted_against?(@post) ? ' voted' : '' %>" data-type="down">TOSS IT</a>
   </div>
 </div>
