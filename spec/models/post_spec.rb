@@ -82,7 +82,7 @@ describe Post do
         @scroll.should include(@promoted)
       end
 
-      context 'pagination', focus:true do
+      context 'pagination' do
         before :each do
           @campaign = FactoryGirl.create(:campaign)
           FactoryGirl.create_list(:post, 20, campaign_id: @campaign.id)
