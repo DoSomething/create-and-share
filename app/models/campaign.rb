@@ -18,7 +18,7 @@ class Campaign < ActiveRecord::Base
 
   validates :path, uniqueness: { case_sensitive: false }
 
-  has_attached_file :image, :styles => { :campaign => '250x141!' }, :default_url => '/images/:style/default.png'
+  has_attached_file :image, :styles => { :campaign => '250x141!' }, :default_url => '/images/:style/default.png', :processors => [:thumbnail, :compress]
   validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif'] }
 
   before_save do
