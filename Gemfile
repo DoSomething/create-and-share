@@ -18,6 +18,9 @@ gem 'mailchimp'
 
 gem 'thumbs_up'
 
+gem 'turbolinks'
+gem 'jquery-turbolinks'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
