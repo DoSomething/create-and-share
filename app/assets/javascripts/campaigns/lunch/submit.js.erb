@@ -1,0 +1,9 @@
+$(document).ready(function() {
+  $( "#post_school_id" ).autocomplete({
+    source: "/lunch/posts/school_lookup.json",
+    minLength: 2,
+    select: function( event, ui ) {
+      // Select logic here
+    }
+  });
+});

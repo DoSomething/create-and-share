@@ -286,12 +286,12 @@ class PostsController < ApplicationController
     #res = JSON.parse(open('http://mchitten.com/articles.json').read)
     search = [
       { gsid: 1, name: 'DoSomething High School', city: 'Brooklyn', state: 'NY', zip: '11225' },
-      { gsid: 2, name: 'Blah blah College', city: 'Wesminster', state: 'MD', zip: '11225' }
+      { gsid: 2, name: 'Blah blah School', city: 'Wesminster', state: 'MD', zip: '11225' }
     ]
 
-    mapped = search.map { |e| [e[:gsid], e[:name]] }
-    results = mapped.find { |id, name| name =~ Regexp.new(params[:search], 'i') }
+    mapped = search.map { |e| { label: e[:name], value: "#{e[:name]} (#{e[:gsid]})" } }
+    results = mapped.find_all { |result| result[:label] =~ Regexp.new(params[:term], 'i') }
 
-    render json: { results: results }
+    render json: results, root: false, response: 200
   end
 end
