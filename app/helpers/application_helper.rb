@@ -20,6 +20,7 @@ module ApplicationHelper
     ENV['facebook_app_id']
   end
 
+  @@campaign_cache = {}
   # Gets current campaign via path
   def get_campaign
     if params[:campaign_path].nil?
@@ -27,8 +28,10 @@ module ApplicationHelper
     end
 
     path = params[:campaign_path]
+    @@campaign_cache[path] ||= Campaign.where(path: path).first
 
-    @campaign = Campaign.where(:path => path).first
+    @campaign = @@campaign_cache[path]
+    @@campaign_cache[path]
   end
 
   # Did the user already submit something?

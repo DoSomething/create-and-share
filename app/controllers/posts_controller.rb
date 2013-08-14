@@ -2,7 +2,7 @@ class PostsController < ApplicationController
   include Services
 
   # Get campaign
-  before_filter :get_campaign, only: [:campaign_closed, :index, :filter, :extras, :show, :vanity, :new]
+  before_filter :get_campaign, only: [:campaign_closed, :index, :filter, :extras, :show, :vanity, :new, :school_lookup]
 
   # Before everything runs, run an authentication check and an API key check.
   before_filter :is_not_authenticated, :verify_api_key, :campaign_closed
@@ -280,6 +280,12 @@ class PostsController < ApplicationController
   end
 
   def school_lookup
+    if @campaign.has_school_field === false
+      raise 'This campaign does not have a school field'
+      render response: 500
+      return
+    end
+
     #require 'open-uri'
     #require 'json'
     #base_uri = 'http://localhost:3000'
