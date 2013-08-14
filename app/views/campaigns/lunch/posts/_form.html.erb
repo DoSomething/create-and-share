@@ -65,17 +65,17 @@
   </div>
   <div class="page" data-page="2">
     <%= f.simple_fields_for :extras do |extra| %>
-      <%= extra.input :how_often_do_you_eat, label: 'How often do you eat school lunch?', as: 'radio', collection: ['0-2 times per month', '3-5 times per month', '6-10 times per month', 'Every day'] %>
-      <%= extra.input :how_nutricious, label: "Thinking back on the school lunch you've eaten in the past 4 weeks, how nutricious was your meal?", as: 'radio', collection: ['Very nutricious', 'Somewhat nutricious', 'Not nutricious at all', 'Unhealthy'] %>
-      <%= extra.input :thrown_away, label: 'How many times in the past 4 weeks have you thrown away part of your school lunch?', as: 'radio', collection: ['0-2 times', '3-5 times', '6-10 times', 'Every day'] %>
+      <%= extra.input :how_often_do_you_eat, label: 'How often do you eat school lunch?', as: :radio_buttons, collection: ['0-2 times per month', '3-5 times per month', '6-10 times per month', 'Every day'] %>
+      <%= extra.input :how_nutricious, label: "Thinking back on the school lunch you've eaten in the past 4 weeks, how nutricious was your meal?", as: :radio_buttons, collection: ['Very nutricious', 'Somewhat nutricious', 'Not nutricious at all', 'Unhealthy'] %>
+      <%= extra.input :thrown_away, label: 'How many times in the past 4 weeks have you thrown away part of your school lunch?', as: :radio_buttons, collection: ['0-2 times', '3-5 times', '6-10 times', 'Every day'] %>
     <% end %>
   </div>
   <div class="page" data-page="3">
     <%= f.simple_fields_for :extras do |extra| %>
-      <%= extra.input :how_satisfied, label: 'How satisfied have you been with the taste of your school lunch over the past 4 weeks?', as: 'radio', collection: ['Very satisfied', 'Somewhat satisfied', 'Not satisfied', 'Very unsatisfied'] %>
+      <%= extra.input :how_satisfied, label: 'How satisfied have you been with the taste of your school lunch over the past 4 weeks?', as: :radio_buttons, collection: ['Very satisfied', 'Somewhat satisfied', 'Not satisfied', 'Very unsatisfied'] %>
       <%= extra.input :how_do_you_feel, label: 'After eating your school lunch, how do you feel?', as: 'check_boxes', collection: ['Energetic', 'Hungry', 'Full', 'Sick', 'Tired', 'Healthy', 'Sluggish', 'Smart'] %>
-      <%= extra.input :nutrition_information, label: 'Is nutrition information visible in your school cafeteria?', as: 'radio', collection: ['Yes', 'No'] %>
-      <%= extra.input :cost, label: 'How much does your school lunch cost?', as: 'radio', collection: ["It's free", '$1 - $2', '$3 - $4', '$5 or more'] %>
+      <%= extra.input :nutrition_information, label: 'Is nutrition information visible in your school cafeteria?', as: :radio_buttons, collection: ['Yes', 'No'] %>
+      <%= extra.input :cost, label: 'How much does your school lunch cost?', as: :radio_buttons, collection: ["It's free", '$1 - $2', '$3 - $4', '$5 or more'] %>
     <% end %>
   </div>
 
