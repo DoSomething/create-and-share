@@ -26,6 +26,7 @@
   <%= f.input :image, required: false %>
   <%= f.input :meme %>
   <%= f.input :meme_header %>
+  <%= f.input :facebook, label: 'Facebook share type', as: 'select', collection: { 'Post on my own wall' => 'mine', "Post on my friends' walls" => 'friends' }, default: 'mine' %>
   <%= f.input :gated, as: 'select', default: '', collection: { 'No gate' => '', 'Gate entire campaign' => 'all', "Gate only submit" => 'submit' } %>
   <%= f.input :paged_form, label: 'Form is multiple pages long.' %>
   <%= f.input :has_school_field, label: 'Has Great Schools autocomplete field' %>
