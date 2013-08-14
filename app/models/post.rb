@@ -17,8 +17,7 @@ class Post < ActiveRecord::Base
   validates :name,    :presence => true
   validates :city,    :format => { :with => /[A-Za-z0-9\-\_\s]+/ },
                       :allow_blank => true
-  validates :school_id,  :numericality => true,
-                         :allow_blank => true
+  validates :school_id,  :presence => { :if => :is_school_campaign? }
   validates :state,   :presence => true,
                       :length => { :maximum => 2 },
                       :format => { :with => /[A-Z]{2}/ }
@@ -33,6 +32,11 @@ class Post < ActiveRecord::Base
   has_one :school
 
   acts_as_voteable
+
+  def is_school_campaign?
+    campaign = Campaign.find(self.campaign)
+    campaign.has_school_field === true
+  end
 
   def self.tagged(**args)
     i = 0

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130813212946) do
+ActiveRecord::Schema.define(:version => 20130814132717) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(:version => 20130813212946) do
     t.string   "meme_header"
     t.boolean  "meme"
     t.boolean  "paged_form"
+    t.boolean  "has_school_field"
   end
 
   create_table "participations", :force => true do |t|

@@ -28,6 +28,7 @@
   <%= f.input :meme_header %>
   <%= f.input :gated, as: 'select', default: '', collection: { 'No gate' => '', 'Gate entire campaign' => 'all', "Gate only submit" => 'submit' } %>
   <%= f.input :paged_form, label: 'Form is multiple pages long.' %>
+  <%= f.input :has_school_field, label: 'Has Great Schools autocomplete field' %>
   <%= f.submit %>
 
 <% end %>

@@ -4,7 +4,7 @@ class Campaign < ActiveRecord::Base
   :title, :gated, :description,
   :image, :mailchimp, :mobile_commons,
   :email_signup, :email_submit, :meme_header, :meme,
-  :paged_form
+  :paged_form, :has_school_field
 
   has_many :posts
 
