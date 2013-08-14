@@ -23,6 +23,7 @@ class Post < ActiveRecord::Base
 
   has_many :shares
   belongs_to :campaign
+  belongs_to :user, foreign_key: 'uid', primary_key: 'uid'
 
   acts_as_voteable
 

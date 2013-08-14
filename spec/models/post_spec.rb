@@ -104,9 +104,11 @@ describe Post do
     describe 'filtering' do
       before :each do
         @caliCat = FactoryGirl.create(:post, state: "CA", extras: { :animal_type => 'cat' })
-        @campaign = FactoryGirl.create(:campaign, path: "picsforpets")
-        CreateAndShare::Application.config.filters = { @campaign.path => { ":atype-:state" => { "constraints" => { ":atype" => "(?<atype>cat|dog|other)s?", ":state" => "(?<state>[A-Z]{2})" }, "where" => { "animal_type" => "atype", "state" => "state" } } } }
+        @campaign = FactoryGirl.create(:campaign)
+        add_config(@campaign.path)
       end
+
+      after { remove_config(@campaign.path) }
 
       it 'filters posts' do
         results = Post.filtered({ campaign_path: @campaign.path, filter: "cats-CA" })

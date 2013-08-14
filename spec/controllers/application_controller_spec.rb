@@ -190,7 +190,9 @@ describe ApplicationController do
   describe 'returns popup if there is one' do
     before :each do
       routes.draw { get "popup" => "anonymous#popup" }
+      add_config(campaign.path)
     end
+    after { remove_config(campaign.path) }
 
     it 'returns a popup template name at appropriate action count' do
       User.any_instance.stub(:action_count).and_return(5)

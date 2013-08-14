@@ -7,5 +7,9 @@ Example:
     This will create:
         config/campaigns/blah.yml
         app/assets/javascripts/campaigns/blah
+        app/assets/javascripts/campaigns/blah/application.js
+        app/assets/javascripts/campaigns/blah/filters.js
         app/assets/stylesheets/campaigns/blah
-
+        app/assets/stylesheets/campaigns/blah/application.sass
+        app/views/campaigns/blah/
+        app/views/campaigns/blah/popups/

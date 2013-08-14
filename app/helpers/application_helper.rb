@@ -57,6 +57,7 @@ module ApplicationHelper
     end
   end
 
+  # Includes a campaign-specific stylesheet if there is one
   def campaign_stylesheet_link_tag(stylesheet, campaign)
     if campaign && File.exist?(Rails.root.to_s + '/app/assets/stylesheets/campaigns/' + campaign.path + '/' + stylesheet + '.sass')
       stylesheet_link_tag 'campaigns/' + campaign.path + '/application', :media => "all"
@@ -65,6 +66,7 @@ module ApplicationHelper
     end
   end
 
+  # Includes a campaign-specific javascript manifest if there is one
   def campaign_javascript_include_tag(script, campaign)
     if campaign && File.exist?(Rails.root.to_s + '/app/assets/javascripts/campaigns/' + campaign.path + '/' + script + '.js')
       javascript_include_tag 'campaigns/' + campaign.path + '/application'

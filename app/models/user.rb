@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
 
   has_many :campaigns, through: :participations
   has_many :participations, dependent: :destroy
+  has_many :posts
 
   acts_as_voter
 
