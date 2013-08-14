@@ -14,7 +14,6 @@ class ApplicationController < ActionController::Base
   end
 
   before_filter :miniprofiler
-
   def miniprofiler
     Rack::MiniProfiler.authorize_request if admin?
   end
