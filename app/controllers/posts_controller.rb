@@ -116,7 +116,7 @@ class PostsController < ApplicationController
       params[:post][:image] = File.new(tmp_file)
     end
 
-    if params[:post][:school_id] && @campaign.has_school_field === true
+    if params[:post][:school_id] && (@campaign && @campaign.has_school_field === true)
       match = params[:post][:school_id].match(/\((?<gsid>\d+)\)/)
 
       # Force a failure if they've input a non-GS school

@@ -20,7 +20,6 @@ module ApplicationHelper
     ENV['facebook_app_id']
   end
 
-  @@campaign_cache = {}
   # Gets current campaign via path
   def get_campaign
     if params[:campaign_path].nil?
@@ -28,16 +27,14 @@ module ApplicationHelper
     end
 
     path = params[:campaign_path]
-    @@campaign_cache[path] ||= Campaign.where(path: path).first
-
-    @campaign = @@campaign_cache[path]
-    @@campaign_cache[path]
+    @campaign = Campaign.where(path: path).first
   end
 
   # Did the user already submit something?
   def already_submitted?
     user_id = session[:drupal_user_id]
     campaign = get_campaign
+
     if user_id.nil? || campaign.nil?
       return false
     end

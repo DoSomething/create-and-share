@@ -157,7 +157,7 @@ describe ApplicationController do
 
   describe 'checks for submission' do
     context 'has posts' do
-      before { FactoryGirl.create(:post, campaign_id: campaign.id) }
+      before { @post = FactoryGirl.create(:post, campaign_id: campaign.id) }
       it 'has posts in one campaign' do
         get :index, { campaign_path: campaign.path }, session
         assigns(:submitted).should eq true

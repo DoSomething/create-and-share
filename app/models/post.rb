@@ -34,7 +34,7 @@ class Post < ActiveRecord::Base
   acts_as_voteable
 
   def is_school_campaign?
-    campaign = Campaign.find(self.campaign)
+    campaign = Campaign.find(self.campaign_id)
     campaign.has_school_field === true
   end
 

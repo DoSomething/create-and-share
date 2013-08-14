@@ -24,7 +24,6 @@ describe PostsController, :type => :controller do
   describe 'GET #show' do
     it 'assigns post' do
       get :show, { :campaign_path => campaign.path, :id => @post.id }, session
-
       assigns(:user).should eq user
       expect(assigns(:post)).to eq @post
     end
