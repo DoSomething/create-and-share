@@ -17,6 +17,7 @@
   <%
     campaign = get_campaign
     facebook = Rails.application.config.facebook[campaign.path]
+    share_type = campaign.facebook
   %>
   <script type="text/javascript">
   <!--
@@ -24,6 +25,7 @@
       title: '<%= campaign.title %>',
       path: '<%= campaign.path %>',
       facebook: <%=raw facebook.to_json %>,
+      share_type: '<%= share_type %>',
     };
   -->
   </script>
