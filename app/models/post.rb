@@ -123,10 +123,19 @@ class Post < ActiveRecord::Base
           .all
       end
 
-      total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
-        self
-          .where(flagged: false, campaign_id: campaign.id)
-          .count
+      if !filtered
+        total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
+          self
+            .where(flagged: false, campaign_id: campaign.id)
+            .count
+        end
+      else
+        total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
+          self
+            .where(flagged: false, campaign_id: campaign.id)
+            .filtered(params)
+            .count
+        end
       end
     end
 
