@@ -278,4 +278,20 @@ class PostsController < ApplicationController
 
     render :json => { score: score, up: up, down: down, color: color, popup: popup }
   end
+
+  def school_lookup
+    #require 'open-uri'
+    #require 'json'
+    #base_uri = 'http://localhost:3000'
+    #res = JSON.parse(open('http://mchitten.com/articles.json').read)
+    search = [
+      { gsid: 1, name: 'DoSomething High School', city: 'Brooklyn', state: 'NY', zip: '11225' },
+      { gsid: 2, name: 'Blah blah College', city: 'Wesminster', state: 'MD', zip: '11225' }
+    ]
+
+    mapped = search.map { |e| [e[:gsid], e[:name]] }
+    results = mapped.find { |id, name| name =~ Regexp.new(params[:search], 'i') }
+
+    render json: { results: results }
+  end
 end

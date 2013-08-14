@@ -45,6 +45,9 @@ $(document).ready(function() {
       }
       if (page > 1) {
         $('#prev-page').show();
+        if (page < pages.length) {
+          $('#next-page').show();
+        }
       }
       if (page == 1) {
         $('#prev-page').hide();
