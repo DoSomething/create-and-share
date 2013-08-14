@@ -29,7 +29,7 @@ class Post < ActiveRecord::Base
   has_many :shares
   belongs_to :campaign
   belongs_to :user, foreign_key: 'uid', primary_key: 'uid'
-  has_one :school
+  belongs_to :school, primary_key: 'gsid'
 
   acts_as_voteable
 
