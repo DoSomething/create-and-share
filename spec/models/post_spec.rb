@@ -85,9 +85,7 @@ describe Post do
       context 'pagination' do
         before :each do
           @campaign = FactoryGirl.create(:campaign)
-          20.times do
-            FactoryGirl.create(:post, campaign_id: @campaign.id)
-          end
+          FactoryGirl.create_list(:post, 20, campaign_id: @campaign.id)
           @posts = Post.build_post(@campaign)
         end
 
