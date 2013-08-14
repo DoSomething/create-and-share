@@ -2,7 +2,7 @@ class PostsController < ApplicationController
   include Services
 
   # Get campaign
-  before_filter :get_campaign, only: [:campaign_closed, :index, :filter, :extras, :show, :vanity, :new, :school_lookup]
+  before_filter :get_campaign, only: [:campaign_closed, :index, :filter, :extras, :show, :vanity, :new, :create, :school_lookup]
 
   # Before everything runs, run an authentication check and an API key check.
   before_filter :is_not_authenticated, :verify_api_key, :campaign_closed
@@ -114,6 +114,17 @@ class PostsController < ApplicationController
 
       params[:post][:processed_from_url] = tmp_file
       params[:post][:image] = File.new(tmp_file)
+    end
+
+    if params[:post][:school_id] && @campaign.has_school_field === true
+      match = params[:post][:school_id].match(/\((?<gsid>\d+)\)/)
+
+      # Force a failure if they've input a non-GS school
+      if !match[:gsid].nil?
+        params[:post][:school_id] = match[:gsid]
+      else
+        params[:post][:school_id] = nil
+      end
     end
 
     @post = Post.new(params[:post])
