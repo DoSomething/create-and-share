@@ -1,27 +1,23 @@
 // FILTERS
 // -------
 
-/***********************************************************
-REWRITE TO HANDLE THE CAMPAIGN SPECIFIC FILTER FORM AND URLS
-************************************************************/
+$(function() {
+  // Get user filter input and set destination
+  $('#submit_filter').click(function(){
+    var $type = $('#lunch_filter').val();
+    var $state = $('#state_filter').val();
+    var $this = $(this);
 
-// $(function() {
-//   // Get user filter input and set destination
-//   $('#submit_filter').click(function(){
-//     var $type = $('#animal_filter').val();
-//     var $state = $('#state_filter').val();
-//     var $this = $(this);
+    // The destination parameter is unbiased.  We need to tell it where to go here.
+    var dest;
+    if ($type == 'featured') {
+      dest = 'featured';
+    }
+    else {
+      dest = ($type !== 'all') ? $type + (($state !== '') ? '-' + $state : '') : (($state !== '') ? $state : '');
+    }
 
-//     // The destination parameter is unbiased.  We need to tell it where to go here.
-//     var dest;
-//     if ($type == 'featured') {
-//       dest = 'featured';
-//     }
-//     else {
-//       dest = ($type !== 'all') ? $type + (($state !== '') ? '-' + $state : '') : (($state !== '') ? $state : '');
-//     }
-
-//     document.location.href = '/' + campaign.path + (dest !== '' ? '/' + dest : '/');
-//     return false;
-//   });
-// });
+    document.location.href = '/' + campaign.path + (dest !== '' ? '/show/' + dest : '/');
+    return false;
+  });
+});

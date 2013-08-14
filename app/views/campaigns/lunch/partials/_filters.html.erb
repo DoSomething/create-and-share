@@ -1,0 +1,22 @@
+<nav class="filters">
+  <div class="section-container">
+    <select class="lunch_filter filter" id="lunch_filter">
+      <option value="all">All Lunches</option>
+      <option value="delish">Delish lunches</option>
+      <option value="gross">Gross lunches</option>
+    </select>
+    <select class="state_filter filter" id="state_filter">
+      <option value="">All States</option>
+      <%
+        s = params[:state] || ''
+        states = get_states
+        states.each do |key, state|
+      %>
+        <option value="<%= key %>"<%= ' selected="selected"' if s.to_sym == key %>><%= state %></option>
+      <% end %>
+    </select>
+
+    <a href="#" class="btn secondary small filter" id="submit_filter"><span>filter</span></a>
+  </div>
+</nav>
+
