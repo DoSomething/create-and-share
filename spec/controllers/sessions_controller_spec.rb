@@ -130,7 +130,13 @@ describe SessionsController, :type => :controller do
       describe 'does not login user' do
         before :each do
           @params = login_params
-          @params[:session][:username] = @user.email
+          @params[:session][:username] = "fail"
+          request_object = HTTParty::Request.new Net::HTTP::Get, '/'
+          parsed_response = lambda { ["Wrong Username or Password."] }
+          response_object = Net::HTTPUnauthorized.new('1.1', 401, 'BAD')
+          response_object.stub(:body => "{foo:'bar'}")
+          response = HTTParty::Response.new(request_object, response_object, parsed_response)
+          Services::Auth.stub(:login).and_return(response)
         end
 
         specify 'with campaign' do

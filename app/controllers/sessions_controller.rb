@@ -36,12 +36,7 @@ class SessionsController < ApplicationController
     campaign = Campaign.find_by_id(sess[:campaign])
 
     if form == 'login' # logs in user if he/she exist
-      if User.exists?(username)
-        login(campaign, form, session, username, password, nil)
-      else
-        flash[:error] = 'Invalid username / password.'
-        redirect_to campaign ? "/#{campaign.path}/login" : "/login"
-      end
+      login(campaign, form, session, username, password, nil)
     elsif form == 'register' # registers user if they don't exist in the DoSomething drupal database and then logs in him/her
       if User.exists?(email)
         flash[:error] = "A user with that account already exists."
@@ -70,7 +65,6 @@ class SessionsController < ApplicationController
       else
         date = Date.strptime(auth['birthday'], '%m/%d/%Y')
       end
-      # @todo: Update this for campaign.
       if !User.register(campaign, password, auth['email'], auth['id'], auth['first_name'], auth['last_name'], '', "#{date.month}/#{date.day}/#{date.year}")
         flash[:error] = "An error has occurred. Please log in again."
       end
@@ -102,10 +96,10 @@ class SessionsController < ApplicationController
           flash[:message] = "You've logged in with Facebook successfully!"
         end
 
-        if campaign
+        if campaign && !User.find_by_uid(session[:drupal_user_id]).participated?(campaign.id)
           redirect_to participation_path(campaign_path: campaign.path)
         else
-          source = session[:source] ||= root_path(campaign_path: '')
+          source = session[:source] ||= root_path(campaign_path: campaign ? campaign.path : '')
           session[:source] = nil
           redirect_to source
         end
@@ -119,7 +113,7 @@ class SessionsController < ApplicationController
           flash[:error] = "Facebook authentication failed."
         end
 
-        redirect_to request.env['HTTP_REFERER']
+        redirect_to campaign ? "/#{campaign.path}/login" : "/login"
       end
     end
 end
