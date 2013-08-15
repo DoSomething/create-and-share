@@ -35,6 +35,7 @@ class PostsController < ApplicationController
   end
 
   # Automatically uploads an image for the form.
+  # POST /:campaign/posts/autoimg
   def autoimg
     valid_types = ['image/jpeg', 'image/gif', 'image/png']
     file = params[:file]
