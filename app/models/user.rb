@@ -113,4 +113,9 @@ class User < ActiveRecord::Base
 
     share_count + vote_count
   end
+
+  def participated?(campaign_id)
+    p self.participations.where(campaign_id: campaign_id)
+    !self.participations.where(campaign_id: campaign_id).empty?
+  end
 end

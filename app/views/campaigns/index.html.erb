@@ -1,8 +1,8 @@
 <section id="campaigns">
 <% @campaigns.each do |campaign| %>
   <div class="campaign">
-    <%= link_to campaign.path do %><%= image_tag campaign.image.url(:campaign) %><% end %>
-    <%= link_to authenticated? ? participation_path(campaign_path: campaign.path) : campaign.path do %><h2><%= campaign.title %></h2><% end %>
+    <%= link_to authenticated? && !User.find_by_uid(session[:drupal_user_id]).participated?(campaign.id) ? participation_path(campaign_path: campaign.path) : campaign.path do %><%= image_tag campaign.image.url(:campaign) %><% end %>
+    <%= link_to authenticated? && !User.find_by_uid(session[:drupal_user_id]).participated?(campaign.id) ? participation_path(campaign_path: campaign.path) : campaign.path do %><h2><%= campaign.title %></h2><% end %>
     <%= simple_format campaign.description %>
     <% if admin? %><div class="manage"><%= link_to 'Edit', edit_campaign_path(campaign) %></div><% end %>
   </div>

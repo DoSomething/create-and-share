@@ -21,7 +21,7 @@ class UsersController < ApplicationController
     render :status => :forbidden unless authenticated?
 
     user = User.find_by_uid(session[:drupal_user_id])
-    if user.participations.where(campaign_id: @campaign.id).empty?
+    if !user.participated?(@campaign.id)
       user.participations.create(intent: false, campaign_id: @campaign.id)
       user.handle_mc(@campaign)
     end
