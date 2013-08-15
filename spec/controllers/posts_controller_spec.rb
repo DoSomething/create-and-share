@@ -46,12 +46,16 @@ describe PostsController, :type => :controller do
   describe "POST methods" do
     before :each do
       @attributes = FactoryGirl.attributes_for(:post)
+      @school = FactoryGirl.create(:school)
+      @attributes[:school_id] = @school.title + ' (' + @school.id.to_s + ')'
       @attributes[:campaign_id] = campaign.id
+      @campaign = campaign
     end
 
     describe "POST #create" do
       describe "with valid params" do
         it "creates a new post" do
+
           expect { post :create, {:post => @attributes}, session }.to change(Post, :count).by(1)
         end
 
@@ -66,6 +70,22 @@ describe PostsController, :type => :controller do
           post :create, {:post => @attributes }, session
 
           response.should redirect_to show_post_path(assigns(:post), :campaign_path => campaign.path)
+        end
+      end
+
+      describe 'with school autocomplete' do
+        it 'passes when school field is true, and there is a school' do
+          expect { post :create, { post: @attributes }, session }.to change(Post, :count).by(1)
+        end
+        it 'Fails if school field is true, and there is no school' do
+          bad_attributes = FactoryGirl.attributes_for(:post, school_id: false)
+          expect { post :create, { post: bad_attributes }, session }.to_not change(Post, :count).by(1)
+        end
+        it 'ignores a school ID when the campaign setting is FALSE' do
+          bad_campaign = FactoryGirl.create(:campaign, has_school_field: false)
+          fine_post = FactoryGirl.attributes_for(:post, campaign_id: bad_campaign)
+          expect { post :create, { post: fine_post }, session }.to change(Post, :count).by(1)
+          expect(assigns(:post).school_id).to be_nil
         end
       end
 

@@ -33,6 +33,12 @@ class Post < ActiveRecord::Base
 
   acts_as_voteable
 
+  before_save do
+    if !is_school_campaign? && self.school_id
+      self.school_id = nil
+    end
+  end
+
   def is_school_campaign?
     return false if self.campaign_id.nil?
 

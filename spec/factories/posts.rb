@@ -17,9 +17,9 @@ FactoryGirl.define do
       { :animal_type => 'cat', :shelter => 'Cats' }
     }
     processed_from_url nil
-    school_id 0
     story { Faker::Lorem.paragraph }
     campaign
+    school
 
     factory :promo do
       promoted true

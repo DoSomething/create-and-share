@@ -9,56 +9,75 @@ describe Campaign do
   it { FactoryGirl.create(:campaign).should respond_to(:users) }
 
   describe 'validations' do
+    let(:campaign) { FactoryGirl.build(:campaign) }
     it 'is invalid without a title' do
-      FactoryGirl.build(:campaign, title: nil).should_not be_valid      
+      campaign.title = nil
+      campaign.should_not be_valid
     end
 
     it 'is invalid without a description' do
-      FactoryGirl.build(:campaign, description: nil).should_not be_valid      
+      campaign.description = nil
+      campaign.should_not be_valid
     end
 
     it 'is invalid without a start date' do
-      FactoryGirl.build(:campaign, start_date: nil).should_not be_valid      
+      campaign.start_date = nil
+      campaign.should_not be_valid
     end
 
     it 'is invalid without an end date' do
-      FactoryGirl.build(:campaign, end_date: nil).should_not be_valid      
+      campaign.end_date = nil
+      campaign.should_not be_valid
     end
 
     it 'is invalid without a path' do
-      FactoryGirl.build(:campaign, path: nil).should_not be_valid      
+      campaign.path = nil
+      campaign.should_not be_valid
     end
 
     it 'is invalid without a mailchimp' do
-      FactoryGirl.build(:campaign, mailchimp: nil).should_not be_valid      
+      campaign.mailchimp = nil
+      campaign.should_not be_valid
     end
 
     it 'is invalid without a mobile commons' do
-      FactoryGirl.build(:campaign, mobile_commons: nil).should_not be_valid      
+      campaign.mobile_commons = nil
+      campaign.should_not be_valid
     end
 
     it 'is invalid without an email sign up' do
-      FactoryGirl.build(:campaign, email_signup: nil).should_not be_valid      
+      campaign.email_signup = nil
+      campaign.should_not be_valid
     end
 
     it 'is invalid without an email submit' do
-      FactoryGirl.build(:campaign, email_submit: nil).should_not be_valid      
+      campaign.email_submit = nil
+      campaign.should_not be_valid
     end
 
     it 'is invalid without a lead email' do
-      FactoryGirl.build(:campaign, lead_email: nil).should_not be_valid      
+      campaign.lead_email = nil
+      campaign.should_not be_valid
     end
 
     it 'is invalid without developers' do
-      FactoryGirl.build(:campaign, developers: nil).should_not be_valid      
+      campaign.developers = nil
+      campaign.should_not be_valid
     end
 
     it 'is invalid without an image' do
-      FactoryGirl.build(:campaign, image: nil).should_not be_valid      
+      campaign.image = nil
+      campaign.should_not be_valid
     end
 
     it 'is invalid without a lead' do
-      FactoryGirl.build(:campaign, lead: nil).should_not be_valid      
+      campaign.lead = nil
+      campaign.should_not be_valid
+    end
+
+    it 'is invalid without a facebook share type' do
+      campaign.facebook = nil
+      campaign.should_not be_valid
     end
 
     it 'has unique paths' do

@@ -85,9 +85,7 @@ describe Post do
       context 'pagination' do
         before :each do
           @campaign = FactoryGirl.create(:campaign)
-          20.times do
-            FactoryGirl.create(:post, campaign_id: @campaign.id)
-          end
+          FactoryGirl.create_list(:post, 20, campaign_id: @campaign.id)
           @posts = Post.build_post(@campaign)
         end
 
@@ -124,6 +122,12 @@ describe Post do
       it 'strips bad tags from meme text' do
         new_post = FactoryGirl.create(:post, meme_text: '<b>Meme</b>')
         new_post.meme_text.should eq 'Meme'
+      end
+      it 'ignores school ID on a non-school campaign' do
+        new_campaign = FactoryGirl.create(:campaign, has_school_field: false)
+        new_post = FactoryGirl.create(:post, campaign_id: new_campaign.id)
+
+        new_post.school_id.should be nil
       end
     end
   end

@@ -121,8 +121,8 @@ class PostsController < ApplicationController
       match = params[:post][:school_id].match(/\((?<gsid>\d+)\)/)
 
       # Force a failure if they've input a non-GS school
-      if !match[:gsid].nil?
-        params[:post][:school_id] = match[:gsid]
+      if match && !match['gsid'].nil?
+        params[:post][:school_id] = match['gsid']
       else
         params[:post][:school_id] = nil
       end
