@@ -40,15 +40,18 @@ class Post < ActiveRecord::Base
     campaign.has_school_field === true
   end
 
-  def self.tagged(**args)
+  def self.tagged(*args)
+    args = args[0]
+
     i = 0
-    @p = self
-    args.each do |col, val|
-      c_a = "t#{i}"
-      @p = @p
-       .joins("INNER JOIN tags #{c_a} ON (#{c_a}.post_id = posts.id)")
-       .where("#{c_a}.campaign_id = posts.campaign_id AND (#{c_a}.column = ? AND #{c_a}.value = ?)", col, val)
+    @p = args.inject(self) do |query, join|
+      join_alias = "t#{i}"
+      query = query
+        .joins("INNER JOIN tags #{join_alias} ON (#{join_alias}.post_id = posts.id)")
+        .where("#{join_alias}.campaign_id = posts.campaign_id AND (#{join_alias}.column = ? AND #{join_alias}.value = ?)", join[0], join[1])
+
       i += 1
+      query
     end
 
     @p
