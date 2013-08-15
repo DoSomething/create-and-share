@@ -115,7 +115,6 @@ class User < ActiveRecord::Base
   end
 
   def participated?(campaign_id)
-    p self.participations.where(campaign_id: campaign_id)
     !self.participations.where(campaign_id: campaign_id).empty?
   end
 end
