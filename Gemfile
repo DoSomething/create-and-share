@@ -19,6 +19,11 @@ gem 'mailchimp'
 
 gem 'thumbs_up'
 
+gem 'turbolinks'
+gem 'jquery-turbolinks'
+
+gem 'rack-mini-profiler'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -35,6 +40,7 @@ end
 
 group :development, :test do
   gem 'rspec-rails'
+  gem 'fuubar'
   gem 'capybara'
   gem 'selenium-webdriver'
   gem 'headless'

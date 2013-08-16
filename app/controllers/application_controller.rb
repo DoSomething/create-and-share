@@ -13,6 +13,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  before_filter :miniprofiler
+  def miniprofiler
+    Rack::MiniProfiler.authorize_request if admin?
+  end
+
   # Not found message.
   def record_not_found
     render 'not_found'

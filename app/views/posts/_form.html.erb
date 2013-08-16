@@ -1,7 +1,4 @@
 <!-- #hidden fields for cropping -->
-<% content_for(:head) do %>
-  <%= stylesheet_link_tag 'jquery.Jcrop.min' %>
-<% end %>
 
 <h2>tell us about your animal</h2>
 <%= simple_form_for(@post, :url => { :action => params[:action] == 'edit' ? 'update' : 'create' }, :html => { :multipart => true, :class => "form form-submit right" }) do |f| %>

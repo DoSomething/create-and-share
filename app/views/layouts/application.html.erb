@@ -13,7 +13,6 @@
   <meta property="og:image" content="http://pics.dosomething.org/images/logo-pics.png" />
   <%= csrf_meta_tags %>
 
-  <%= yield(:head) %>
   <%
     campaign = get_campaign
     facebook = Rails.application.config.facebook[campaign.path]

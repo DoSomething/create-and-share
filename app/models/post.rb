@@ -23,7 +23,7 @@ class Post < ActiveRecord::Base
                       :format => { :with => /[A-Z]{2}/ }
   validates :campaign_id, :presence => true, :numericality => true
 
-  has_attached_file :image, :styles => { :gallery => '450x450!' }, :default_url => '/images/:style/default.png', :processors => [:cropper, :memify]
+  has_attached_file :image, :styles => { :gallery => '450x450!' }, :default_url => '/images/:style/default.png', :processors => [:cropper, :memify, :compress]
   validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif'] }
 
   has_many :shares

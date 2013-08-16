@@ -162,4 +162,17 @@ describe User do
 			expect { @user.vote_for(@post) }.to_not change { @user.action_count(otherCampaign.id) }
 		end
 	end
+
+	describe 'participated?' do
+		let(:user) { FactoryGirl.create(:user) }
+		let(:campaign) { FactoryGirl.create(:campaign) }
+
+		it 'returns true if participated' do
+			expect{ user.participations.create(intent: false, campaign_id: campaign.id) }.to change { user.participated?(campaign.id) }.from(false).to(true)
+		end
+
+		it 'returns false if has not participated' do
+			expect(user.participated?(campaign.id)).to be_false
+		end
+	end
 end
