@@ -58,3 +58,7 @@ filters:
 popups:
   # Put your popups here, e.g.:
   # 5: "test"
+
+stats:
+  - "Cats eat food when they are hungry"
+  - "Pie is a popular food item"

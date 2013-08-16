@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130814190339) do
+ActiveRecord::Schema.define(:version => 20130816135750) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(:version => 20130814190339) do
     t.boolean  "paged_form"
     t.boolean  "has_school_field"
     t.string   "facebook"
+    t.integer  "stat_frequency"
   end
 
   create_table "participations", :force => true do |t|

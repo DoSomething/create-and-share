@@ -23,6 +23,7 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
+    @stats = Rails.application.config.stats[@campaign.path]
     @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
     @user = User.find_by_uid(session[:drupal_user_id])
 
