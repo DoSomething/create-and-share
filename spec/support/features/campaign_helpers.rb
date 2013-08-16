@@ -24,5 +24,6 @@ def fill_campaign_form
   if campaign.gated
     select 'Gate entire campaign', from: 'campaign_gated'
   end
+  fill_in 'campaign_stat_frequency', with: campaign.stat_frequency
   campaign
 end

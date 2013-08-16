@@ -15,7 +15,7 @@ class Campaign < ActiveRecord::Base
   :lead_email, :path, :start_date,
   :title, :description,
   :image, :mailchimp, :mobile_commons,
-  :email_signup, :email_submit, :facebook
+  :email_signup, :email_submit, :facebook, :stat_frequency
 
   validates :path, uniqueness: { case_sensitive: false }
 

@@ -59,7 +59,7 @@ class SessionsController < ApplicationController
   # GET /auth/facebook/callback
   def fboauth
     auth = env['omniauth.auth']['extra']['raw_info'] # data from Facebook
-    origin_campaign = get_campaign_from_path(request.env['omniauth.origin'])
+    origin_campaign = get_campaign_from_url(request.env['omniauth.origin'])
 
     # Try and find the campaign by the path specified in source.
     campaign = Campaign.find_by_path(origin_campaign)

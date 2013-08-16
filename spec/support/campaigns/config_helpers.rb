@@ -20,3 +20,12 @@ def remove_config(campaign_path)
   # Remove mock popup
   FileUtils.rmtree "#{Rails.root}/app/views/campaigns/#{campaign_path}"
 end
+
+def get_campaign_from_url(path)
+  match = path.match(/^https?\:\/\/[^\/]+\/(?<campaign>[^\/]+)/i)
+  if match && !match['campaign'].nil?
+    return match['campaign']
+  end
+
+  nil
+end

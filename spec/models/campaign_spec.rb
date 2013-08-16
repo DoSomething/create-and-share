@@ -80,6 +80,11 @@ describe Campaign do
       campaign.should_not be_valid
     end
 
+    it 'is invalid without a numeric stat frequency' do
+      campaign.stat_frequency = nil
+      campaign.should_not be_valid
+    end
+
     it 'has unique paths' do
       FactoryGirl.create(:campaign, path: 'used')
       FactoryGirl.build(:campaign, path: 'used').should_not be_valid

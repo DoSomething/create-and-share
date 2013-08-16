@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
     render 'not_found'
   end
 
-  def get_campaign_from_path(path)
+  def get_campaign_from_url(path)
     match = path.match(/^https?\:\/\/[^\/]+\/(?<campaign>[^\/]+)/i)
     if match && !match['campaign'].nil?
       return match['campaign']

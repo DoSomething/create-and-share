@@ -206,4 +206,14 @@ describe ApplicationController do
       assigns(:popup).should be_blank
     end
   end
+
+  it 'gets a real campaign path from a URL' do
+    legit_url = 'http://campaigns.dosomething.org/breakfast'
+    path = get_campaign_from_url(legit_url)
+    path.should eq 'breakfast'
+
+    unlegit_url = 'http://campaigns.dosomething.org'
+    path = get_campaign_from_url(unlegit_url)
+    path.should be nil
+  end
 end
