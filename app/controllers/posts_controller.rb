@@ -205,6 +205,7 @@ class PostsController < ApplicationController
 
   # GET /:campaign/show/cats-NY
   def filter
+    @stats = Rails.application.config.stats[@campaign.path]
     if Rails.application.config.filters[@campaign.path].nil?
       redirect_to :root
       return
@@ -230,6 +231,7 @@ class PostsController < ApplicationController
   # GET /:campaign/mine
   # GET /:campaign/featured
   def extras
+    @stats = Rails.application.config.stats[@campaign.path]
     @user = User.find_by_uid(session[:drupal_user_id])
     
     @result = nil

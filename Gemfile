@@ -40,7 +40,6 @@ end
 
 group :development, :test do
   gem 'rspec-rails'
-  gem 'fuubar'
   gem 'capybara'
   gem 'selenium-webdriver'
   gem 'headless'
