@@ -7,7 +7,7 @@
   <% @posts.each do |post| %>
     <% @post = post %>
     <%= render 'single_post' %>
-    <% if @campaign.stat_frequency > 0 %>
+    <% if @campaign && @campaign.stat_frequency && @campaign.stat_frequency > 0 %>
       <% i += 1 %>
       <% if i % @campaign.stat_frequency === 0 %>
         <%= render 'stat' %>

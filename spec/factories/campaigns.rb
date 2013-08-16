@@ -21,5 +21,6 @@ FactoryGirl.define do
     email_signup { Faker::Lorem.word }
     mailchimp 'PicsforPets2013'
     mobile_commons "158551"
+    stat_frequency 0
   end
 end
