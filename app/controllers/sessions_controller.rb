@@ -59,9 +59,10 @@ class SessionsController < ApplicationController
   # GET /auth/facebook/callback
   def fboauth
     auth = env['omniauth.auth']['extra']['raw_info'] # data from Facebook
+    origin_campaign = get_campaign_from_path(request.env['omniauth.origin'])
 
     # Try and find the campaign by the path specified in source.
-    campaign = Campaign.find_by_path(session[:source].gsub('/', ''))
+    campaign = Campaign.find_by_path(origin_campaign)
 
     if !User.exists?(auth['email']) # registers user if he/she isn't already in the drupal database
       password = (0...50).map{ ('a'..'z').to_a[rand(26)] }.join

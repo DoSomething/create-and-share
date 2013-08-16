@@ -18,6 +18,15 @@ class ApplicationController < ActionController::Base
     render 'not_found'
   end
 
+  def get_campaign_from_path(path)
+    match = path.match(/^https?\:\/\/[^\/]+\/(?<campaign>[^\/]+)/i)
+    if match && !match['campaign'].nil?
+      return match['campaign']
+    end
+
+    nil
+  end
+
   # Confirms that the user is authenticated.  Redirects to root (/) if so.
   # See SessionsController, line 5
   def is_authenticated
