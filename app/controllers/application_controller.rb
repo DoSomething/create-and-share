@@ -85,10 +85,10 @@ class ApplicationController < ActionController::Base
     # Confirm that it's a json request.  This is irrelevant otherwise.
     if request.format.symbol == :json
       # We must have a key, either way.  If no key, pass forbidden response.
-      if params[:key].nil? && (request.env['REQUEST_URI'] =~ Regexp.new(request.env['HTTP_HOST'])).nil?
+      if params[:key].nil? && (request.env['HTTP_REFERER'] =~ Regexp.new(request.env['HTTP_HOST'])).nil?
         render :json => { :errors => "Invalid API key." }, :status => :forbidden
       else
-        if (request.env['REQUEST_URI'] =~ Regexp.new(request.env['HTTP_HOST'])).nil?
+        if (request.env['HTTP_REFERER'] =~ Regexp.new(request.env['HTTP_HOST'])).nil?
           # Find by key
           @key = ApiKey.find_by_key(params[:key])
           if @key.nil?
