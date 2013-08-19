@@ -19,3 +19,4 @@
 //= require jquery.lazyload
 //= require_tree .
 //= require ../../pages
+//= require ../../application/jquery.Jcrop.min
