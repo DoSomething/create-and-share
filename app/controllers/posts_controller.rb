@@ -74,7 +74,7 @@ class PostsController < ApplicationController
       .where(id: params[:id])
       .limit(1)
       .first
-
+    expires_in 1.day
     @user = User.find_by_uid(session[:drupal_user_id])
 
     respond_to do |format|

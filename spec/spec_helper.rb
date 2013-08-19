@@ -38,6 +38,10 @@ Spork.prefork do
     config.use_transactional_fixtures = false
 
     config.before :each do
+      # Best way to properly test caching is to clear cache before every test
+      # see https://www.ruby-forum.com/topic/216173
+      Rails.cache.clear
+
       if Capybara.current_driver == :rack_test
         DatabaseCleaner.strategy = :transaction
       else

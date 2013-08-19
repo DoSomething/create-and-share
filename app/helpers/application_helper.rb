@@ -27,7 +27,12 @@ module ApplicationHelper
     end
 
     path = params[:campaign_path]
-    @campaign = Campaign.where(path: path).first
+
+    @campaign = Rails.cache.fetch "#{path}-campaign-info" do
+      Campaign.where(path: path).first
+    end
+
+    @campaign
   end
 
   # Did the user already submit something?
@@ -38,7 +43,10 @@ module ApplicationHelper
     if user_id.nil? || campaign.nil?
       return false
     end
-    posts = Post.where(uid: user_id, campaign_id: campaign.id)
+
+    posts = Rails.cache.fetch user_id.to_s + '-posted-on-' + campaign.id.to_s do
+      Post.where(uid: user_id, campaign_id: campaign.id)
+    end
 
     !posts.nil? && posts.count > 0
   end
