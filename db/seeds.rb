@@ -14,7 +14,7 @@ Campaign.create({
   lead: 'Farah',
   lead_email: 'fshake@dosomething.org',
   developers: 'mchittenden@dosomething.org, mwatson@dosomething.org',
-  gated: true,
+  gated: 'submit',
   description: "Push for better quality lunch food with Project Lunch.  Schools around the nation are serving students inedible junk and we'd like to change that.  Upload a picture your lunch, rate it, and share it with your friends.",
   image: File.new(Rails.root + 'app/assets/images/campaigns/lunch/sandwich.jpg'),
   mailchimp: "PicsforPets2013",
@@ -22,5 +22,9 @@ Campaign.create({
   email_submit: "PicsforPets_2013_Reportback",
   email_signup: "PicsforPets_2013_Reportback",
   meme_header: "",
-  meme: false
+  meme: false,
+  paged_form: true,
+  has_school_field: true,
+  facebook: 'mine',
+  stat_frequency: 2
 })
