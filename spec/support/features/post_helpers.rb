@@ -7,7 +7,11 @@ def fill_post_form
   attach_file 'post_image', Rails.root.to_s + '/spec/mocks/ruby.png'
   fill_in 'post_name', with: post.name
   fill_in 'post_city', with: post.city
-  select get_states[post.state.to_sym], from: 'post_state'
+  if !post.state.nil?
+    select get_states[post.state.to_sym], from: 'post_state'
+  else
+    select 'New York', from: 'post_state'
+  end
   fill_in 'post_school_id', with: post.school.title + ' (' + post.school.id.to_s + ')'
   post
 end
