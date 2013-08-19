@@ -20,8 +20,12 @@ class UsersController < ApplicationController
   def participation
     render :status => :forbidden unless authenticated?
 
-    user = User.find_by_uid(session[:drupal_user_id])
-    if !user.participated?(@campaign.id)
+    participated = Rails.cache.fetch 'user-' + session[:drupal_user_id].to_s + '-participated-in-' + @campaign.id.to_s do
+      user = User.find_by_uid(session[:drupal_user_id])
+      user.participated?(@campaign.id)
+    end
+
+    unless participated
       user.participations.create(intent: false, campaign_id: @campaign.id)
       user.handle_mc(@campaign)
     end

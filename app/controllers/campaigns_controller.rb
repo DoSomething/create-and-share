@@ -9,7 +9,9 @@ class CampaignsController < ApplicationController
   # GET /campaigns
   # GET /campaigns.json
   def index
-    @campaigns = Campaign.order('created_at DESC').all
+    @campaigns = Rails.cache.fetch 'campaign-list' do
+      Campaign.order('created_at DESC').all
+    end
 
     respond_to do |format|
       format.html # index.html.erb
