@@ -6,7 +6,7 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-Campaign.create({
+Campaign.create!({
   title: 'Project Lunch',
   start_date: '2013-08-12 16:05:00',
   end_date: '2016-08-12 16:05:00',
