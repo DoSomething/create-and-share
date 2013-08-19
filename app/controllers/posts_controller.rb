@@ -320,4 +320,8 @@ class PostsController < ApplicationController
 
     render json: results, root: false, response: 200
   end
+
+  def fail
+    abort 'This is an exception'
+  end
 end

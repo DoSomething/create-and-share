@@ -15,6 +15,7 @@ CreateAndShare::Application.configure do
   #config.cache_store = :dalli_store, 'localhost:11211'
 
   # Don't care if the mailer can't send
+  config.action_mailer.delivery_method = :letter_opener
   config.action_mailer.raise_delivery_errors = false
 
   # Print deprecation notices to the Rails logger

@@ -58,11 +58,13 @@ group :development, :test do
   gem 'factory_girl_rails', '~> 4.0'
 
   gem 'better_errors'
+  gem 'letter_opener'
 end
 
 gem 'jquery-rails'
 
 gem 'active_model_serializers'
+gem 'exception_notification'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
