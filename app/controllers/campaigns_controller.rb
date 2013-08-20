@@ -75,6 +75,11 @@ class CampaignsController < ApplicationController
   before_filter :get_campaign, only: [:popups]
   # GET /:campaign/popups/:popup
   def popups
-    render Rails.root.to_s + "/app/views/campaigns/#{@campaign.path}/popups/#{params[:popup]}"
+    file = Rails.root.to_s + "/app/views/campaigns/#{@campaign.path}/popups/#{params[:popup]}"
+    if File.exists? file + '.html.erb'
+      render file, layout: false
+    else
+      render nothing: true
+    end
   end
 end

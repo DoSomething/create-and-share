@@ -35,6 +35,16 @@ module ApplicationHelper
     @campaign
   end
 
+  def get_user
+    unless session[:drupal_user_id].nil?
+      @user = Rails.cache.fetch session[:drupal_user_id].to_s + '-user-info' do
+        User.find_by_uid(session[:drupal_user_id])
+      end
+    end
+
+    @user = nil unless @user
+  end
+
   # Did the user already submit something?
   def already_submitted?
     user_id = session[:drupal_user_id]

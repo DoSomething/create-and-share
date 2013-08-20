@@ -2,7 +2,8 @@ class PostsController < ApplicationController
   include Services
 
   # Get campaign
-  before_filter :get_campaign, only: [:campaign_closed, :index, :filter, :extras, :show, :vanity, :new, :create, :school_lookup]
+  before_filter :get_campaign, except: [:autoimg, :edit, :update, :destroy, :flag, :thumbs]
+  before_filter :get_user, only: [:index, :show, :filter, :vanity, :extras]
 
   # Before everything runs, run an authentication check and an API key check.
   before_filter :is_not_authenticated, :verify_api_key, :campaign_closed
@@ -25,7 +26,6 @@ class PostsController < ApplicationController
   def index
     @stats = Rails.application.config.stats[@campaign.path]
     @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
-    @user = User.find_by_uid(session[:drupal_user_id])
 
     respond_to do |format|
       format.js
@@ -48,12 +48,9 @@ class PostsController < ApplicationController
       name = file.original_filename
       dir = 'public/system/tmp'
 
-      if File.exists? path
-        # Write the file to the tmp directory.
-        if File.exists? dir and File.exists? path
-          newfile = File.join(dir, name)
-          File.open(newfile, 'wb') { |f| f.write(file.tempfile.read()) }
-        end
+      if File.exists?(path) && File.exists?(dir)
+        newfile = File.join(dir, name)
+        File.open(newfile, 'wb') { |f| f.write(file.tempfile.read()) }
       # This shouldn't happen.
       else
         render json: {:success => false, :reason => "Your file didn't upload properly.  Try again."}
@@ -69,13 +66,13 @@ class PostsController < ApplicationController
   # GET /posts/1
   # GET /posts/1.json
   def show
-    @post = Post
-      .build_post(@campaign)
-      .where(id: params[:id])
-      .limit(1)
-      .first
-
-    @user = User.find_by_uid(session[:drupal_user_id])
+    @post = Rails.cache.fetch 'campaign-' + @campaign.id.to_s + '-post-' + params[:id].to_s do
+      Post
+        .build_post(@campaign)
+        .where(id: params[:id])
+        .limit(1)
+        .first
+    end
 
     respond_to do |format|
       format.html # show.html.erb
@@ -164,7 +161,7 @@ class PostsController < ApplicationController
   # DELETE /posts/1.json
   def destroy
     # Shouldn't be here if they're not an admin.
-    render :status => :forbidden if !admin?
+    render :status => :forbidden unless admin?
 
     @post = Post.find(params[:id])
     @post.destroy
@@ -232,7 +229,6 @@ class PostsController < ApplicationController
   # GET /:campaign/featured
   def extras
     @stats = Rails.application.config.stats[@campaign.path]
-    @user = User.find_by_uid(session[:drupal_user_id])
     
     @result = nil
     @where = {}
