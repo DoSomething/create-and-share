@@ -74,9 +74,14 @@ class ApplicationController < ActionController::Base
         flash[:error] = "you have been logged out - please login as admin to view this page"
       end
 
-      session[:source] = request.path
-      redirect_to '/login'
-      false
+      # Throw a 500 for create/update/delete pages -- because there's no point redirecting that.
+      if ['create', 'update', 'delete'].include? params[:action]
+        render json: 'You are not authorized to do that.', status: 500
+      else
+        session[:source] = request.path
+        redirect_to '/login'
+        false
+      end
     end
   end
 

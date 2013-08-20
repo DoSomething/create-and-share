@@ -1,10 +1,8 @@
 class CampaignsController < ApplicationController
-  layout 'admin', :except => [:show]
-  # We can skip this for testing purposes.
-  # @TODO: Change this later to honor proper auth.
-  if !Rails.env.test?
-    before_filter :admin, :except => [:index]
-  end
+  layout 'admin'
+
+  # Hide everything except the index page from non-admins
+  before_filter :admin, :except => [:index]
 
   # GET /campaigns
   # GET /campaigns.json
@@ -23,11 +21,6 @@ class CampaignsController < ApplicationController
   # GET /campaigns/new.json
   def new
     @campaign = Campaign.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @campaign }
-    end
   end
 
   # GET /campaigns/1/edit

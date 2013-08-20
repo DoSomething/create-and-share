@@ -85,7 +85,7 @@ class Post < ActiveRecord::Base
 
     uncached_posts = self
       .build_post(campaign)
-      .order('created_at DESC')
+      .order('posts.created_at DESC')
 
     if state == 'index'
       if !Rails.application.config.home[params[:campaign_path]].nil?
