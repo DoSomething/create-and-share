@@ -20,14 +20,16 @@ class UsersController < ApplicationController
   def participation
     render :status => :forbidden unless authenticated?
 
-    participated = Rails.cache.fetch 'user-' + session[:drupal_user_id].to_s + '-participated-in-' + @campaign.id.to_s do
+    account, participated = Rails.cache.fetch 'user-' + session[:drupal_user_id].to_s + '-participated-in-' + @campaign.id.to_s do
       user = User.find_by_uid(session[:drupal_user_id])
-      user.participated?(@campaign.id)
+      pc = user.participated?(@campaign.id)
+
+      [user, pc]
     end
 
-    unless participated
-      user.participations.create(intent: false, campaign_id: @campaign.id)
-      user.handle_mc(@campaign)
+    if !participated
+      account.participations.create(intent: false, campaign_id: @campaign.id)
+      account.handle_mc(@campaign)
     end
 
     # Bring them to the real campaign root path or source

@@ -28,6 +28,10 @@ class Campaign < ActiveRecord::Base
     end
   end
 
+  after_create do
+    Rails.cache.delete 'campaign-list'
+  end
+
   def gated? type
     self.gated == type
   end
