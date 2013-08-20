@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :find_view_path
   def find_view_path
-    if !get_campaign.nil?
+    unless get_campaign.nil?
       prepend_view_path 'app/views/campaigns/' + get_campaign.path
     end
   end
@@ -23,11 +23,11 @@ class ApplicationController < ActionController::Base
     render 'not_found'
   end
 
-  def get_campaign_from_url(path)
-    match = path.match(/^https?\:\/\/[^\/]+\/(?<campaign>[^\/]+)/i)
-    if match && !match['campaign'].nil?
-      return match['campaign']
-    end
+  # @param [Object] url The fully qualified URL to the campaign in question.
+  # @return [String] Either the campaign as a string, or nil.
+  def get_campaign_from_url(url)
+    match = path.match(/^https?:\/\/[^\/]+\/(?<campaign>[^\/]+)/i)
+    return match['campaign'].to_s if match && !match['campaign'].nil?
 
     nil
   end
@@ -60,6 +60,7 @@ class ApplicationController < ActionController::Base
       else
         redirect_to '/login'
       end
+
       false
     end
   end

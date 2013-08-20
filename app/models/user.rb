@@ -145,6 +145,7 @@ class User < ActiveRecord::Base
       end
     end
 
+    Rails.cache.clear
     color
   end
 end
