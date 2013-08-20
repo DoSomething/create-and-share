@@ -70,7 +70,7 @@ class Post < ActiveRecord::Base
 
   def self.build_post(campaign)
     self
-      .select('COUNT(shares.*) AS real_share_count, COUNT(votes.id) AS vc')
+      .select('posts.*, COUNT(shares.*) AS real_share_count, COUNT(votes.id) AS vc')
       .joins('LEFT JOIN shares ON (shares.post_id = posts.id)')
       .joins('LEFT JOIN votes ON (votes.voteable_id = posts.id)')
       .where(campaign_id: campaign.id, flagged: false)

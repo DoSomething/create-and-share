@@ -2,7 +2,7 @@ class CampaignsController < ApplicationController
   layout 'admin'
 
   # Hide everything except the index page from non-admins
-  before_filter :admin, :except => [:index]
+  before_filter :admin, :except => [:index, :popups]
 
   # GET /campaigns
   # GET /campaigns.json
