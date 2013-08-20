@@ -117,4 +117,34 @@ class User < ActiveRecord::Base
   def participated?(campaign_id)
     !self.participations.where(campaign_id: campaign_id).empty?
   end
+
+  # Votes on a post.
+  # @param [String] type A type of vote -- up or down.
+  # @param [Object] post An instance of Post that can be voted against
+  # @return [Bool] The color as a boolean
+  def perform_vote type, post
+    color = true
+
+    if type == 'up'
+      if self.voted_against?(post)
+        self.vote_exclusively_against(post)
+      elsif self.voted_on?(post)
+        self.unvote_for(post)
+        color = false
+      else
+        self.vote_for(post)
+      end
+    else
+      if self.voted_for?(post)
+        self.vote_exclusively_against(post)
+      elsif self.voted_on?(post)
+        self.unvote_for(post)
+        color = false
+      else
+        self.vote_against(post)
+      end
+    end
+
+    color
+  end
 end

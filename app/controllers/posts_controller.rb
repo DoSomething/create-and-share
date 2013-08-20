@@ -41,28 +41,28 @@ class PostsController < ApplicationController
     valid_types = ['image/jpeg', 'image/gif', 'image/png']
     file = params[:file]
 
-    # Make tripl-y sure that we're uploading a valid file.
-    if !valid_types.include?(file.content_type)
-      render json: { :success => false, :reason => 'Not a valid file.' }
-    else
+    # Make triple-y sure that we're uploading a valid file.
+    if valid_types.include?(file.content_type)
       # Basic variables.
       path = file.tempfile.path()
       name = file.original_filename
       dir = 'public/system/tmp'
 
-      # This shouldn't happen.
-      if !File.exists? path
-        render json: { :success => false, :reason => "Your file didn't upload properly.  Try again." }
-      else
+      if File.exists? path
         # Write the file to the tmp directory.
         if File.exists? dir and File.exists? path
           newfile = File.join(dir, name)
           File.open(newfile, 'wb') { |f| f.write(file.tempfile.read()) }
         end
+      # This shouldn't happen.
+      else
+        render json: {:success => false, :reason => "Your file didn't upload properly.  Try again."}
       end
 
       # Render success.
-      render json: { :success => true, :filename => name }
+      render json: {:success => true, :filename => name}
+    else
+      render json: {:success => false, :reason => 'Not a valid file.'}
     end
   end
 
@@ -263,27 +263,8 @@ class PostsController < ApplicationController
     user = User.find_by_uid(session[:drupal_user_id])
     post = Post.find(params[:id])
 
-    color = true
-
-    if params[:type] == 'up'
-      if !user.voted_on?(post)
-        user.vote_for(post)
-      elsif user.voted_against?(post)
-        user.vote_exclusively_for(post)
-      else
-        user.unvote_for(post)
-        color = false
-      end
-    else
-      if !user.voted_on?(post)
-        user.vote_against(post)
-      elsif user.voted_for?(post)
-        user.vote_exclusively_against(post)
-      else
-        user.unvote_for(post)
-        color = false
-      end
-    end
+    # Execute the vote
+    color = user.perform_vote(params[:type], post)
 
     score = post.plusminus
     up = post.votes_for
@@ -297,10 +278,8 @@ class PostsController < ApplicationController
   # GET /:campaign_path/posts/school_lookup?term=[term]
   # POST /:campaign_path/posts/school_lookup
   def school_lookup
-    if @campaign.has_school_field === false
+    unless @campaign.has_school_field
       raise 'This campaign does not have a school field'
-      render response: 500
-      return
     end
 
     #require 'open-uri'
@@ -319,9 +298,5 @@ class PostsController < ApplicationController
     end
 
     render json: results, root: false, response: 200
-  end
-
-  def fail
-    abort 'This is an exception'
   end
 end
