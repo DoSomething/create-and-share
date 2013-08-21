@@ -46,7 +46,12 @@ module ApplicationHelper
   end
 
   def get_votes
-    Vote.select(:voteable_id).where(voter_id: User.find_by_uid(session[:drupal_user_id]).id).map { |v| v.voteable_id } || []
+    u = User.find_by_uid(session[:drupal_user_id])
+    unless u.nil?
+      return Vote.select(:voteable_id).where(voter_id: u.id).map { |v| v.voteable_id } || []
+    end
+
+    []
   end
 
   # Did the user already submit something?

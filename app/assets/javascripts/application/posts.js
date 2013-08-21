@@ -113,7 +113,9 @@ $(function() {
   });
 
   $(document).ready(function() {
-    $('img.lazy').lazyload();
-    set_votes();
+    if (typeof campaign !== 'undefined') {
+      $('img.lazy').lazyload();
+      set_votes();
+    }
   });
 });

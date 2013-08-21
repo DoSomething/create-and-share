@@ -26,7 +26,7 @@
       share_type: '<%= campaign.facebook %>',
       allow_revoting: <%= campaign.allow_revoting %>,
       votes: <%= get_votes %>,
-      scroll_type: '<%= !filters['order'].nil? ? 'custom' : 'default' %>',
+      scroll_type: '<%= filters && !filters['order'].nil? ? 'custom' : 'default' %>',
     };
   -->
   </script>

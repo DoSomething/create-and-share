@@ -137,9 +137,10 @@ class Post < ActiveRecord::Base
         end
       end
     else
+      limit = (promoted ? (self.per_page - 1) : self.per_page)
       cached_posts = Rails.cache.fetch prefix + 'posts-' + state do
         uncached_posts
-          .limit(self.per_page - 1)
+          .limit(limit)
           .all
       end
 

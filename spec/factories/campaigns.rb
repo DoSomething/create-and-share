@@ -22,5 +22,6 @@ FactoryGirl.define do
     mailchimp 'PicsforPets2013'
     mobile_commons "158551"
     stat_frequency 0
+    allow_revoting true
   end
 end
