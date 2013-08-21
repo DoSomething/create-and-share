@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :school do
-    gsid 1
+    sequence(:gsid) { |n| n }
     title { Faker::Lorem.words.join(" ") }
     state { Faker::Address.state_abbr }
     city { Faker::Address.city }
