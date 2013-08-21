@@ -282,21 +282,24 @@ class PostsController < ApplicationController
   def school_lookup
     raise 'This campaign does not have a school field' unless @campaign.has_school_field
 
-    # require 'open-uri'
-    # base_uri = 'http://localhost:3000'
-    # search = JSON.parse(open('http://lofischools-dosomething.rhcloud.com/search?query=High%20School&state=CT').read)['results']
-    search = [
-      { 'gsid' => 1, 'name' => 'DoSomething High School', 'city' => 'Brooklyn', 'state' => 'NY', 'zip' => '11225' },
-      { 'gsid' => 2, 'name' => 'Blah blah School', 'city' => 'Wesminster', 'state' => 'MD', 'zip' => '11225' }
-    ]
-
     # params[:term] = searchterm
     # params[:state] = state
+
+    # Make a request to the GreatSchools search
+    require 'open-uri'
+    search = JSON.parse(open('http://lofischools-dosomething.rhcloud.com/search?query=' + URI::escape(params[:term]) + '&state=' + URI::escape(params[:state])).read)['results']
+
+    # Test data
+    # search = [
+    #   { 'gsid' => 1, 'name' => 'DoSomething High School', 'city' => 'Brooklyn', 'state' => 'NY', 'zip' => '11225' },
+    #   { 'gsid' => 2, 'name' => 'Blah blah School', 'city' => 'Wesminster', 'state' => 'MD', 'zip' => '11225' }
+    # ]
 
     results = search.inject([]) do |res, elm|
       result = { label: elm['name'], value: "#{elm['name']} (#{elm['gsid']})" }
 
       begin
+        # Store a local copy of the school so we can reference posts to its information.
         School.create({
           gsid: elm['gsid'],
           title: elm['name'],
@@ -305,11 +308,10 @@ class PostsController < ApplicationController
           zip: elm['zip']
         })
       rescue
-        # Don't care!
+        # There's a unique key on GSID so School.create will fail sometimes.  Whatever!
       end
 
       res << result if result[:label] =~ Regexp.new(params[:term], 'i')
-      res
     end
 
     render json: results, root: false, response: 200
