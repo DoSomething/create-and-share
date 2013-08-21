@@ -51,6 +51,10 @@ $(function() {
 
   // THUMBS UP & THUMBS DOWN
   $('.thumbs-up, .thumbs-down').click(function(e) {
+    if (!campaign.allow_revoting && $(this).hasClass('shared')) {
+      return false;
+    }
+
     e.preventDefault();
     var type = $(this).data("type");
     var id = $(this).parent().parent().data("id");
@@ -64,6 +68,9 @@ $(function() {
         $(post + '.thumbs-up, ' + post + '.thumbs-down').removeClass("voted");
         if (response["color"]) {
           $(post + '.thumbs-' + type).addClass("voted");
+          if (!campaign.allow_revoting) {
+            $(post + ' .thumbs-up, ' + post + ' .thumbs-down').addClass('shared');
+          }
         }
         render_popup(response["popup"]);
     });
@@ -96,6 +103,14 @@ $(function() {
 
   $(document).ready(function() {
     $('img.lazy').lazyload();
+
+    if (!campaign.allow_revoting) {
+      if (typeof campaign.shares === 'object') {
+        for (var i in campaign.shares) {
+          $('.id-' + campaign.shares[i] + ' .thumbs-up').addClass('shared');
+          $('.id-' + campaign.shares[i] + ' .thumbs-down').addClass('shared');
+        }
+      }
+    }
   });
-  // END
 });

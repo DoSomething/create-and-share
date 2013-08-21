@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130821151001) do
+ActiveRecord::Schema.define(:version => 20130821183306) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -27,9 +27,9 @@ ActiveRecord::Schema.define(:version => 20130821151001) do
     t.string   "lead"
     t.string   "lead_email"
     t.string   "developers"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
-    t.string   "gated",              :null => false
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+    t.string   "gated",                                 :null => false
     t.text     "description"
     t.string   "image"
     t.string   "image_file_name"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(:version => 20130821151001) do
     t.boolean  "has_school_field"
     t.string   "facebook"
     t.integer  "stat_frequency"
+    t.boolean  "allow_revoting",     :default => false
   end
 
   create_table "participations", :force => true do |t|
