@@ -22,7 +22,9 @@ $(document).ready(function() {
           var new_count = ++settings['share_count'];
           settings['share_elm'].text(new_count);
           $.post('/' + campaign.path + '/posts/' + settings['id'] + '/share', { 'share': { 'post_id': settings['id'] }, 'new_count': new_count }, function(res) {
-            render_popup(response["popup"]);
+            if (typeof response['popup'] !== 'undefined') {
+              render_popup(response["popup"]);
+            }
           });
         }
         $('html,body').animate({ scrollTop: $('.id-' + settings['id']).offset().top }, 'fast');
@@ -82,11 +84,20 @@ $(document).ready(function() {
     $('.facebook-share').click(function(e) {
       $fbid = FB.getUserID();
       if ($fbid === "") {
-        FB.login(function(response) {
-          if (response.authResponse) {
-            self.handle_facebook_click($(this), e);
-          }
-        }, { 'scope': 'email,user_birthday' });
+        if (campaign.share_type == 'friends') {
+          FB.login(function(response) {
+            if (response.authResponse) {
+              self.handle_facebook_click($(this), e);
+            }
+          }, { 'scope': 'email,user_birthday' });
+        }
+        else if (campaign.share_type == 'mine') {
+          FB.login(function(response) {
+            if (response.authResponse) {
+              self.handle_facebook_click($(this), e);
+            }
+          });
+        }
 
         return false;
       }
