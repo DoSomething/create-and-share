@@ -4,6 +4,7 @@ describe PostsController, :type => :controller do
   let(:user) { FactoryGirl.create(:user) }
   let(:campaign) { FactoryGirl.create(:campaign) }
   let(:session) { { drupal_user_id: user.uid, drupal_user_role: { test: 'authenticated user', blah: 'administrator' } } }
+  let(:invalid_session) { { drupal_user_id: user.uid, drupal_user_role: { test: 'authenticated user' } } }
 
   before { @post = FactoryGirl.create(:post, campaign_id: campaign.id) }
 
@@ -154,10 +155,16 @@ describe PostsController, :type => :controller do
     end
   end
 
-  describe "flagging" do
-    it 'flags a post' do
+  describe "flagging", focus: true do
+    before :each do
       request.env['HTTP_REFERER'] = root_path(:campaign_path => campaign.path)
+    end
+
+    it 'succeeds if you have the right permissions' do
       expect { get :flag, { id: @post.id }, session }.to change { Post.find(@post.id).flagged }.to(true)
+    end
+    it 'fails if you do not have the right permissions' do
+      expect { get :flag, { id: @post.id }, invalid_session }.to raise_error('User ' + invalid_session[:drupal_user_id].to_s + ' is unauthorized.')
     end
   end
 

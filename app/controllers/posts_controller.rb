@@ -10,8 +10,8 @@ class PostsController < ApplicationController
   skip_before_filter :campaign_closed, only: [:create, :update]
 
   before_filter only: [:edit, :update, :destroy, :flag] do
-    render status: :forbidden
-  end unless :admin?
+    raise 'User ' + (session[:drupal_user_id] || 0).to_s + ' is unauthorized.' unless admin?
+  end
 
   # Ignores xsrf in favor of API keys for JSON requests.
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
@@ -92,8 +92,6 @@ class PostsController < ApplicationController
 
   # GET /:campaign/posts/1/edit
   def edit
-    # Shouldn't be here if they're not an admin.
-    render status: :forbidden unless admin?
     @post = Post.find(params[:id])
   end
 
@@ -145,9 +143,6 @@ class PostsController < ApplicationController
   # PUT /posts/1
   # PUT /posts/1.json
   def update
-    # Shouldn't be here if they're not an admin.
-    render status: :forbidden unless admin?
-
     @post = Post.find(params[:id])
 
     respond_to do |format|
@@ -164,9 +159,6 @@ class PostsController < ApplicationController
   # DELETE /posts/1
   # DELETE /posts/1.json
   def destroy
-    # Shouldn't be here if they're not an admin.
-    render :status => :forbidden unless admin?
-
     @post = Post.find(params[:id])
     @post.destroy
 
@@ -178,9 +170,6 @@ class PostsController < ApplicationController
 
   # POST /:campaign/posts/1/flag
   def flag
-    # Shouldn't be here if they're not an admin.
-    render status: :forbidden unless admin?
-
     # Mark this post as flagged
     Post.find(params[:id]).update_attribute(:flagged, true)
 

@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   # @param [Object] url The fully qualified URL to the campaign in question.
   # @return [String] Either the campaign as a string, or nil.
   def get_campaign_from_url(url)
-    match = path.match(/^https?:\/\/[^\/]+\/(?<campaign>[^\/]+)/i)
+    match = url.match(/^https?:\/\/[^\/]+\/(?<campaign>[^\/]+)/i)
     return match['campaign'].to_s if match && !match['campaign'].nil?
 
     nil
