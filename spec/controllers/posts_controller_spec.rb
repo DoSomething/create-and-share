@@ -155,7 +155,7 @@ describe PostsController, :type => :controller do
     end
   end
 
-  describe "flagging", focus: true do
+  describe "flagging" do
     before :each do
       request.env['HTTP_REFERER'] = root_path(:campaign_path => campaign.path)
     end
