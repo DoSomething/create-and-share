@@ -21,7 +21,7 @@ $(document).ready(function() {
         if (response && response.post_id) {
           var new_count = ++settings['share_count'];
           settings['share_elm'].text(new_count);
-          $.post('/' + campaign.path + '/shares', { 'share': { 'post_id': settings['id'] }, 'new_count': new_count }, function(res) {
+          $.post('/' + campaign.path + '/posts/' + settings['id'] + '/share', { 'new_count': new_count }, function(res) {
             render_popup(response["popup"]);
           });
         }
@@ -65,7 +65,7 @@ $(document).ready(function() {
           if (response && response.post_id) {
             var new_count = ++settings['share_count'];
             settings['share_elm'].text(new_count);
-            $.post('/' + campaign.path + '/shares', { 'share': { 'post_id': post_id }, 'new_count': new_count }, function(res) {
+            $.post('/' + campaign.path + '/posts/' + settings['id'] + '/share', { 'new_count': new_count }, function(res) {
               render_popup(response["popup"]);
             });
           }

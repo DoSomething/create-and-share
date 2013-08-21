@@ -177,21 +177,23 @@ class PostsController < ApplicationController
     # Shouldn't be here if they're not an admin.
     render status: :forbidden unless admin?
 
-    @post = Post.find(params[:id])
-    @post.flagged = true
-    @post.save
+    # Mark this post as flagged
+    Post.find(params[:id]).update_attribute(:flagged, true)
 
     redirect_to request.env['HTTP_REFERER']
   end
 
   # GET /:campaign/henri
+  # Shows a post that is featured and has the same name as your search.
   def vanity
-    @post = Post
-      .build_post(@campaign)
-      .where(promoted: true)
-      .where('LOWER(name) = ?', params[:vanity].downcase)
-      .limit(1)
-      .first
+    @post = Rails.cache.fetch 'campaign-' + @campaign.id.to_s + 'vanity-' + params[:vanity].downcase do
+      Post
+        .build_post(@campaign)
+        .where(promoted: true)
+        .where('LOWER(name) = ?', params[:vanity].downcase)
+        .limit(1)
+        .first
+    end
 
     if @post.nil?
       redirect_to root_path(campaign_path: @campaign.path)
@@ -234,7 +236,7 @@ class PostsController < ApplicationController
     @where = {}
     @real_path = params[:filter] ||= Pathname.new(request.fullpath).basename.to_s.gsub(/\.[a-z]+/, '')
     @admin = ''
-    @page = 0.to_s
+    @page = "0"
 
     @posts = Post.build_post(@campaign)
     if params[:run] == 'mine'
@@ -294,5 +296,29 @@ class PostsController < ApplicationController
     end
 
     render json: results, root: false, response: 200
+  end
+
+  # POST /:campaign/posts/:id/share
+  def share
+    render status: :forbidden unless (request.format.symbol == :json || authenticated?)
+
+    # Uy populating UID through mobile request
+    params[:share][:uid] = session[:drupal_user_id] unless request.format.symbol == :json
+
+    @share = Share.new(params[:share])
+    Post.increment_counter(:share_count, params[:share][:post_id])
+
+    # Get popup if applicable
+    popup = get_popup
+
+    respond_to do |format|
+      if @share.save
+        format.html { render json: { 'success' => true, popup: popup } }
+        format.json { render json: { 'success' => true, popup: popup } }
+      else
+        format.html { render json: { 'success' => false, popup: popup } }
+        format.json { render json: { 'success' => false, popup: popup } }
+      end
+    end
   end
 end

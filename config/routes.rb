@@ -20,6 +20,7 @@ CreateAndShare::Application.routes.draw do
       member do
         post 'flag'
         post 'thumbs'
+        post 'share'
       end
 
       collection do
