@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130816135750) do
+ActiveRecord::Schema.define(:version => 20130821151001) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(:version => 20130816135750) do
     t.datetime "image_updated_at"
     t.string   "mailchimp"
     t.string   "mobile_commons"
+    t.string   "mailchimp_submit"
     t.string   "email_submit"
     t.string   "email_signup"
     t.string   "meme_header"
@@ -97,6 +98,8 @@ ActiveRecord::Schema.define(:version => 20130816135750) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "schools", ["gsid"], :name => "index_schools_on_gsid", :unique => true
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false

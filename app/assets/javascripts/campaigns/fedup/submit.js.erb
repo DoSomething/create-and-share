@@ -1,9 +1,22 @@
 $(document).ready(function() {
-  $( "#post_school_id" ).autocomplete({
-    source: "/lunch/posts/school_lookup.json",
+  $('#post_school_id').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: "/" + campaign.path + "/posts/school_lookup.json",
+        dataType: 'json',
+        type: 'GET',
+        data: {
+          term: request.term,
+          state: $('#post_state').val(),
+        },
+        success: function(data) {
+          response(data);
+        },
+      });
+    },
     minLength: 2,
     select: function( event, ui ) {
       // Select logic here
-    }
+    },
   });
 });

@@ -9,6 +9,10 @@ class PostsController < ApplicationController
   before_filter :is_not_authenticated, :verify_api_key, :campaign_closed
   skip_before_filter :campaign_closed, only: [:create, :update]
 
+  before_filter only: [:edit, :update, :destroy, :flag] do
+    render status: :forbidden
+  end unless :admin?
+
   # Ignores xsrf in favor of API keys for JSON requests.
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
 
@@ -276,21 +280,34 @@ class PostsController < ApplicationController
   # GET /:campaign_path/posts/school_lookup?term=[term]
   # POST /:campaign_path/posts/school_lookup
   def school_lookup
-    unless @campaign.has_school_field
-      raise 'This campaign does not have a school field'
-    end
+    raise 'This campaign does not have a school field' unless @campaign.has_school_field
 
-    #require 'open-uri'
-    #require 'json'
-    #base_uri = 'http://localhost:3000'
-    #res = JSON.parse(open('http://mchitten.com/articles.json').read)
+    # require 'open-uri'
+    # base_uri = 'http://localhost:3000'
+    # search = JSON.parse(open('http://lofischools-dosomething.rhcloud.com/search?query=High%20School&state=CT').read)['results']
     search = [
-      { gsid: 1, name: 'DoSomething High School', city: 'Brooklyn', state: 'NY', zip: '11225' },
-      { gsid: 2, name: 'Blah blah School', city: 'Wesminster', state: 'MD', zip: '11225' }
+      { 'gsid' => 1, 'name' => 'DoSomething High School', 'city' => 'Brooklyn', 'state' => 'NY', 'zip' => '11225' },
+      { 'gsid' => 2, 'name' => 'Blah blah School', 'city' => 'Wesminster', 'state' => 'MD', 'zip' => '11225' }
     ]
 
+    # params[:term] = searchterm
+    # params[:state] = state
+
     results = search.inject([]) do |res, elm|
-      result = { label: elm[:name], value: "#{elm[:name]} (#{elm[:gsid]})" }
+      result = { label: elm['name'], value: "#{elm['name']} (#{elm['gsid']})" }
+
+      begin
+        School.create({
+          gsid: elm['gsid'],
+          title: elm['name'],
+          state: elm['state'],
+          city: elm['city'],
+          zip: elm['zip']
+        })
+      rescue
+        # Don't care!
+      end
+
       res << result if result[:label] =~ Regexp.new(params[:term], 'i')
       res
     end
