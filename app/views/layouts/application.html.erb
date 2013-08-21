@@ -15,7 +15,7 @@
 
   <%
     campaign = get_campaign
-    facebook = Rails.application.config.facebook[campaign.path]
+    filters, facebook = campaign_config
   %>
   <script type="text/javascript">
   <!--
@@ -25,7 +25,8 @@
       facebook: <%=raw facebook.to_json %>,
       share_type: '<%= campaign.facebook %>',
       allow_revoting: <%= campaign.allow_revoting %>,
-      shares: <%= Vote.select(:voteable_id).where(voter_id: 5).map { |v| v.voteable_id } || [] %>,
+      votes: <%= get_votes %>,
+      scroll_type: '<%= !filters['order'].nil? ? 'custom' : 'default' %>',
     };
   -->
   </script>

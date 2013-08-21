@@ -49,42 +49,53 @@ $(function() {
     return false;
   });
 
-  // THUMBS UP & THUMBS DOWN
-  $('.thumbs-up, .thumbs-down').click(function(e) {
-    if (!campaign.allow_revoting && $(this).hasClass('shared')) {
-      return false;
-    }
+  set_votes = function() {
+    // THUMBS UP & THUMBS DOWN
+    $('.thumbs-up, .thumbs-down').click(function(e) {
+      if (!campaign.allow_revoting && $(this).hasClass('shared')) {
+        return false;
+      }
 
-    e.preventDefault();
-    var type = $(this).data("type");
-    var id = $(this).parent().parent().data("id");
-    $.post('/' + campaign.path + '/posts/' + id + '/thumbs',
-      { type: type },
-      function(response) {
-        var post = '.post[data-id="' + id + '"] ';
-        $(post + '.count').text(response["score"]);
-        $(post + '.thumbs-up-count').text(response["up"]);
-        $(post + '.thumbs-down-count').text(response["down"]);
-        $(post + '.thumbs-up, ' + post + '.thumbs-down').removeClass("voted");
-        if (response["color"]) {
-          $(post + '.thumbs-' + type).addClass("voted");
-          if (!campaign.allow_revoting) {
-            $(post + ' .thumbs-up, ' + post + ' .thumbs-down').addClass('shared');
+      e.preventDefault();
+      var type = $(this).data("type");
+      var id = $(this).parent().parent().data("id");
+      $.post('/' + campaign.path + '/posts/' + id + '/thumbs',
+        { type: type },
+        function(response) {
+          var post = '.post[data-id="' + id + '"] ';
+          $(post + '.count').text(response["score"]);
+          $(post + '.thumbs-up-count').text(response["up"]);
+          $(post + '.thumbs-down-count').text(response["down"]);
+          $(post + '.thumbs-up, ' + post + '.thumbs-down').removeClass("voted");
+          if (response["color"]) {
+            $(post + '.thumbs-' + type).addClass("voted");
+            if (!campaign.allow_revoting) {
+              $(post + ' .thumbs-up, ' + post + ' .thumbs-down').addClass('shared');
+            }
           }
-        }
-        render_popup(response["popup"]);
+          render_popup(response["popup"]);
+      });
+    }).mouseover(function() {
+      var type = $(this).data("type");
+      var id = $(this).parent().parent().data("id");
+      var post = '.post[data-id="' + id + '"] ';
+      $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "visible" });
+    }).mouseout(function() {
+      var type = $(this).data("type");
+      var id = $(this).parent().parent().data("id");
+      var post = '.post[data-id="' + id + '"] ';
+      $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "hidden" });
     });
-  }).mouseover(function() {
-    var type = $(this).data("type");
-    var id = $(this).parent().parent().data("id");
-    var post = '.post[data-id="' + id + '"] ';
-    $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "visible" });
-  }).mouseout(function() {
-    var type = $(this).data("type");
-    var id = $(this).parent().parent().data("id");
-    var post = '.post[data-id="' + id + '"] ';
-    $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "hidden" });
-  });
+
+    if (!campaign.allow_revoting) {
+      if (typeof campaign.votes === 'object') {
+        for (var i in campaign.votes) {
+          $('.id-' + campaign.votes[i] + ' .thumbs-up').addClass('shared');
+          $('.id-' + campaign.votes[i] + ' .thumbs-down').addClass('shared');
+        }
+      }
+    }
+  };
 
   // PET FINDER SHELTER LOCATOR
   var $err = $('#shelter-finder .error');
@@ -103,14 +114,6 @@ $(function() {
 
   $(document).ready(function() {
     $('img.lazy').lazyload();
-
-    if (!campaign.allow_revoting) {
-      if (typeof campaign.shares === 'object') {
-        for (var i in campaign.shares) {
-          $('.id-' + campaign.shares[i] + ' .thumbs-up').addClass('shared');
-          $('.id-' + campaign.shares[i] + ' .thumbs-down').addClass('shared');
-        }
-      }
-    }
+    set_votes();
   });
 });

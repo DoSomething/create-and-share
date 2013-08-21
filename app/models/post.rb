@@ -120,12 +120,21 @@ class Post < ActiveRecord::Base
     end
 
     if !params[:last].nil?
-      cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
-        uncached_posts
-          .where('posts.id < ?', params[:last])
-          .where('posts.id != ?', promoted ? promoted.id : 0)
-          .limit(self.per_page)
-          .all
+      if params[:type] == 'custom'
+        cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
+          uncached_posts
+            .offset((params[:page].to_i * self.per_page))
+            .limit(self.per_page)
+            .all
+        end
+      else
+        cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
+          uncached_posts
+            .where('posts.id < ?', params[:last])
+            .where('posts.id != ?', promoted ? promoted.id : 0)
+            .limit(self.per_page)
+            .all
+        end
       end
     else
       cached_posts = Rails.cache.fetch prefix + 'posts-' + state do

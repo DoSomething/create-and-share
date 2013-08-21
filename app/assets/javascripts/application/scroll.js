@@ -15,7 +15,7 @@ $(document).ready(function() {
 
       // If we are viewing a filter...
       if (typeof filter != 'undefined') {
-        $.getScript('/' + campaign.path + '/show/' + filter + '.js?page=' + page + '&last=' + latest, function() {
+        $.getScript('/' + campaign.path + '/show/' + filter + '.js?type=' + campaign.scroll_type + '&page=' + page + '&last=' + latest, function() {
           // Remove the current inview element.  Add a new one.
           $('.inview').remove();
           $('<div></div>').addClass('inview').appendTo($('.post-list'));
@@ -23,6 +23,7 @@ $(document).ready(function() {
           $('img.lazy').lazyload();
           // Reload Facebook click event
           load_facebook();
+          set_votes();
           // Running count += returned count
           running += returned;
           // Only keep going if there are more posts to show.
@@ -35,7 +36,7 @@ $(document).ready(function() {
         });
       }
       else {
-        $.getScript('/' + campaign.path + '/posts.js?page=' + page + '&last=' + latest, function() {
+        $.getScript('/' + campaign.path + '/posts.js?type=' + campaign.scroll_type + '&page=' + page + '&last=' + latest, function() {
           // Remove the current inview element.  Add a new one.
           $('.inview').remove();
           $('<div></div>').addClass('inview').appendTo($('.post-list'));
@@ -43,6 +44,7 @@ $(document).ready(function() {
           $('img.lazy').lazyload();
           // Load Facebook
           load_facebook();
+          set_votes();
           // Running count += returned count
           running += returned;
           // Only keep going if there are more posts to show.

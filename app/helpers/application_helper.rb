@@ -45,6 +45,10 @@ module ApplicationHelper
     @user = nil unless @user
   end
 
+  def get_votes
+    Vote.select(:voteable_id).where(voter_id: User.find_by_uid(session[:drupal_user_id]).id).map { |v| v.voteable_id } || []
+  end
+
   # Did the user already submit something?
   def already_submitted?
     user_id = session[:drupal_user_id]
@@ -73,6 +77,10 @@ module ApplicationHelper
     else
       "anything here"
     end
+  end
+
+  def campaign_config
+    [Rails.application.config.home[get_campaign.path], Rails.application.config.facebook[get_campaign.path]]
   end
 
   # Includes a campaign-specific stylesheet if there is one
