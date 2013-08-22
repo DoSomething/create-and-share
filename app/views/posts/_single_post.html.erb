@@ -9,8 +9,8 @@
   <div class="votes">
     <span class="count"><%= @post.plusminus %></span>
     <span class="thumbs-up-count-wrapper"><span class="thumbs-up-count"><%= @post.votes_for %></span></span>
-    <a href="#" class="thumbs-up<%= @user.voted_for?(@post) ? ' voted' : '' %>" data-type="up"><%= image_tag 'vote_yes.png' %></a>
+    <a href="#" class="thumbs-up<%= !@user.nil? && @user.voted_for?(@post) ? ' voted' : '' %>" data-type="up"><%= image_tag 'vote_yes.png' %></a>
     <span class="thumbs-down-count-wrapper"><span class="thumbs-down-count"><%= @post.votes_against %></span></span>
-    <a href="#" class="thumbs-down<%= @user.voted_against?(@post) ? ' voted' : '' %>" data-type="down"><%= image_tag 'vote_no.png' %></a>
+    <a href="#" class="thumbs-down<%= !@user.nil? && @user.voted_against?(@post) ? ' voted' : '' %>" data-type="down"><%= image_tag 'vote_no.png' %></a>
   </div>
 </div>

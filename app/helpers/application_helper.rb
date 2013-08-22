@@ -28,17 +28,44 @@ module ApplicationHelper
 
     path = params[:campaign_path]
 
-    @campaign = Campaign.where(:path => path).first
+    @campaign = Rails.cache.fetch "#{path}-campaign-info" do
+      Campaign.where(path: path).first
+    end
+
+    @campaign
+  end
+
+  def get_user
+    unless session[:drupal_user_id].nil?
+      @user = Rails.cache.fetch session[:drupal_user_id].to_s + '-user-info' do
+        User.find_by_uid(session[:drupal_user_id])
+      end
+    end
+
+    @user = nil unless @user
+  end
+
+  def get_votes
+    u = User.find_by_uid(session[:drupal_user_id])
+    unless u.nil?
+      return Vote.select(:voteable_id).where(voter_id: u.id).map { |v| v.voteable_id } || []
+    end
+
+    []
   end
 
   # Did the user already submit something?
   def already_submitted?
     user_id = session[:drupal_user_id]
     campaign = get_campaign
+
     if user_id.nil? || campaign.nil?
       return false
     end
-    posts = Post.where(uid: user_id, campaign_id: campaign.id)
+
+    posts = Rails.cache.fetch user_id.to_s + '-posted-on-' + campaign.id.to_s do
+      Post.where(uid: user_id, campaign_id: campaign.id)
+    end
 
     !posts.nil? && posts.count > 0
   end
@@ -55,6 +82,10 @@ module ApplicationHelper
     else
       "anything here"
     end
+  end
+
+  def campaign_config
+    [Rails.application.config.home[get_campaign.path], Rails.application.config.facebook[get_campaign.path]]
   end
 
   # Includes a campaign-specific stylesheet if there is one

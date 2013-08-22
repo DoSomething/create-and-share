@@ -19,14 +19,14 @@ CreateAndShare::Application.routes.draw do
       member do
         post 'flag'
         post 'thumbs'
+        post 'share'
       end
 
       collection do
         post 'autoimg'
+        get 'school_lookup'
       end
     end
-
-    resources :shares, only: [:create]
 
     # Login / out
     match 'login',  to: 'sessions#new',     as: :login

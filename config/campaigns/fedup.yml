@@ -1,0 +1,64 @@
+facebook:
+  # title: Facebook post title
+  # caption: Caption
+  # description: Description
+
+home:
+  order:
+    - "vc DESC"
+    - "posts.created_at DESC"
+
+filters:
+  ":state":
+    constraints:
+      ":state": "(?<state>[A-Z]{2})"
+    where:
+      "state": "state"
+    order:
+      - "vc DESC"
+      - "posts.created_at DESC"
+  "delish":
+    fields:
+      - "COUNT(up.*) as upcount"
+    joins:
+      - "LEFT JOIN votes up on (up.voteable_id = posts.id and up.vote = 't')"
+    order:
+      - "upcount DESC"
+  "gross":
+    fields:
+      - "COUNT(down.*) as downcount"
+    joins:
+      - "LEFT JOIN votes down on (down.voteable_id = posts.id and down.vote = 'f')"
+    order:
+      - "downcount DESC"
+  "delish-:state":
+    constraints:
+      ":state": "(?<state>[A-Z]{2})"
+    fields:
+      - "COUNT(up.*) as upcount"
+    joins:
+      - "LEFT JOIN votes up on (up.voteable_id = posts.id and up.vote = 't')"
+    where:
+      "state": "state"
+    order:
+      - "upcount DESC"
+  "gross-:state":
+    constraints:
+      ":state": "(?<state>[A-Z]{2})"
+    fields:
+      - "COUNT(down.*) as downcount"
+    joins:
+      - "LEFT JOIN votes down on (down.voteable_id = posts.id and down.vote = 'f')"
+    where:
+      "state": "state"
+    order:
+      - "downcount DESC"
+
+
+popups:
+  # Put your popups here, e.g.:
+  # 5: "test"
+
+stats:
+  - "Cats eat food when they are hungry"
+  - "Pie is a popular food item"

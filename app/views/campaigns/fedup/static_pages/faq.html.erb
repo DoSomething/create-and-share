@@ -1,0 +1,28 @@
+<% cache do %>
+<section class="faq">
+  <div class="section-container">
+    <h2>What is DoSomething.org Going to Do With the Info Collected Here?</h2>
+    <p>We will be compiling a map and report that displays the real state of school lunch across the nation.  This report will be distributed to school districts across the country, as well as school nutrition advocates to be used as a tool to make a case for better school lunches in your cafeteria.</p>
+
+    <h2>Who Decides What We Get for Lunch Every Day?</h2>
+    <p>School lunch decisions are made on a local level - by school districts.  While guidelines are provided by The National School Lunch Program, an organization that provides low cost or free lunches to more than 30 million kidsa day, actual purchasing decisions are made locally.</p>
+
+    <h2>How Can I Really Make A Difference?</h2>
+    <p>Start the conversation in your school and on the district level.  Check out our advocacy kit (link to download) for info on how to get started.</p>
+
+    <h2>What is The National School Lunch Program?</h2>
+    <p>The National School Lunch Program is a federally assisted meal program operating in public and nonprofit private schools and residential child care institutions.  It provides nutritionally balanced, low-cost or free lunches to children each school day.  The program was established under the National School Lunch Act, signed by President Harry Truman in 1946.</p>
+
+    <h2>Ready to show us your lunch?</h2>
+    <% if authenticated? %>
+      <% if already_submitted? %>
+        <%= link_to :start, :class => 'btn primary large' do %><span>Get Started</span><% end %>
+      <% else %>
+        <%= link_to :intent, :class => 'btn primary large' do %><span>Get Started</span><% end %>
+      <% end %>
+    <% else %>
+      <%= link_to :login, :class => 'btn primary large' do %><span>Get Started</span><% end %>
+    <% end %>
+  </div>
+</section>
+<% end %>

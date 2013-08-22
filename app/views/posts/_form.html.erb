@@ -57,6 +57,7 @@
   <%= f.input :name, required: true, label: "Name?", wrapper_html: { class: 'form-item-name' } %>
   <%= f.input :city, required: true, label: "City?", wrapper_html: { class: 'form-item-city' } %>
   <%= f.input :state, required: true, label: "State?", wrapper_html: { class: 'form-item-state' }, as: :select, collection: get_states.invert, prompt: 'Choose a state', include_blank: false %>
+  <%= f.input :school_id, required: false, label: 'Your school', wrapper_html: { class: 'form-item-school-id' }, as: 'string' %>
   <% if admin? %>
     <%= f.input :story, label: "Compelling story? Why not.", required: false, wrapper_html: { class: 'form-item-story' } %>
     <%= f.input :flagged, label: 'Flagged', :as => :boolean %>
@@ -65,5 +66,10 @@
   <% end %>
   <%= f.input :creation_time, :as => :hidden, :value => Time.now %>
   <%= f.input :update_time, :as => :hidden, :value => Time.now %>
+
+  <% if @campaign.paged_form %>
+    <%= f.submit 'next_page', as: 'button', value: 'Next Page', id: 'next-page', class: 'btn primary large' %>
+    <%= f.submit 'prev_page', as: 'button', value: 'Previous Page', id: 'prev-page', class: 'btn primary large' %>
+  <% end %>
   <%= f.submit 'submit', :value => 'Submit', :id => 'edit-final-submit', :class => 'btn primary large' %>
 <% end %>

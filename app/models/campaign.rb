@@ -3,7 +3,9 @@ class Campaign < ActiveRecord::Base
   :lead_email, :path, :start_date,
   :title, :gated, :description,
   :image, :mailchimp, :mobile_commons,
-  :email_signup, :email_submit, :meme_header, :meme
+  :email_signup, :email_submit, :meme_header, :meme,
+  :paged_form, :has_school_field, :facebook, :stat_frequency,
+  :allow_revoting
 
   has_many :posts
 
@@ -14,11 +16,11 @@ class Campaign < ActiveRecord::Base
   :lead_email, :path, :start_date,
   :title, :description,
   :image, :mailchimp, :mobile_commons,
-  :email_signup, :email_submit
+  :email_signup, :email_submit, :facebook, :stat_frequency
 
   validates :path, uniqueness: { case_sensitive: false }
 
-  has_attached_file :image, :styles => { :campaign => '250x141!' }, :default_url => '/images/:style/default.png', :processors => [:thumbnail, :compress]
+  has_attached_file :image, :styles => { :campaign => '250x141!' }, :default_url => '/images/:style/default.png', :preserve_file => true, :processors => [:thumbnail, :compress]
   validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif'] }
 
   before_save do
@@ -27,7 +29,22 @@ class Campaign < ActiveRecord::Base
     end
   end
 
-  def gated?
-    self.gated == true
+  after_create do
+    Rails.cache.delete 'campaign-list'
+  end
+
+  def gated? type
+    self.gated == type
+  end
+
+  def is_gated? (params, session)
+    is_on_login_page = (params[:controller] == 'sessions' && params[:action] == 'new')
+    campaign_exists = !params[:campaign].nil?
+    entire_campaign_is_gated = self.gated? 'all'
+    on_submit_page = (params[:action] == 'new' && params[:controller] == 'posts')
+    submit_page_is_gated = self.gated? 'submit'
+    campaign_is_not_gated = self.gated? ''
+
+    campaign_exists && ((entire_campaign_is_gated || (submit_page_is_gated && on_submit_page)) && !campaign_is_not_gated) || is_on_login_page
   end
 end

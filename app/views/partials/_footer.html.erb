@@ -1,4 +1,4 @@
-<% cache 'footer' do %>
+<% cache 'campaign-' + @campaign.id.to_s + '-footer' do %>
   <footer class="footer-help">
     <div class="section-container">
      <p class="help">Questions? E-mail <%= @campaign.lead %> at <%= mail_to @campaign.lead_email %></p>

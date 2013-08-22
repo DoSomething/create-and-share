@@ -15,7 +15,7 @@
 
   <%
     campaign = get_campaign
-    facebook = Rails.application.config.facebook[campaign.path]
+    filters, facebook = campaign_config
   %>
   <script type="text/javascript">
   <!--
@@ -23,6 +23,10 @@
       title: '<%= campaign.title %>',
       path: '<%= campaign.path %>',
       facebook: <%=raw facebook.to_json %>,
+      share_type: '<%= campaign.facebook %>',
+      allow_revoting: <%= campaign.allow_revoting %>,
+      votes: <%= get_votes %>,
+      scroll_type: '<%= filters && !filters['order'].nil? ? 'custom' : 'default' %>',
     };
   -->
   </script>

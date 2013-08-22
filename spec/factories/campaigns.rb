@@ -11,12 +11,17 @@ FactoryGirl.define do
     developers { Faker::Internet.email }
     description { Faker::Lorem.paragraph }
     image Rack::Test::UploadedFile.new(Rails.root + 'spec/mocks/ruby.png', 'image/png')
-    gated true
+    gated 'all'
+    facebook 'mine'
+    has_school_field true
+    paged_form false
     meme true
     meme_header { Faker::Lorem.words.join(" ") }
     email_submit { Faker::Lorem.word }
     email_signup { Faker::Lorem.word }
     mailchimp 'PicsforPets2013'
     mobile_commons "158551"
+    stat_frequency 0
+    allow_revoting true
   end
 end

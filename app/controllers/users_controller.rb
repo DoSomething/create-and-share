@@ -4,13 +4,13 @@ class UsersController < ApplicationController
   before_filter :get_campaign
 
   def intent
-    render :status => :forbidden unless authenticated?
-
-    # Save the intent to related participation.
-    user = User.find_by_uid(session[:drupal_user_id])
-    if participation = user.participations.where(campaign_id: @campaign.id).first
-      participation.intent = true
-      participation.save
+    if authenticated?
+      # Save the intent to related participation.
+      user = User.find_by_uid(session[:drupal_user_id])
+      if participation = user.participations.where(campaign_id: @campaign.id).first
+        participation.intent = true
+        participation.save
+      end
     end
 
     # Bring them to the real submit path
@@ -20,10 +20,16 @@ class UsersController < ApplicationController
   def participation
     render :status => :forbidden unless authenticated?
 
-    user = User.find_by_uid(session[:drupal_user_id])
-    if !user.participated?(@campaign.id)
-      user.participations.create(intent: false, campaign_id: @campaign.id)
-      user.handle_mc(@campaign)
+    account, participated = Rails.cache.fetch 'user-' + session[:drupal_user_id].to_s + '-participated-in-' + @campaign.id.to_s do
+      user = User.find_by_uid(session[:drupal_user_id])
+      pc = user.participated?(@campaign.id)
+
+      [user, pc]
+    end
+
+    if !participated
+      account.participations.create(intent: false, campaign_id: @campaign.id)
+      account.handle_mc(@campaign)
     end
 
     # Bring them to the real campaign root path or source

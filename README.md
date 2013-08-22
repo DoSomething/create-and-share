@@ -3,7 +3,7 @@
 Create and Share is a campaign model used on DoSomething.org.  Users are encouraged to upload a picture and provide some basic details that will show up in the gallery.
 
 ### Features
-* tumblr-esque infinite scroll gallery
+* Tumblr-esque infinite scroll gallery
 * Facebook sharing
 * thumbs up / down voting
 * featured posts (with vanity links)

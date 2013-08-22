@@ -1,0 +1,15 @@
+<div data-id="<%= @post.id %>" class="post id-<%= @post.id %><%= @post.promoted ? ' promoted' : '' %>">
+  <% if admin? %><div class="flag-container"><%= link_to 'Flag', flag_post_path(@post, :campaign_path => params[:campaign_path]), :method => :post, :confirm => 'Flag this?' %> | <%= link_to 'Edit', edit_path(@post, :campaign_path => params[:campaign_path]) %></div><% end %>
+  <div class="share-container"><a href="#" class="facebook-share btn share medium" data-id="<%= @post.id %>"><span>Share Me</span></a><span class="share-count"><%= (@post.share_count ? @post.share_count : @post.real_share_count) || 0 %></span></div>
+  <% if @post.promoted %><div class="promoted-container"><%= link_to 'promoted', '/featured', :class => 'promoted-badge'  %></div><% end %>
+  <div class="image-container"><%= image_tag 'blank.gif', 'data-original' => @post.image(:gallery), :alt => @post.name + ' from ' + @post.state, :class => 'lazy' %></div>
+  <div class="name-loc"><%= link_to show_post_path(@post, :campaign_path => params[:campaign_path]) do %><span class="name"><%= @post.name %></span>, <%= @post.state %><% end %></div>
+  <div class="story"><%=raw simple_format(@post.story).gsub(/(\r|\n|\r\n)/, '') %></div>
+
+  <div class="votes">
+    <span class="thumbs-up-count-wrapper"><span class="thumbs-up-count"><%= @post.votes_for %></span></span>
+    <a href="#" class="thumbs-up<%= !@user.nil? && @user.voted_for?(@post) ? ' voted' : '' %>" data-type="up">EAT IT</a>
+    <span class="thumbs-down-count-wrapper"><span class="thumbs-down-count"><%= @post.votes_against %></span></span>
+    <a href="#" class="thumbs-down<%= !@user.nil? && @user.voted_against?(@post) ? ' voted' : '' %>" data-type="down">TOSS IT</a>
+  </div>
+</div>
