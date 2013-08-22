@@ -11,11 +11,11 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require jquery
-//= require jquery.turbolinks
+// require jquery.turbolinks
 //= require jquery_ujs
 //= require jquery.ui.autocomplete
 //= require_tree ./application
 //= require jquery.inview.js
 //= require tdfriendselector.js
 //= require jquery.lazyload
-//= require turbolinks
+// require turbolinks
