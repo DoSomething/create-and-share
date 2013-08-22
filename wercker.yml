@@ -1,6 +1,9 @@
 box: wercker/ubuntu12.04-ruby2.0.0
 services:
     - wercker/postgresql
+    - xvfb
+    - firefox
+    - imagemagick
 build:
     steps:
         - bundle-install
