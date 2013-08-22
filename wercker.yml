@@ -10,13 +10,6 @@ build:
             service: postgresql
 
         - script:
-            name: echo ruby information
-            code: |
-                echo "ruby version $(ruby --version) running!"
-                echo "from location $(which ruby)"
-                echo -p "gem list: $(gem list)"
-
-        - script:
             name: Set up db
             code: bundle exec rake db:schema:load RAILS_ENV=test
 
@@ -24,10 +17,14 @@ build:
             name: Clear caches
             code: |
                 mkdir /pipeline/build/tmp/cache/
-                RAILS_ENV=test touch tmp/restart.txt
                 RAILS_ENV=test bundle exec rake tmp:cache:clear
-                RAILS_ENV=test bundle exec rake cache_clear
 
         - script:
             name: rspec
             code: RAILS_ENV=test HEADLESS=true bundle exec rspec
+
+    after-steps:
+        - hipchat-notify:
+            token: $HIPCHAT_TOKEN
+            room-id: 142954
+            from-name: Wercker

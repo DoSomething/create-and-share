@@ -11,7 +11,7 @@ FactoryGirl.define do
     name { Faker::Name.first_name }
     promoted false
     share_count 0
-    state { Faker::Address.state_abbr }
+    state { get_states.keys.sample.to_s }
     city { Faker::Address.city }
     extras {
       { :animal_type => 'cat', :shelter => 'Cats' }
