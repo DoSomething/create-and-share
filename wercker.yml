@@ -23,10 +23,10 @@ build:
         - script:
             name: Clear caches
             code: |
-                touch tmp/restart.txt
-                bundle exec rake tmp:cache:clear
-                bundle exec rake cache_clear
+                RAILS_ENV=test touch tmp/restart.txt
+                RAILS_ENV=test bundle exec rake tmp:cache:clear
+                RAILS_ENV=test bundle exec rake cache_clear
 
         - script:
             name: rspec
-            code: HEADLESS=true bundle exec rspec
+            code: RAILS_ENV=test HEADLESS=true bundle exec rspec
