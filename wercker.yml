@@ -23,6 +23,7 @@ build:
         - script:
             name: Clear caches
             code: |
+                mkdir /pipeline/build/tmp/cache/
                 RAILS_ENV=test touch tmp/restart.txt
                 RAILS_ENV=test bundle exec rake tmp:cache:clear
                 RAILS_ENV=test bundle exec rake cache_clear
