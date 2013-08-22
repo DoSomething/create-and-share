@@ -11,6 +11,12 @@ class CampaignsController < ApplicationController
       Campaign.order('created_at DESC').all
     end
 
+    # Redirect to single campaign if there's only one running.
+    if !Rails.env.test? && @campaigns.count === 1
+      redirect_to root_path(campaign_path: @campaigns.first.path)
+      return
+    end
+
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @campaigns }
