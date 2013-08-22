@@ -276,7 +276,7 @@ class PostsController < ApplicationController
 
     # Make a request to the GreatSchools search
     require 'open-uri'
-    search = JSON.parse(open('http://lofischools-dosomething.rhcloud.com/search?query=' + URI::escape(params[:term]) + '&state=' + URI::escape(params[:state])).read)['results']
+    search = JSON.parse(open('http://lofischools.herokuapp.com/search?query=' + URI::escape(params[:term]) + '&state=' + URI::escape(params[:state])).read)['results']
 
     # Test data
     # search = [
