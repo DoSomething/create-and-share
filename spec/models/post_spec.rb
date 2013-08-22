@@ -12,8 +12,8 @@ describe Post do
       FactoryGirl.build(:post, name: nil).should_not be_valid      
     end
 
-    it 'is invalid without a city' do
-      FactoryGirl.build(:post, city: nil).should_not be_valid
+    it 'is invalid without a valid city' do
+      FactoryGirl.build(:post, city: '#@#()$*@#$').should_not be_valid
     end
 
     it 'is invalid without state' do
@@ -122,6 +122,12 @@ describe Post do
       it 'strips bad tags from meme text' do
         new_post = FactoryGirl.create(:post, meme_text: '<b>Meme</b>')
         new_post.meme_text.should eq 'Meme'
+      end
+      it 'ignores school ID on a non-school campaign' do
+        new_campaign = FactoryGirl.create(:campaign, has_school_field: false)
+        new_post = FactoryGirl.create(:post, campaign_id: new_campaign.id)
+
+        new_post.school_id.should be nil
       end
     end
   end

@@ -3,6 +3,17 @@ facebook:
   # caption: Caption
   # description: Description
 
+home:
+  # Put homepage configuration here.  This follows
+  # the same principal as "filters", except for
+  # "constraints".  e.g.:
+  #
+  # order:
+  #   - "COUNT(votes.id) ASC"
+  #   - "created_at DESC"
+  # where:
+  #   "state": "NY"
+
 filters:
   # Put your filters here, e.g.:
   # ":state":
@@ -14,3 +25,10 @@ filters:
 popups:
   # Put your popups here, e.g.:
   # 5: "test"
+
+stats:
+  # Put potential stats here.  These will mix in the
+  # infinite scroll.  You'll need to define stat_frequency
+  # for your campaign for this to show up.  e.g.:
+  # - "Cats don't like water"
+  # - "Giraffes are tall"

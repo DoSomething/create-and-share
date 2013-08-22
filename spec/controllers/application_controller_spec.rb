@@ -157,7 +157,7 @@ describe ApplicationController do
 
   describe 'checks for submission' do
     context 'has posts' do
-      before { FactoryGirl.create(:post, campaign_id: campaign.id) }
+      before { @post = FactoryGirl.create(:post, campaign_id: campaign.id) }
       it 'has posts in one campaign' do
         get :index, { campaign_path: campaign.path }, session
         assigns(:submitted).should eq true
@@ -205,5 +205,15 @@ describe ApplicationController do
       get :popup, { campaign_path: campaign.path }, session
       assigns(:popup).should be_blank
     end
+  end
+
+  it 'gets a real campaign path from a URL' do
+    legit_url = 'http://campaigns.dosomething.org/breakfast'
+    path = get_campaign_from_url(legit_url)
+    path.should eq 'breakfast'
+
+    unlegit_url = 'http://campaigns.dosomething.org'
+    path = get_campaign_from_url(unlegit_url)
+    path.should be nil
   end
 end

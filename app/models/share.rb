@@ -1,6 +1,7 @@
 class Share < ActiveRecord::Base
   attr_accessible :post_id, :uid
   belongs_to :post
+  belongs_to :user
 
   validates :post_id, :presence => true, :numericality => { :greater_than_or_equal_to => 0 }
   validates :uid, :presence => true, :numericality => { :greater_than_or_equal_to => 0 }

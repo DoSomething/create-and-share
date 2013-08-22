@@ -5,14 +5,19 @@ class Post < ActiveRecord::Base
     :story, :update_time,
     :meme_text, :meme_position,
     :crop_x, :crop_y, :crop_w, :crop_h, :crop_dim_w,
-    :campaign_id, :extras
+    :campaign_id, :extras, :processed_from_url,
+    :school_id
 
   serialize :extras, Hash
 
-  attr_accessor :crop_x, :crop_y, :crop_w, :crop_h, :reprocessed, :crop_dim_w, :real_share_count
+  attr_accessor :crop_x, :crop_y, :crop_w, :crop_h,
+    :reprocessed, :crop_dim_w, :real_share_count,
+    :processed_from_url
 
   validates :name,    :presence => true
-  validates :city,    :presence => true
+  validates :city,    :format => { :with => /[A-Za-z0-9\-\_\s]+/ },
+                      :allow_blank => true
+  validates :school_id,  :presence => { :if => :is_school_campaign? }
   validates :state,   :presence => true,
                       :length => { :maximum => 2 },
                       :format => { :with => /[A-Z]{2}/ }
@@ -22,20 +27,38 @@ class Post < ActiveRecord::Base
   validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif'] }
 
   has_many :shares
+  has_many :tags
   belongs_to :campaign
   belongs_to :user, foreign_key: 'uid', primary_key: 'uid'
+  belongs_to :school, primary_key: 'gsid'
 
   acts_as_voteable
 
-  def self.tagged(**args)
+  before_save do
+    if !is_school_campaign? && self.school_id
+      self.school_id = nil
+    end
+  end
+
+  def is_school_campaign?
+    return false if self.campaign_id.nil?
+
+    campaign = Campaign.find(self.campaign_id)
+    campaign.has_school_field === true
+  end
+
+  def self.tagged(*args)
+    args = args[0]
+
     i = 0
-    @p = self
-    args.each do |col, val|
-      c_a = "t#{i}"
-      @p = @p
-       .joins("INNER JOIN tags #{c_a} ON (#{c_a}.post_id = posts.id)")
-       .where("#{c_a}.campaign_id = posts.campaign_id AND (#{c_a}.column = ? AND #{c_a}.value = ?)", col, val)
+    @p = args.inject(self) do |query, join|
+      join_alias = "t#{i}"
+      query = query
+        .joins("INNER JOIN tags #{join_alias} ON (#{join_alias}.post_id = posts.id)")
+        .where("#{join_alias}.campaign_id = posts.campaign_id AND (#{join_alias}.column = ? AND #{join_alias}.value = ?)", join[0], join[1])
+
       i += 1
+      query
     end
 
     @p
@@ -48,8 +71,9 @@ class Post < ActiveRecord::Base
 
   def self.build_post(campaign)
     self
-      .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
+      .select('posts.*, COUNT(shares.*) AS real_share_count, COUNT(votes.id) AS vc')
+      .joins('LEFT JOIN shares ON (shares.post_id = posts.id)')
+      .joins('LEFT JOIN votes ON (votes.voteable_id = posts.id)')
       .where(campaign_id: campaign.id, flagged: false)
       .group('posts.id')
   end
@@ -62,7 +86,20 @@ class Post < ActiveRecord::Base
 
     uncached_posts = self
       .build_post(campaign)
-      .order('created_at DESC')
+      .order('posts.created_at DESC')
+
+    if state == 'index'
+      if !Rails.application.config.home[params[:campaign_path]].nil?
+        home_config = Rails.application.config.home[params[:campaign_path]]
+        # Make sure we don't bug out.
+        home_config['fields'] ||= {}
+        home_config['joins'] ||= {}
+        home_config['where'] ||= {}
+        home_config['order'] ||= {}
+
+        uncached_posts = uncached_posts.build_config_params(uncached_posts, {}, home_config['fields'], home_config['joins'], home_config['where'], home_config['order'])
+      end
+    end
 
     if filtered
       uncached_posts = uncached_posts
@@ -84,24 +121,43 @@ class Post < ActiveRecord::Base
     end
 
     if !params[:last].nil?
-      cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
-        uncached_posts
-          .where('posts.id < ?', params[:last])
-          .where('posts.id != ?', promoted ? promoted.id : 0)
-          .limit(self.per_page)
-          .all
+      if params[:type] == 'custom'
+        cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
+          uncached_posts
+            .offset((params[:page].to_i * self.per_page))
+            .limit(self.per_page)
+            .all
+        end
+      else
+        cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
+          uncached_posts
+            .where('posts.id < ?', params[:last])
+            .where('posts.id != ?', promoted ? promoted.id : 0)
+            .limit(self.per_page)
+            .all
+        end
       end
     else
+      limit = (promoted ? (self.per_page - 1) : self.per_page)
       cached_posts = Rails.cache.fetch prefix + 'posts-' + state do
         uncached_posts
-          .limit(self.per_page - 1)
+          .limit(limit)
           .all
       end
 
-      total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
-        self
-          .where(flagged: false, campaign_id: campaign.id)
-          .count
+      if !filtered
+        total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
+          self
+            .where(flagged: false, campaign_id: campaign.id)
+            .count
+        end
+      else
+        total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
+          self
+            .where(flagged: false, campaign_id: campaign.id)
+            .filtered(params)
+            .count
+        end
       end
     end
 
@@ -125,6 +181,9 @@ class Post < ActiveRecord::Base
       ret = Regexp.new "^#{ret}$"
       if @result = params[:filter].match(ret)
         @where = config['where']
+        @order = config['order']
+        @fields = config['fields']
+        @joins = config['joins']
         break
       end
     end
@@ -134,37 +193,63 @@ class Post < ActiveRecord::Base
       return
     end
 
+    self.build_config_params(self, @result, @fields, @joins, @where, @order)
+  end
+
+  def self.build_config_params(query, result = {}, fields = [], joins = [], where = [], order = [])
     cols = Post.column_names
     i = 0
-    @results = self
+    results = self
 
-    @where.each do |column, value|
-      if cols.include? column
-        if @result.names.length > 0
-          if !@result[value].nil?
-            @results = @results.where(column.to_sym => @result[value])
-          end
-        else
-          @results = @results.where(column.to_sym => value)
-        end
-      else
-        col_alias = "t#{i.to_s}"
-        if @result.names.length > 0
-          if !@result[value].nil?
-            value = @result[value]
-          end
-        else
-          value = value
-        end
-
-        @results = @results
-          .joins('INNER JOIN tags ' + col_alias + ' ON (' + col_alias + '.post_id = posts.id)')
-          .where(col_alias + '.column = ? and ' + col_alias + '.value = ?', column, value)
-        i += 1
+    unless fields.nil?
+      results = results.select('posts.*')
+      fields.each do |f|
+        results = results.select(f)
       end
     end
 
-    @results
+    unless joins.nil?
+      joins.each do |j|
+        results = results.joins(j)
+      end
+    end
+
+    unless where.nil?
+      where.each do |column, value|
+        if cols.include? column
+          if !result.nil? && !result.names.nil? && result.names.length > 0
+            if !result[value].nil?
+              results = results.where(column.to_sym => result[value])
+            end
+          else
+            results = results.where(column.to_sym => value)
+          end
+        else
+          col_alias = "t#{i.to_s}"
+          if !result.nil? && !result.names.nil? && result.names.length > 0
+            if !result[value].nil?
+              value = result[value]
+            end
+          else
+            value = value
+          end
+
+          results = results
+            .joins('INNER JOIN tags ' + col_alias + ' ON (' + col_alias + '.post_id = posts.id)')
+            .where(col_alias + '.column = ? and ' + col_alias + '.value = ?', column, value)
+          i += 1
+        end
+      end
+    end
+
+    unless order.nil? || order.count == 0
+      results = results.reorder('')
+      order.each do |o|
+        results = results.order(o)
+      end
+    end
+
+    results
   end
 
   def self.scrolly(point = nil)
@@ -220,6 +305,27 @@ class Post < ActiveRecord::Base
       if !self.campaign.email_submit.nil?
         Services::Mandrill.mail(self.campaign.lead, self.campaign.lead_email, @user.email, self.campaign.email_submit)
       end
+    end
+  end
+
+  # Remove the temporary image created when we
+  after_create :remove_url_tmp_image, if: :loading_from_url?
+  def loading_from_url?
+    !self.processed_from_url.nil?
+  end
+  def remove_url_tmp_image
+    if File.exists?(self.processed_from_url)
+      FileUtils.rm_f(self.processed_from_url)
+    end
+  end
+
+  after_create :remove_real_tmp_image, unless: :loading_from_url?
+  def remove_real_tmp_image
+    filename = self.image.instance['image_file_name']
+    dir = 'public/system/tmp/'
+
+    if File.exists?(dir + filename)
+      FileUtils.rm(dir + filename)
     end
   end
 

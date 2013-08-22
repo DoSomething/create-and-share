@@ -4,6 +4,7 @@ describe PostsController, :type => :controller do
   let(:user) { FactoryGirl.create(:user) }
   let(:campaign) { FactoryGirl.create(:campaign) }
   let(:session) { { drupal_user_id: user.uid, drupal_user_role: { test: 'authenticated user', blah: 'administrator' } } }
+  let(:invalid_session) { { drupal_user_id: user.uid, drupal_user_role: { test: 'authenticated user' } } }
 
   before { @post = FactoryGirl.create(:post, campaign_id: campaign.id) }
 
@@ -24,7 +25,6 @@ describe PostsController, :type => :controller do
   describe 'GET #show' do
     it 'assigns post' do
       get :show, { :campaign_path => campaign.path, :id => @post.id }, session
-
       assigns(:user).should eq user
       expect(assigns(:post)).to eq @post
     end
@@ -47,12 +47,16 @@ describe PostsController, :type => :controller do
   describe "POST methods" do
     before :each do
       @attributes = FactoryGirl.attributes_for(:post)
+      @school = FactoryGirl.create(:school)
+      @attributes[:school_id] = @school.title + ' (' + @school.id.to_s + ')'
       @attributes[:campaign_id] = campaign.id
+      @campaign = campaign
     end
 
     describe "POST #create" do
       describe "with valid params" do
         it "creates a new post" do
+
           expect { post :create, {:post => @attributes}, session }.to change(Post, :count).by(1)
         end
 
@@ -67,6 +71,22 @@ describe PostsController, :type => :controller do
           post :create, {:post => @attributes }, session
 
           response.should redirect_to show_post_path(assigns(:post), :campaign_path => campaign.path)
+        end
+      end
+
+      describe 'with school autocomplete' do
+        it 'passes when school field is true, and there is a school' do
+          expect { post :create, { post: @attributes }, session }.to change(Post, :count).by(1)
+        end
+        it 'Fails if school field is true, and there is no school' do
+          bad_attributes = FactoryGirl.attributes_for(:post, school_id: false)
+          expect { post :create, { post: bad_attributes }, session }.to_not change(Post, :count).by(1)
+        end
+        it 'ignores a school ID when the campaign setting is FALSE' do
+          bad_campaign = FactoryGirl.create(:campaign, has_school_field: false)
+          fine_post = FactoryGirl.attributes_for(:post, campaign_id: bad_campaign)
+          expect { post :create, { post: fine_post }, session }.to change(Post, :count).by(1)
+          expect(assigns(:post).school_id).to be_nil
         end
       end
 
@@ -136,9 +156,15 @@ describe PostsController, :type => :controller do
   end
 
   describe "flagging" do
-    it 'flags a post' do
+    before :each do
       request.env['HTTP_REFERER'] = root_path(:campaign_path => campaign.path)
+    end
+
+    it 'succeeds if you have the right permissions' do
       expect { get :flag, { id: @post.id }, session }.to change { Post.find(@post.id).flagged }.to(true)
+    end
+    it 'fails if you do not have the right permissions' do
+      expect { get :flag, { id: @post.id }, invalid_session }.to raise_error('User ' + invalid_session[:drupal_user_id].to_s + ' is unauthorized.')
     end
   end
 
@@ -289,6 +315,46 @@ describe PostsController, :type => :controller do
           user.vote_for(@post)
           xhr :post, :thumbs, @up, session
           JSON.parse(response.body)["popup"].should be_blank
+        end
+      end
+    end
+  end
+
+  describe 'sharing' do
+    before :each do
+      @post = FactoryGirl.create(:post, campaign_id: campaign.id)
+      attributes = FactoryGirl.attributes_for(:share)
+      attributes[:post_id] = @post.id
+      @params = { share: attributes, new_count: 1, campaign_path: campaign.path }
+    end
+
+    describe "POST #share" do
+      it "creates a new share" do
+        expect { post :share, @params, session }.to change(Share, :count).by(1)
+      end
+
+      it "increases share count for that post" do
+        expect { post :share, @params, session }.to change { Post.find(@params[:share][:post_id]).share_count }.by(1)
+      end
+    end
+
+    describe "popups" do
+      before { add_config(campaign.path) }
+      after { remove_config(campaign.path) }
+
+      context "action count does not correspond to a popup" do
+        it 'assigns a blank string to popup' do
+          User.any_instance.stub(:action_count).and_return(0)
+          xhr :post, :share, @params, session
+          JSON.parse(response.body)["popup"].should be_blank
+        end
+      end
+
+      context "action count does correspond to a popup" do
+        it 'assigns "test" to popup if action count is 5' do
+          User.any_instance.stub(:action_count).and_return(5)
+          xhr :post, :share, @params, session
+          JSON.parse(response.body)["popup"].should eq "test"
         end
       end
     end

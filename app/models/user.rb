@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   has_many :campaigns, through: :participations
   has_many :participations, dependent: :destroy
   has_many :posts
+  has_many :shares, foreign_key: :uid, primary_key: :uid
 
   acts_as_voter
 
@@ -70,6 +71,13 @@ class User < ActiveRecord::Base
     end
     user.save
 
+    if Rails.env.test?
+      # Allows us to fake administrator priveleges in tests
+      if user && user.is_admin == true && !roles.values.include?('administrator')
+        roles[99] = 'administrator'
+      end
+    end
+
     # set up session for current user
     session[:drupal_user_id] = uid
     session[:drupal_user_role] = roles
@@ -116,5 +124,36 @@ class User < ActiveRecord::Base
 
   def participated?(campaign_id)
     !self.participations.where(campaign_id: campaign_id).empty?
+  end
+
+  # Votes on a post.
+  # @param [String] type A type of vote -- up or down.
+  # @param [Object] post An instance of Post that can be voted against
+  # @return [Bool] The color as a boolean
+  def perform_vote type, post
+    color = true
+
+    if type == 'up'
+      if self.voted_against?(post)
+        self.vote_exclusively_against(post)
+      elsif self.voted_on?(post)
+        self.unvote_for(post)
+        color = false
+      else
+        self.vote_for(post)
+      end
+    else
+      if self.voted_for?(post)
+        self.vote_exclusively_against(post)
+      elsif self.voted_on?(post)
+        self.unvote_for(post)
+        color = false
+      else
+        self.vote_against(post)
+      end
+    end
+
+    Rails.cache.clear
+    color
   end
 end

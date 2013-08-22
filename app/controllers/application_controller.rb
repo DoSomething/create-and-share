@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :find_view_path
   def find_view_path
-    if !get_campaign.nil?
+    unless get_campaign.nil?
       prepend_view_path 'app/views/campaigns/' + get_campaign.path
     end
   end
@@ -23,11 +23,22 @@ class ApplicationController < ActionController::Base
     render 'not_found'
   end
 
+  # @param [Object] url The fully qualified URL to the campaign in question.
+  # @return [String] Either the campaign as a string, or nil.
+  def get_campaign_from_url(url)
+    match = url.match(/^https?:\/\/[^\/]+\/(?<campaign>[^\/]+)/i)
+    return match['campaign'].to_s if match && !match['campaign'].nil?
+
+    nil
+  end
+
   # Confirms that the user is authenticated.  Redirects to root (/) if so.
   # See SessionsController, line 5
   def is_authenticated
     campaign = get_campaign
-    if authenticated? || campaign && !campaign.gated?
+    params[:campaign] = campaign
+
+    if authenticated? || campaign && !campaign.is_gated?(params, session)
       if campaign && campaign.path
         redirect_to root_path(:campaign_path => campaign.path)
       else
@@ -39,7 +50,9 @@ class ApplicationController < ActionController::Base
   # Checks if a user is *not* authenticated.
   def is_not_authenticated
     campaign = get_campaign
-    unless authenticated? || request.format.symbol == :json || campaign && !campaign.gated?
+    params[:campaign] = campaign
+
+    unless authenticated? || request.format.symbol == :json || campaign && !campaign.is_gated?(params, session)
       flash[:error] = "you must be logged in to see that"
       session[:source] = request.path
       if campaign && campaign.path
@@ -47,6 +60,7 @@ class ApplicationController < ActionController::Base
       else
         redirect_to '/login'
       end
+
       false
     end
   end
@@ -60,9 +74,14 @@ class ApplicationController < ActionController::Base
         flash[:error] = "you have been logged out - please login as admin to view this page"
       end
 
-      session[:source] = request.path
-      redirect_to '/login'
-      false
+      # Throw a 500 for create/update/delete pages -- because there's no point redirecting that.
+      if ['create', 'update', 'delete'].include? params[:action]
+        render json: 'You are not authorized to do that.', status: 500
+      else
+        session[:source] = request.path
+        redirect_to '/login'
+        false
+      end
     end
   end
 
@@ -72,14 +91,16 @@ class ApplicationController < ActionController::Base
     # Confirm that it's a json request.  This is irrelevant otherwise.
     if request.format.symbol == :json
       # We must have a key, either way.  If no key, pass forbidden response.
-      if params[:key].nil?
+      if params[:key].nil? && (request.env['HTTP_REFERER'] =~ Regexp.new(request.env['HTTP_HOST'])).nil?
         render :json => { :errors => "Invalid API key." }, :status => :forbidden
       else
-        # Find by key
-        @key = ApiKey.find_by_key(params[:key])
-        if @key.nil?
-          # Throw error if no key found.
-          render :json => { :errors => "Invalid API key." }, :status => :forbidden
+        if (request.env['HTTP_REFERER'] =~ Regexp.new(request.env['HTTP_HOST'])).nil?
+          # Find by key
+          @key = ApiKey.find_by_key(params[:key])
+          if @key.nil?
+            # Throw error if no key found.
+            render :json => { :errors => "Invalid API key." }, :status => :forbidden
+          end
         end
       end
     end

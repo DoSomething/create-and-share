@@ -16,6 +16,10 @@ Spork.prefork do
   require 'capybara/rspec'
   require 'capybara/rails'
 
+  Capybara.register_driver :selenium_firefox do |app|
+    Capybara::Selenium::Driver.new(app, :browser => :firefox)
+  end
+
   RSpec.configure do |config|
     # ## Mock Framework
     #
@@ -34,6 +38,10 @@ Spork.prefork do
     config.use_transactional_fixtures = false
 
     config.before :each do
+      # Best way to properly test caching is to clear cache before every test
+      # see https://www.ruby-forum.com/topic/216173
+      Rails.cache.clear
+
       if Capybara.current_driver == :rack_test
         DatabaseCleaner.strategy = :transaction
       else
@@ -59,6 +67,15 @@ Spork.prefork do
 
     config.filter_run :focus => true
     config.run_all_when_everything_filtered = true
+
+    if ENV['HEADLESS'] == 'true'
+      require 'headless'
+      headless = Headless.new
+      headless.start
+      at_exit do
+        headless.destroy
+      end
+    end
 
     OmniAuth.config.test_mode = true
   end
