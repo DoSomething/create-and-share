@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   has_many :campaigns, through: :participations
   has_many :participations, dependent: :destroy
   has_many :posts
+  has_many :shares, foreign_key: :uid, primary_key: :uid
 
   acts_as_voter
 

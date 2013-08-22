@@ -10,13 +10,7 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
-//= require jquery
-//= require jquery_ujs
-//= require jquery.ui.autocomplete
-//= require_tree ../../application
-//= require jquery.inview.js
-//= require tdfriendselector.js
-//= require jquery.lazyload
+//= require ../../application
 //= require_tree .
+// Multi-page forms
 //= require ../../pages
-//= require ../../application/jquery.Jcrop.min

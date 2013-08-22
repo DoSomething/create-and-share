@@ -19,4 +19,16 @@ $(document).ready(function() {
       // Select logic here
     },
   });
+
+  if ($('#post_state').val() == "") {
+    $('.post_school_id').hide();
+    $('#post_state').change(function() {
+      if ($(this).val() != "") {
+        $('.post_school_id').slideDown('fast');
+      }
+      else {
+        $('.post_school_id').slideUp('fast');
+      }
+    });
+  }
 });

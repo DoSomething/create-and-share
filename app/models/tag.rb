@@ -1,5 +1,6 @@
 class Tag < ActiveRecord::Base
   attr_accessible :campaign_id, :column, :post_id, :value
+  belongs_to :post
 
   validates :campaign_id, :presence => true, :numericality => true
   validates :post_id,     :presence => true, :numericality => true

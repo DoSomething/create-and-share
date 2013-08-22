@@ -27,6 +27,7 @@ class Post < ActiveRecord::Base
   validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif'] }
 
   has_many :shares
+  has_many :tags
   belongs_to :campaign
   belongs_to :user, foreign_key: 'uid', primary_key: 'uid'
   belongs_to :school, primary_key: 'gsid'
