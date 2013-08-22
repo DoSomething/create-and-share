@@ -2,7 +2,7 @@ require 'faker'
 
 FactoryGirl.define do
   factory :post do
-    uid 1263777
+    uid { build(:user).uid }
     adopted false
     meme_text { Faker::Lorem.sentence }
     meme_position 'bottom'

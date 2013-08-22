@@ -11,7 +11,6 @@ CreateAndShare::Application.routes.draw do
   match 'sessions', to: redirect('/login')
   get 'auth/:provider/callback', to: 'sessions#fboauth'
   get 'auth/failure', to: redirect('/'), notice: 'Login failed! Try again?'
-  get 'bigfail', to: 'posts#fail'
 
   scope ':campaign_path', constraints: lambda { |params| Campaign.where(:path => params[:campaign_path]).count > 0 } do
     root to: 'posts#index'
@@ -28,8 +27,6 @@ CreateAndShare::Application.routes.draw do
         get 'school_lookup'
       end
     end
-
-    resources :shares, only: [:create]
 
     # Login / out
     match 'login',  to: 'sessions#new',     as: :login

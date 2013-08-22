@@ -1,17 +1,13 @@
 FactoryGirl.define do
-	factory :user do
-		email 'test@subject.com'
-		fbid nil
-		uid 1263777
-		mobile 1234567890
-		is_admin false
-	end
+  factory :user do
+    email 'bohemian_test@bohemian.cc'
+    fbid nil
+    uid 703718
+    mobile 1234567890
+    is_admin false
 
-	factory :admin_user, class: User do
-		email 'fueledbymarvin@gmail.com'
-		fbid 594889925
-		uid 1234184
-		mobile 1234567890
-		is_admin true
-	end
+    trait :admin do
+      is_admin true
+    end
+  end
 end

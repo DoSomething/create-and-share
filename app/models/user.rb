@@ -70,6 +70,13 @@ class User < ActiveRecord::Base
     end
     user.save
 
+    if Rails.env.test?
+      # Allows us to fake administrator priveleges in tests
+      if user && user.is_admin == true && !roles.values.include?('administrator')
+        roles[99] = 'administrator'
+      end
+    end
+
     # set up session for current user
     session[:drupal_user_id] = uid
     session[:drupal_user_role] = roles

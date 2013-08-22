@@ -1,6 +1,6 @@
 FactoryGirl.define do
-	factory :share do
-	  uid 1263777
-	  post
-	end
+  factory :share do
+    uid { build(:user).uid }
+    post
+  end
 end
