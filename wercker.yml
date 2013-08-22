@@ -35,5 +35,5 @@ build:
     after-steps:
         - hipchat-notify:
             token: $HIPCHAT_TOKEN
-            room_id: 142954
+            room-id: 142954
             from-name: Wercker
