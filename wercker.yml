@@ -31,3 +31,9 @@ build:
         - script:
             name: rspec
             code: RAILS_ENV=test HEADLESS=true bundle exec rspec
+
+    after-steps:
+        - hipchat-notify:
+            token: $HIPCHAT_TOKEN
+            room_id: 142954
+            from-name: Wercker
