@@ -5,3 +5,6 @@ build:
   steps:
     - bundle-install
     - rails-database-yml
+    - script:
+      name: rspec
+      code: bundle exec rspec
