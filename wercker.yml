@@ -1,9 +1,6 @@
 box: wercker/ubuntu12.04-ruby2.0.0
 services:
     - wercker/postgresql
-    - xvfb
-    - firefox
-    - imagemagick
 build:
     steps:
         - bundle-install
@@ -24,5 +21,12 @@ build:
             code: bundle exec rake db:schema:load RAILS_ENV=test
 
         - script:
+            name: Clear caches
+            code: |
+                touch tmp/restart.txt
+                bundle exec rake tmp:cache:clear
+                bundle exec rake cache_clear
+
+        - script:
             name: rspec
-            code: bundle exec rspec
+            code: HEADLESS=true bundle exec rspec
