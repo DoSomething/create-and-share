@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130821183306) do
+ActiveRecord::Schema.define(:version => 20130822185046) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -89,6 +89,11 @@ ActiveRecord::Schema.define(:version => 20130821183306) do
   end
 
   add_index "posts", ["campaign_id"], :name => "index_posts_on_campaign_id"
+  add_index "posts", ["flagged"], :name => "index_posts_on_flagged"
+  add_index "posts", ["name"], :name => "index_posts_on_name"
+  add_index "posts", ["school_id"], :name => "index_posts_on_school_id"
+  add_index "posts", ["state"], :name => "index_posts_on_state"
+  add_index "posts", ["uid"], :name => "index_posts_on_uid"
 
   create_table "schools", :force => true do |t|
     t.integer  "gsid"
@@ -120,6 +125,7 @@ ActiveRecord::Schema.define(:version => 20130821183306) do
   end
 
   add_index "shares", ["post_id"], :name => "index_shares_on_post_id"
+  add_index "shares", ["uid"], :name => "index_shares_on_uid"
 
   create_table "tags", :force => true do |t|
     t.integer  "campaign_id"
@@ -131,7 +137,9 @@ ActiveRecord::Schema.define(:version => 20130821183306) do
   end
 
   add_index "tags", ["campaign_id"], :name => "index_tags_on_campaign_id"
+  add_index "tags", ["column"], :name => "index_tags_on_column"
   add_index "tags", ["post_id"], :name => "index_tags_on_post_id"
+  add_index "tags", ["value"], :name => "index_tags_on_value"
 
   create_table "users", :force => true do |t|
     t.integer  "fbid",       :limit => 8
@@ -142,6 +150,9 @@ ActiveRecord::Schema.define(:version => 20130821183306) do
     t.boolean  "is_admin"
     t.string   "mobile"
   end
+
+  add_index "users", ["fbid"], :name => "index_users_on_fbid"
+  add_index "users", ["uid"], :name => "index_users_on_uid"
 
   create_table "votes", :force => true do |t|
     t.boolean  "vote",          :default => false, :null => false
