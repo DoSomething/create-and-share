@@ -16,11 +16,13 @@ module ApplicationHelper
 
   # Returns the Facebook App ID, based off of environment.
   # @see /config/initializers/env_variables.rb
+  # @return [String] The Facebook App ID for the current environment
   def fb_app_id
     ENV['facebook_app_id']
   end
 
   # Gets current campaign via path
+  # @return [Object] The campaign object given the current path
   def get_campaign
     if params[:campaign_path].nil?
       return nil
@@ -31,30 +33,34 @@ module ApplicationHelper
     @campaign = Rails.cache.fetch "#{path}-campaign-info" do
       Campaign.where(path: path).first
     end
-
-    @campaign
   end
 
+  # Gets current user information
+  # @return [Object] Either
   def get_user
     unless session[:drupal_user_id].nil?
-      @user = Rails.cache.fetch session[:drupal_user_id].to_s + '-user-info' do
-        User.find_by_uid(session[:drupal_user_id])
+      uid = session[:drupal_user_id]
+      @user = Rails.cache.fetch uid.to_s + '-user-info' do
+        return User.find_by_uid(uid)
       end
     end
 
     @user = nil unless @user
   end
 
+  # Assuming the user is signed in, gets the IDs of votes that they've already made
+  # @return [Array] Either your votes, or an empty array
   def get_votes
-    u = User.find_by_uid(session[:drupal_user_id])
-    unless u.nil?
-      return Vote.select(:voteable_id).where(voter_id: u.id).map { |v| v.voteable_id } || []
+    unless session[:drupal_user_id].nil?
+      u = User.find_by_uid(session[:drupal_user_id])
+      return Vote.select(:voteable_id).where(voter_id: u.id).map { |v| v.voteable_id } || [] unless u.nil?
     end
 
     []
   end
 
   # Did the user already submit something?
+  # @return [bool] Whether or not you submitted, based off of post count for your UID
   def already_submitted?
     user_id = session[:drupal_user_id]
     campaign = get_campaign
@@ -71,6 +77,7 @@ module ApplicationHelper
   end
 
   # Prints a friendly error message depending on what path you're at.
+  # @return [String] A string representing no posts for the current path
   def make_legible(path = params[:filter] ||= request.path)
     # Front page
     if path == 'featured'
@@ -80,10 +87,12 @@ module ApplicationHelper
       "anything by you yet"
     # Everything else
     else
-      "anything here"
+      "anything here yet"
     end
   end
 
+  # Returns an array where the first item is the home config, and the second is the Facebook config
+  # @return [Array] An array fo configuration for the current campaign
   def campaign_config
     [Rails.application.config.home[get_campaign.path], Rails.application.config.facebook[get_campaign.path]]
   end
