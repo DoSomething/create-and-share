@@ -11,7 +11,7 @@ feature 'Campaign creation' do
     click_link 'Add New Campaign'
     campaign = fill_campaign_form
     click_button 'Create Campaign'
-    page.should have_content 'We don\'t have anything here!'
+    page.should have_content 'We don\'t have anything here yet!'
     visit '/'
     page.should have_content campaign.description
   end
@@ -20,7 +20,7 @@ feature 'Campaign creation' do
     click_link 'Add New Campaign'
     click_button 'Create Campaign'
     page.should have_content 'can\'t be blank'
-    page.should_not have_content 'We don\'t have anything here!'
+    page.should_not have_content 'We don\'t have anything here yet!'
   end
 end
 

@@ -151,7 +151,7 @@ describe ApplicationController do
 
     it 'other' do
       get :index, filter: "lalala"
-      assigns(:legible).should eq "anything here"
+      assigns(:legible).should eq "anything here yet"
     end
   end
 

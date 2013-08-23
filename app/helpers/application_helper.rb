@@ -45,7 +45,7 @@ module ApplicationHelper
       end
     end
 
-    @user = nil unless @user
+    @user || nil
   end
 
   # Assuming the user is signed in, gets the IDs of votes that they've already made
