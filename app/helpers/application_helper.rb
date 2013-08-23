@@ -40,9 +40,7 @@ module ApplicationHelper
   def get_user
     unless session[:drupal_user_id].nil?
       uid = session[:drupal_user_id]
-      @user = Rails.cache.fetch uid.to_s + '-user-info' do
-        return User.find_by_uid(uid)
-      end
+      @user = User.find_by_uid(uid)
     end
 
     @user || nil
