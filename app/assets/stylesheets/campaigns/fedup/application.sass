@@ -14,8 +14,129 @@
 @import '../../application'
 @import 'partials_app/form'
 
+$fu-primary: #db5047
+$fu-secondary: #36b193
+$fu-off-black: #333131
+
+$fu-header: url('/images/campaigns/fedup/header.jpg')
+$fu-numbers: url('/images/campaigns/fedup/numbers.png')
+
+// -------
+// GENERAL
+// -------
+body
+  background: #fff
+
+a:link, a:visited, a:active
+  color: $fu-primary
+
+a:hover
+  color: lighten($fu-primary, 5)
+
+// -----------
+// UTILITY BAR
+// -----------
+.utility-bar
+  a
+    color: #fff
+    &:hover
+      color: darken(#fff, 10)
+
+// ------
+// HEADER
+// ------
+.header
+  background-image: $fu-header
+  background-size: cover
+  background-position: 50% 50%
+  .section-container
+    background: none
+
+// --------------
+// CALL TO ACTION
+// --------------
+.cta
+  background: $fu-primary
+
+// -------
+// FILTERS
+// -------
+.filters
+  background: $fu-off-black
+
+// -----
+// POSTS
+// -----
+.posts
+  h1, h2, p
+    color: $fu-off-black
+  p
+    border-bottom: 5px solid $fu-off-black
+
+// -----------
+// START & FAQ
+// -----------
+section.start, section.faq
+  border-top: 25px solid $fu-primary
+  h1, h2, p, li, label
+    color: $fu-off-black
+
+.start
+  .introduction
+    border-bottom: 7px solid $fu-off-black
+    margin: 0 0 -2em 0
+    padding: 0 0 1em 0
+
+  .cta
+    border-top: 7px solid $fu-off-black
+    background: none
+    padding: 2em 0 1em 0
+
+  .instructions
+    padding: 1em 0
+    margin: 1em 3em
+    b
+      display: block
+      &:before
+        background-image: $fu-numbers
+        background-repeat: no-repeat
+        content: ''
+        display: block
+        position: relative
+        top: 2em
+        left: -3em
+        height: 38px
+        width: 38px
+    b.first
+      &:before
+        background-position: 0 0
+    b.second
+      &:before
+        background-position: -38px 0
+    b.third
+      &:before
+        background-position: 0 -38px
+    b.star
+      &:before
+        background-position: -38px -38px
+    img
+      display: block
+      margin: 1em auto 0
+      width: 100%
+
+.faq
+  .section-container
+    padding: 0
+
+// -------------
+// FOOTER (HELP)
+// -------------
+.footer-help p
+  color: $fu-off-black
+
 .shared
   background: #ededed !important
   border: 1px solid #dedede !important
   cursor: default !important
   color: #808080 !important
+
