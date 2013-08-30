@@ -73,10 +73,97 @@ a:hover
   p
     border-bottom: 5px solid $fu-off-black
 
+  .school
+    margin: 0 0 5px 15px
+
+  .votes
+    .thumbs-up, .thumbs-down, .count
+      font-weight: 500 !important
+      color: #fff
+      +border-radius(3px)
+
+    .facebook-icon
+      background-image: url('/images/campaigns/fedup/facebook.png')
+      background-repeat: no-repeat
+
+    .facebook-share
+      background: lightblue
+
+    .thumbs-up, .thumbs-down
+      padding: 10px 15px 10px 20px
+
+    .thumb-icon
+      background-image: url('/images/campaigns/fedup/thumbs.png')
+      background-repeat: no-repeat
+      background-size: 40px
+      display: inline-block
+      height: 22px
+      width: 16px
+      position: relative
+      top: 6px
+      left: -8px
+
+    .thumbs-up
+      background-color: $fu-secondary
+      .icon
+        background-position: 0 0
+
+    .thumbs-down
+      background-color: $fu-primary
+      .icon
+        background-position: -24px 0
+
+// ---------
+// POSTS NEW
+// ---------
+.posts-new
+  h2
+    border-bottom: 5px solid $fu-off-black
+  select
+    font-size: 1.2em
+  input[type="text"], input[type="file"], textarea
+    border: 2px solid #ddd
+    color: $fu-off-black
+
+.ui-autocomplete
+  background: #fff
+  max-width: 415px !important
+  width: 100%
+  padding: 10px 20px
+  border-right: 2px solid #ddd
+  border-bottom: 2px solid #ddd
+  border-left: 2px solid #ddd
+  +border-radius(3px)
+  a
+    text-decoration: none
+    cursor: pointer
+
+.ui-helper-hidden-accessible
+  margin: 0.5em 0
+  display: block
+
+#allowed-types /* TODO - THESE MARGIN AND PADDING IMPROVEMENTS MAY BE GOOD CANDIDATES TO PORT BACK TO THE GLOBAL LEVEL */
+  color: #222
+  margin: 1em 0 0 0
+  padding: 0
+
+#upload-preview
+  border: 50px solid #f4f4f4
+  +border-radius(3px)
+
+#image_error
+  margin: 1em 0 0 0
+
+#new_post
+  label.radio_buttons, label.check_boxes
+    font-weight: 600
+  label.collection_radio_buttons, label.collection_check_boxes
+    margin: 0 0 0 0.5em
+
 // -----------
 // START & FAQ
 // -----------
-section.start, section.faq
+section.start, section.faq, section.posts-new
   border-top: 25px solid $fu-primary
   h1, h2, p, li, label
     color: $fu-off-black
@@ -90,7 +177,7 @@ section.start, section.faq
   .cta
     border-top: 7px solid $fu-off-black
     background: none
-    padding: 2em 0 1em 0
+    padding: 2em 0 2em
 
   .instructions
     padding: 1em 0
@@ -131,8 +218,11 @@ section.start, section.faq
 // -------------
 // FOOTER (HELP)
 // -------------
-.footer-help p
-  color: $fu-off-black
+.footer-help
+  background: #f8f8f8
+  border-top: 1px solid #ddd
+  p
+    color: $fu-off-black
 
 .shared
   background: #ededed !important
