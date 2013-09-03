@@ -2,8 +2,10 @@ set :application, "Create and Share"
 set :repository,  "git@github.com:DoSomething/create-and-share.git"
 set :branch, "lunch"
 
-server 'admin.dosomething.org', :app, :web, :db
+set :gateway, 'admin.dosomething.org:38383'
+server 'campaigns.dosomething.org', :app, :web, :db
 set :port, '38383'
+set :user, 'dosomething'
 ssh_options[:keys] = [ENV['CAP_PRIVATE_KEY']]
 
 # set :scm, :git # You can set :scm explicitly or Capistrano will make an intelligent guess based on known version control directory names
@@ -33,8 +35,7 @@ namespace :build do
   task :start do ; end
   task :stop do ; end
   task :ssh do
-    run 'pwd'
-    run 'ls -l'
+    run 'cd /var/www/campaigns/html && pwd && ls -l'
   end
 end
 
