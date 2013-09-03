@@ -2,8 +2,10 @@ set :application, "Create and Share"
 set :repository,  "git@github.com:DoSomething/create-and-share.git"
 set :branch, "lunch"
 
-server 'campaigns.dosomething.org', :app, :web, :db
-#set :user, 'dosomething'
+server 'admin.dosomething.org', :app, :web, :db
+set :user, ENV["ds_user_name"]
+set :port, '38383'
+set :password, ENV['ds_pass']
 
 # set :scm, :git # You can set :scm explicitly or Capistrano will make an intelligent guess based on known version control directory names
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
@@ -31,9 +33,10 @@ server 'campaigns.dosomething.org', :app, :web, :db
 namespace :build do
   task :start do ; end
   task :stop do ; end
-  task :spec do
-    run_locally 'bundle exec rake'
+  task :ssh do
+    run 'cd cas-deploy && ls -l'
   end
 end
 
+before 'build:update_code', 'build:ssh'
 after 'build:start', 'build:spec'
