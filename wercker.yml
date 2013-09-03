@@ -31,8 +31,7 @@ build:
 
 deploy:
     steps:
-      - bundle-install
-      - script:
-          name: Send to Admin.ds
-          code: |-
-              cap build:ssh
+        - bundle-install
+        - script:
+            name: Send to Admin.ds
+            code: cap build:ssh
