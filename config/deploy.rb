@@ -3,9 +3,8 @@ set :repository,  "git@github.com:DoSomething/create-and-share.git"
 set :branch, "lunch"
 
 server 'admin.dosomething.org', :app, :web, :db
-set :user, ENV["ds_user_name"]
 set :port, '38383'
-set :password, ENV['ds_pass']
+ssh_options[:key] = [ENV['ds_user_name_PRIVATE']]
 
 # set :scm, :git # You can set :scm explicitly or Capistrano will make an intelligent guess based on known version control directory names
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
