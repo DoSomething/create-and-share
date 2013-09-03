@@ -1,9 +1,9 @@
-<% cache @filter + '-home' do %>
+<% cache @admin + '-' + @filter + '-home' do %>
 <script type="text/javascript">
 <!--
 	var count = <%= @count %>;
 	var latest = '<%= @last %>';
-	var filter = '<%= @path %>';
+	var filter = '<%= @filter %>';
 -->
 </script>
 

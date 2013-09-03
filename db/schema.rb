@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130715191949) do
+ActiveRecord::Schema.define(:version => 20130822185046) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -27,9 +27,9 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.string   "lead"
     t.string   "lead_email"
     t.string   "developers"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
-    t.boolean  "gated"
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+    t.string   "gated",                                 :null => false
     t.text     "description"
     t.string   "image"
     t.string   "image_file_name"
@@ -38,10 +38,28 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.datetime "image_updated_at"
     t.string   "mailchimp"
     t.string   "mobile_commons"
-    t.string   "mailchimp_submit"
     t.string   "email_submit"
     t.string   "email_signup"
+    t.string   "meme_header"
+    t.boolean  "meme"
+    t.boolean  "paged_form"
+    t.boolean  "has_school_field"
+    t.string   "facebook"
+    t.integer  "stat_frequency"
+    t.boolean  "allow_revoting",     :default => false
   end
+
+  create_table "participations", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "campaign_id"
+    t.boolean  "intent"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "participations", ["campaign_id"], :name => "index_participations_on_campaign_id"
+  add_index "participations", ["user_id", "campaign_id"], :name => "index_participations_on_user_id_and_campaign_id", :unique => true
+  add_index "participations", ["user_id"], :name => "index_participations_on_user_id"
 
   create_table "posts", :force => true do |t|
     t.string   "image"
@@ -54,8 +72,6 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.datetime "creation_time"
     t.datetime "update_time"
     t.boolean  "adopted"
-    t.string   "top_text"
-    t.string   "bottom_text"
     t.datetime "created_at",                            :null => false
     t.datetime "updated_at",                            :null => false
     t.string   "image_file_name"
@@ -68,11 +84,27 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.string   "city"
     t.integer  "campaign_id"
     t.text     "extras"
-    t.integer  "thumbs_up_count",    :default => 0
-    t.integer  "thumbs_down_count",  :default => 0
+    t.integer  "school_id"
   end
 
   add_index "posts", ["campaign_id"], :name => "index_posts_on_campaign_id"
+  add_index "posts", ["flagged"], :name => "index_posts_on_flagged"
+  add_index "posts", ["name"], :name => "index_posts_on_name"
+  add_index "posts", ["school_id"], :name => "index_posts_on_school_id"
+  add_index "posts", ["state"], :name => "index_posts_on_state"
+  add_index "posts", ["uid"], :name => "index_posts_on_uid"
+
+  create_table "schools", :force => true do |t|
+    t.integer  "gsid"
+    t.string   "title"
+    t.string   "state"
+    t.string   "city"
+    t.string   "zip"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "schools", ["gsid"], :name => "index_schools_on_gsid", :unique => true
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
@@ -92,6 +124,7 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
   end
 
   add_index "shares", ["post_id"], :name => "index_shares_on_post_id"
+  add_index "shares", ["uid"], :name => "index_shares_on_uid"
 
   create_table "tags", :force => true do |t|
     t.integer  "campaign_id"
@@ -103,7 +136,9 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
   end
 
   add_index "tags", ["campaign_id"], :name => "index_tags_on_campaign_id"
+  add_index "tags", ["column"], :name => "index_tags_on_column"
   add_index "tags", ["post_id"], :name => "index_tags_on_post_id"
+  add_index "tags", ["value"], :name => "index_tags_on_value"
 
   create_table "users", :force => true do |t|
     t.integer  "fbid",       :limit => 8
@@ -112,7 +147,24 @@ ActiveRecord::Schema.define(:version => 20130715191949) do
     t.datetime "created_at",              :null => false
     t.datetime "updated_at",              :null => false
     t.boolean  "is_admin"
-    t.boolean  "intent"
+    t.string   "mobile"
   end
+
+  add_index "users", ["fbid"], :name => "index_users_on_fbid"
+  add_index "users", ["uid"], :name => "index_users_on_uid"
+
+  create_table "votes", :force => true do |t|
+    t.boolean  "vote",          :default => false, :null => false
+    t.integer  "voteable_id",                      :null => false
+    t.string   "voteable_type",                    :null => false
+    t.integer  "voter_id"
+    t.string   "voter_type"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+  end
+
+  add_index "votes", ["voteable_id", "voteable_type"], :name => "index_votes_on_voteable_id_and_voteable_type"
+  add_index "votes", ["voter_id", "voter_type", "voteable_id", "voteable_type"], :name => "fk_one_vote_per_user_per_entity", :unique => true
+  add_index "votes", ["voter_id", "voter_type"], :name => "index_votes_on_voter_id_and_voter_type"
 
 end

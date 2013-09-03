@@ -16,6 +16,9 @@ describe PostsController, :type => :controller do
   end
 
   describe 'GET #filter.json' do
+    before { add_config(campaign.path) }
+    after { remove_config(campaign.path) }
+
     it 'fails' do
       get :filter, :campaign_path => campaign.path, :filter => 'cats', :format => :json
       expect(response).to be_forbidden

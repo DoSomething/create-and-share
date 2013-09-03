@@ -1,0 +1,232 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ */
+
+@import '../../application'
+@import 'partials_app/form'
+
+$fu-primary: #db5047
+$fu-secondary: #36b193
+$fu-off-black: #333131
+
+$fu-header: url('/images/campaigns/fedup/header.jpg')
+$fu-numbers: url('/images/campaigns/fedup/numbers.png')
+
+// -------
+// GENERAL
+// -------
+body
+  background: #fff
+
+a:link, a:visited, a:active
+  color: $fu-primary
+
+a:hover
+  color: lighten($fu-primary, 5)
+
+// -----------
+// UTILITY BAR
+// -----------
+.utility-bar
+  a
+    color: #fff
+    &:hover
+      color: darken(#fff, 10)
+
+// ------
+// HEADER
+// ------
+.header
+  background-image: $fu-header
+  background-size: cover
+  background-position: 50% 50%
+  .section-container
+    background: none
+
+// --------------
+// CALL TO ACTION
+// --------------
+.cta
+  background: $fu-primary
+
+// -------
+// FILTERS
+// -------
+.filters
+  background: $fu-off-black
+
+// -----
+// POSTS
+// -----
+.posts
+  h1, h2, p
+    color: $fu-off-black
+  p
+    border-bottom: 5px solid $fu-off-black
+
+  .school
+    margin: 0 0 5px 15px
+
+  .votes
+    .thumbs-up, .thumbs-down, .count
+      font-weight: 500 !important
+      color: #fff
+      +border-radius(3px)
+
+    .facebook-icon
+      background-image: url('/images/campaigns/fedup/facebook.png')
+      background-repeat: no-repeat
+
+    .facebook-share
+      background: lightblue
+
+    .thumbs-up, .thumbs-down
+      padding: 10px 15px 10px 20px
+
+    .thumb-icon
+      background-image: url('/images/campaigns/fedup/thumbs.png')
+      background-repeat: no-repeat
+      background-size: 40px
+      display: inline-block
+      height: 22px
+      width: 16px
+      position: relative
+      top: 6px
+      left: -8px
+
+    .thumbs-up
+      background-color: $fu-secondary
+      .icon
+        background-position: 0 0
+
+    .thumbs-down
+      background-color: $fu-primary
+      .icon
+        background-position: -24px 0
+
+// ---------
+// POSTS NEW
+// ---------
+.posts-new
+  h2
+    border-bottom: 5px solid $fu-off-black
+  select
+    font-size: 1.2em
+  input[type="text"], input[type="file"], textarea
+    border: 2px solid #ddd
+    color: $fu-off-black
+
+.ui-autocomplete
+  background: #fff
+  max-width: 415px !important
+  width: 100%
+  padding: 10px 20px
+  border-right: 2px solid #ddd
+  border-bottom: 2px solid #ddd
+  border-left: 2px solid #ddd
+  +border-radius(3px)
+  a
+    text-decoration: none
+    cursor: pointer
+
+.ui-helper-hidden-accessible
+  margin: 0.5em 0
+  display: block
+
+#allowed-types /* TODO - THESE MARGIN AND PADDING IMPROVEMENTS MAY BE GOOD CANDIDATES TO PORT BACK TO THE GLOBAL LEVEL */
+  color: #222
+  margin: 1em 0 0 0
+  padding: 0
+
+#upload-preview
+  border: 50px solid #f4f4f4
+  +border-radius(3px)
+
+#image_error
+  margin: 1em 0 0 0
+
+#new_post
+  label.radio_buttons, label.check_boxes
+    font-weight: 600
+  label.collection_radio_buttons, label.collection_check_boxes
+    margin: 0 0 0 0.5em
+
+// -----------
+// START & FAQ
+// -----------
+section.start, section.faq, section.posts-new
+  border-top: 25px solid $fu-primary
+  h1, h2, p, li, label
+    color: $fu-off-black
+
+.start
+  .introduction
+    border-bottom: 7px solid $fu-off-black
+    margin: 0 0 -2em 0
+    padding: 0 0 1em 0
+
+  .cta
+    border-top: 7px solid $fu-off-black
+    background: none
+    padding: 2em 0 2em
+
+  .instructions
+    padding: 1em 0
+    margin: 1em 3em
+    b
+      display: block
+      &:before
+        background-image: $fu-numbers
+        background-repeat: no-repeat
+        content: ''
+        display: block
+        position: relative
+        top: 2em
+        left: -3em
+        height: 38px
+        width: 38px
+    b.first
+      &:before
+        background-position: 0 0
+    b.second
+      &:before
+        background-position: -38px 0
+    b.third
+      &:before
+        background-position: 0 -38px
+    b.star
+      &:before
+        background-position: -38px -38px
+    img
+      display: block
+      margin: 1em auto 0
+      width: 100%
+
+.faq
+  .section-container
+    padding: 0
+
+// -------------
+// FOOTER (HELP)
+// -------------
+.footer-help
+  background: #f8f8f8
+  border-top: 1px solid #ddd
+  p
+    color: $fu-off-black
+
+.shared
+  background: #ededed !important
+  border: 1px solid #dedede !important
+  cursor: default !important
+  color: #808080 !important
+
