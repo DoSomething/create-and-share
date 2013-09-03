@@ -4,7 +4,7 @@ set :branch, "lunch"
 
 server 'admin.dosomething.org', :app, :web, :db
 set :port, '38383'
-ssh_options[:keys] = [ENV['ds_user_name_PRIVATE']]
+ssh_options[:keys] = [ENV['DS_DEPLOY_KEY_PRIVATE']]
 
 # set :scm, :git # You can set :scm explicitly or Capistrano will make an intelligent guess based on known version control directory names
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
