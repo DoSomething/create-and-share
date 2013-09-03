@@ -33,7 +33,8 @@ namespace :build do
   task :start do ; end
   task :stop do ; end
   task :ssh do
-    run 'cd cas-deploy && ls -l'
+    run 'pwd'
+    run 'ls -l'
   end
 end
 
