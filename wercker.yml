@@ -32,5 +32,10 @@ build:
 deploy:
     steps:
         - bundle-install
+        - script:
+            name: Write env var
+            code: |
+                export CAP_PRIVATE_KEY=`mktemp`
+                echo -e $DS_DEPLOY_KEY_PRIVATE > $CAP_PRIVATE_KEY
         - cap:
             tasks: build:ssh
