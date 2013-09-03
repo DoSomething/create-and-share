@@ -1,6 +1,6 @@
 set :application, "Create and Share"
 set :repository,  "git@github.com:DoSomething/create-and-share.git"
-set :branch, "lunch"
+set :branch, 'master'
 
 set :gateway, 'admin.dosomething.org:38383'
 server 'campaigns.dosomething.org', :app, :web, :db
@@ -9,36 +9,29 @@ set :user, 'dosomething'
 set :password, ENV['DS_DEPLOY_PASS']
 ssh_options[:keys] = [ENV['CAP_PRIVATE_KEY']]
 
-# set :scm, :git # You can set :scm explicitly or Capistrano will make an intelligent guess based on known version control directory names
-# Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
+set :deploy_to, '/var/www/campaigns'
 
-#role :web, "your web-server here"                          # Your HTTP server, Apache/etc
-#role :app, "your app-server here"                          # This may be the same as your `Web` server
-#role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
-#role :db,  "your slave db-server here"
-
-# if you want to clean up old releases on each deploy uncomment this:
-# after "deploy:restart", "deploy:cleanup"
-
-# if you're still using the script/reaper helper you will need
-# these http://github.com/rails/irs_process_scripts
-
-# If you are using Passenger mod_rails uncomment this:
-# namespace :deploy do
-#   task :start do ; end
-#   task :stop do ; end
-#   task :restart, :roles => :app, :except => { :no_release => true } do
-#     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
-#   end
-# end
-
-namespace :build do
-  task :start do ; end
+namespace :deploy do
+  task :start do; end
   task :stop do ; end
-  task :ssh do
-    run 'cd /var/www/campaigns/html && pwd && ls -l'
+  task :bundle do
+    run "cd #{release_path} && bundle install --deployment --path=#{deploy_to}/shared"
   end
+  # task :rspec do
+  #   run "cd #{release_path} && bundle exec rake"
+  # end
+  task :db do
+    run "cd #{release_path} && bundle exec rake db:migrate"
+  end
+  task :restart, :roles => :app, :except => { :no_release => true } do
+    run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
+  end
+  # task :refresh_styles do
+  #   run "cd #{release_path}; RAILS_ENV=production bundle exec rake paperclip:refresh:missing_styles"
+  # end
 end
 
-before 'build:update_code', 'build:ssh'
-after 'build:start', 'build:spec'
+before 'deploy:assets:precompile', 'deploy:bundle'
+after 'deploy:bundle', 'deploy:db'
+#after 'deploy:update_code', 'deploy:rspec'
+#after 'deploy:update_code', 'deploy:refresh_styles'
