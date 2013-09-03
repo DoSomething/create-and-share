@@ -1,14 +1,28 @@
+<%
+  # Logic for getting the filter from the URL.
+  state_filter, type_filter = nil
+  if params[:filter]
+    if filter = params[:filter].match(/(delish|gross)-([A-Z]{2})/i)
+      state_filter = filter[2]
+      type_filter = filter[1]
+    elsif ['delish', 'gross'].include? params[:filter]
+      type_filter = params[:filter]
+    elsif get_states.include? params[:filter].to_sym
+      state_filter = params[:filter]
+    end
+  end
+%>
 <nav class="filters">
   <div class="section-container">
     <select class="lunch_filter filter" id="lunch_filter">
-      <option value="all">All Lunches</option>
-      <option value="delish">Delish lunches</option>
-      <option value="gross">Gross lunches</option>
+      <option value="all"<%= ' selected="selected"' if type_filter.nil? %>>All Lunches</option>
+      <option value="delish"<%= ' selected="selected"' if type_filter == 'delish' %>>Delish lunches</option>
+      <option value="gross"<%= ' selected="selected"' if type_filter == 'gross' %>>Gross lunches</option>
     </select>
     <select class="state_filter filter" id="state_filter">
       <option value="">All States</option>
       <%
-        s = params[:state] || ''
+        s = state_filter || ''
         states = get_states
         states.each do |key, state|
       %>

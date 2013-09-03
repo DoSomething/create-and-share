@@ -12,7 +12,7 @@ $(document).ready(function() {
       FB.ui({
         'to': friend,
         'method': 'feed',
-        'link': document.location.origin + '/' + settings['id'],
+        'link': document.location.origin + '/' + campaign.path + '/' + settings['id'],
         'name': campaign.facebook.title || '',
         'caption': campaign.facebook.caption || '',
         'description': campaign.facebook.description || '',
@@ -58,7 +58,7 @@ $(document).ready(function() {
 
         FB.ui({
           'method': 'feed',
-          'link': document.location.origin + '/' + post_id,
+          'link': document.location.origin + '/' + campaign.path + '/' + post_id,
           'name': campaign.facebook.title || '',
           'caption': campaign.facebook.caption || '',
           'description': campaign.facebook.description || '',
