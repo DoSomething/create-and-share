@@ -6,6 +6,7 @@ set :gateway, 'admin.dosomething.org:38383'
 server 'campaigns.dosomething.org', :app, :web, :db
 set :port, '38383'
 set :user, 'dosomething'
+set :password, ENV['DS_DEPLOY_PASS']
 ssh_options[:keys] = [ENV['CAP_PRIVATE_KEY']]
 
 # set :scm, :git # You can set :scm explicitly or Capistrano will make an intelligent guess based on known version control directory names
