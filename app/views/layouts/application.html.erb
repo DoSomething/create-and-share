@@ -37,7 +37,7 @@
 
 <%= render 'partials/utility_bar' %>
 <%= render 'partials/header' %>
-<% unless params[:controller].eql?('static_pages') %>
+<% unless params[:controller].eql?('static_pages') || (params[:controller].eql?('posts') && params[:action].eql?('new')) %>
   <%= render 'partials/cta' %>
   <%= render 'partials/filters' %>
 <% end %>

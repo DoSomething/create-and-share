@@ -83,12 +83,12 @@ $(document).ready(function() {
     var img = $('<img />');
     img.attr('src', '/system/tmp/' + filename);
     img.appendTo('#crop-img-container');
-    var crop_button = $("<a href='#' class='btn primary'>Crop</a>");
-    crop_button.attr("id", "crop-button");
-    crop_button.appendTo('#crop-container');
     var cancel_button = $("<a href='#' class='btn secondary'>Cancel</a>");
     cancel_button.attr("id", "cancel-button");
     cancel_button.appendTo('#crop-container');
+    var crop_button = $("<a href='#' class='btn primary'>Crop</a>");
+    crop_button.attr("id", "crop-button");
+    crop_button.appendTo('#crop-container');
     //hide until image is loaded and positioned
     overlay.css({
       position: "absolute",

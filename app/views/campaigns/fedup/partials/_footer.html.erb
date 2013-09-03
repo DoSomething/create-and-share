@@ -1,0 +1,25 @@
+<% cache 'campaign-' + @campaign.id.to_s + '-footer' do %>
+  <footer class="footer-help">
+    <div class="section-container">
+     <p class="help">Questions? E-mail <%= @campaign.lead %> at <%= mail_to @campaign.lead_email %></p>
+    </div>
+  </footer>
+
+  <div id="fb-root"></div>
+  <script type="text/javascript">
+   window.fbAsyncInit = function() {
+     FB.init({
+       appId: "<%= fb_app_id %>",
+       status: true,
+       cookie: true,
+       xfbml: true,
+     });
+   };
+   (function() {
+     var e = document.createElement('script');
+     e.async = true;
+     e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+     document.getElementById('fb-root').appendChild(e);
+   }());
+  </script>
+<% end %>
