@@ -1,0 +1,27 @@
+<section class="start">
+  <div class="section-container">
+
+    <section class="introduction">
+      <p>21 million students a year rely on school lunch as their primary source of energy, but the average school lunch packs in more fat and sodium than a person should eat in a full day. <b>Upload a picture of your school lunch and answer 10 multiple choice questions to be entered to win a $4,000 scholarship.</b> <%= link_to "Learn what we'll do",faq_path %> with the info here.</p>
+    </section>
+
+    <section class="instructions">
+      <b class="first">Snap a photo of your lunch before you take the first bite</b>
+      <%= image_tag '/images/campaigns/fedup/sample.jpg' %>
+
+      <b class="second">Give it a fun and descriptive name!</b>
+      <p>Got a gross burrito? 'Poo-rito' explains everything we need to know about it.</p>
+
+      <b class="third">Tell us about it</b>
+      <p>We'll ask you 10 multiple choice questions about your lunch.</p>
+
+      <b class="star">Don't have your lunch pic yet?</b>
+      <p>Text <strong>LUNCH</strong> to <strong>38383</strong> to upload your pic from your cell when you're ready. We'll send you a reminder text at lunch time.</p>
+    </section>
+
+    <section class="cta">
+      <%= link_to submit_path, class: 'btn primary large solo' do %><span>SHOW US YOUR LUNCH</span><% end %>
+   </section>
+
+  </div>
+</section>

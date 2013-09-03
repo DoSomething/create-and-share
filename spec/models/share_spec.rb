@@ -22,16 +22,12 @@ describe Share do
   end
 
   it "returns a count for a specific post." do
-    post = FactoryGirl.create(:post)
-    share = FactoryGirl.create(:share, post_id: post.id)
-
-    Share.total(:post, post.id).should eq 1
+    share = FactoryGirl.create(:share)
+    Share.total(:post, share.post.id).should eq 1
   end
 
   it "returns a count for a specific user" do
-  	post = FactoryGirl.create(:post)
-  	share = FactoryGirl.create(:share, uid: post.uid)
-
-  	Share.total(:user, post.uid).should eq 1
+  	share = FactoryGirl.create(:share)
+  	Share.total(:user, share.post.uid).should eq 1
   end
 end

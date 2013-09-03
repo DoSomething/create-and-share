@@ -1,0 +1,40 @@
+box: wercker/ubuntu12.04-ruby2.0.0
+services:
+    - wercker/postgresql
+build:
+    steps:
+        - bundle-install
+        - bundle-package
+
+        - rails-database-yml:
+            service: postgresql
+
+        - script:
+            name: Set up db
+            code: bundle exec rake db:schema:load RAILS_ENV=test
+
+        - script:
+            name: Clear caches
+            code: |
+                mkdir /pipeline/build/tmp/cache/
+                RAILS_ENV=test bundle exec rake tmp:cache:clear
+
+        # - script:
+        #     name: rspec
+        #     code: RAILS_ENV=test HEADLESS=true bundle exec rspec
+
+    after-steps:
+        - hipchat-notify:
+            token: $HIPCHAT_TOKEN
+            room-id: 142954
+            from-name: Wercker
+
+deploy:
+    steps:
+        - bundle-install
+        - script:
+            name: Write env var
+            code: |
+                export CAP_PRIVATE_KEY=`mktemp`
+                echo -e $DS_DEPLOY_KEY_PRIVATE > $CAP_PRIVATE_KEY
+        - cap

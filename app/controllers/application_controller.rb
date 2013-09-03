@@ -6,16 +6,16 @@ class ApplicationController < ActionController::Base
   # Handy little method that renders the "not found" message, instead of an error.
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
-  before_filter :find_view_path, :set_global_campaign
+  before_filter :find_view_path
   def find_view_path
-    if !Rails.env.test? && !get_campaign.nil?
-      prepend_view_path 'app/views/' + get_campaign.path
+    unless get_campaign.nil?
+      prepend_view_path 'app/views/campaigns/' + get_campaign.path
     end
   end
 
-  def set_global_campaign
-    $campaign = Campaign.where(:path => params[:campaign_path]).first
-    $campaign ||= nil
+  before_filter :miniprofiler
+  def miniprofiler
+    Rack::MiniProfiler.authorize_request if admin?
   end
 
   # Not found message.
@@ -23,41 +23,65 @@ class ApplicationController < ActionController::Base
     render 'not_found'
   end
 
+  # @param [Object] url The fully qualified URL to the campaign in question.
+  # @return [String] Either the campaign as a string, or nil.
+  def get_campaign_from_url(url)
+    match = url.match(/^https?:\/\/[^\/]+\/(?<campaign>[^\/]+)/i)
+    return match['campaign'].to_s if match && !match['campaign'].nil?
+
+    nil
+  end
+
   # Confirms that the user is authenticated.  Redirects to root (/) if so.
   # See SessionsController, line 5
   def is_authenticated
-    if authenticated? || !get_campaign.gated?
-      if get_campaign.path
-        redirect_to root_path(:campaign_path => get_campaign.path)
+    campaign = get_campaign
+    params[:campaign] = campaign
+
+    if authenticated? || campaign && !campaign.is_gated?(params, session)
+      if campaign && campaign.path
+        redirect_to root_path(:campaign_path => campaign.path)
       else
         redirect_to '/'
       end
     end
   end
 
-  # Checks if a user is *not* authenticated.  This is bypassed by using the JSON format,
-  # or sending a :bypass parameter through the route (not applicable for standard users --
-  # :bypass needs to be sent directly from code.)
+  # Checks if a user is *not* authenticated.
   def is_not_authenticated
-    unless authenticated? || request.format.symbol == :json || params[:bypass] === true || !get_campaign.gated?
+    campaign = get_campaign
+    params[:campaign] = campaign
+
+    unless authenticated? || request.format.symbol == :json || campaign && !campaign.is_gated?(params, session)
+      flash[:error] = "you must be logged in to see that"
       session[:source] = request.path
-      redirect_to :login
+      if campaign && campaign.path
+        redirect_to "/#{campaign.path}/login"
+      else
+        redirect_to '/login'
+      end
+
       false
     end
   end
 
   # Checks if a user is an administrator.
   def admin
-    unless admin? || request.format.symbol == :json || params[:bypass] === true
-      flash[:error] = "error: please login as admin to view this page"
+    unless admin? || request.format.symbol == :json
+      flash[:error] = "please login as admin to view this page"
       if authenticated?
         reset_session
-        flash[:error] = "error: you have been logged out - please login as admin to view this page"
+        flash[:error] = "you have been logged out - please login as admin to view this page"
       end
 
-      session[:source] = request.path
-      redirect_to '/login'
-      false
+      # Throw a 500 for create/update/delete pages -- because there's no point redirecting that.
+      if ['create', 'update', 'delete'].include? params[:action]
+        render json: 'You are not authorized to do that.', status: 500
+      else
+        session[:source] = request.path
+        redirect_to '/login'
+        false
+      end
     end
   end
 
@@ -67,23 +91,31 @@ class ApplicationController < ActionController::Base
     # Confirm that it's a json request.  This is irrelevant otherwise.
     if request.format.symbol == :json
       # We must have a key, either way.  If no key, pass forbidden response.
-      if params[:key].nil?
+      if params[:key].nil? && (request.env['HTTP_REFERER'] =~ Regexp.new(request.env['HTTP_HOST'])).nil?
         render :json => { :errors => "Invalid API key." }, :status => :forbidden
       else
-        # Find by key
-        @key = ApiKey.find_by_key(params[:key])
-        if @key.nil?
-          # Throw error if no key found.
-          render :json => { :errors => "Invalid API key." }, :status => :forbidden
+        if (request.env['HTTP_REFERER'] =~ Regexp.new(request.env['HTTP_HOST'])).nil?
+          # Find by key
+          @key = ApiKey.find_by_key(params[:key])
+          if @key.nil?
+            # Throw error if no key found.
+            render :json => { :errors => "Invalid API key." }, :status => :forbidden
+          end
         end
       end
     end
   end
 
-  # Fixes a bug with the flashbag.
-  alias :std_redirect_to :redirect_to
-  def redirect_to(*args)
-    flash.keep
-    std_redirect_to *args
+  def get_popup
+    get_campaign
+    action_count = User.find_by_uid(session[:drupal_user_id]).action_count(@campaign.id)
+    if Rails.application.config.popups[@campaign.path]
+      Rails.application.config.popups[@campaign.path].each do |count, template|
+        if count == action_count
+          return template
+        end
+      end
+    end
+    ""
   end
 end

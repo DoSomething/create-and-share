@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '3.2.13'
+gem 'rake', '10.1.0'
 
 gem 'pg'
 gem 'paperclip'
@@ -16,6 +17,13 @@ gem 'chronic'
 gem 'dalli'
 gem 'mailchimp'
 
+gem 'thumbs_up'
+
+gem 'turbolinks'
+gem 'jquery-turbolinks'
+
+gem 'rack-mini-profiler'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -27,33 +35,36 @@ group :assets do
   # gem 'therubyracer', :platforms => :ruby
 
   gem 'uglifier', '>= 1.0.3'
+  gem 'jquery-ui-rails'
 end
 
 group :development, :test do
   gem 'rspec-rails'
   gem 'capybara'
-  gem 'selenium-webdriver'
+  gem 'selenium-webdriver', '~> 2.34.0'
   gem 'headless'
-  gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
-  gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'passenger'
   gem 'spork'
+  gem 'faker'
 
   #guard!
   gem 'guard-rspec'
-  gem 'guard-cucumber'
   gem 'guard-livereload'
   gem 'rack-livereload'
   #gem 'guard-compass'
   gem 'guard-spork'
   gem 'guard-passenger'
   gem 'factory_girl_rails', '~> 4.0'
+
+  gem 'better_errors'
+  gem 'letter_opener'
 end
 
 gem 'jquery-rails'
 
 gem 'active_model_serializers'
+gem 'exception_notification'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
@@ -65,7 +76,7 @@ gem 'active_model_serializers'
 # gem 'unicorn'
 
 # Deploy with Capistrano
-# gem 'capistrano'
+gem 'capistrano'
 
 # To use debugger
 # gem 'debugger'

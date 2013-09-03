@@ -69,9 +69,11 @@ $(document).ready(function() {
     //append necessary html and style
     var overlay = $("<div></div>");
     overlay.attr("id", "crop-overlay");
+    overlay.addClass("popup-overlay");
     overlay.appendTo("body");
     var container = $("<div></div>");
     container.attr("id", "crop-container");
+    container.addClass("popup-container");
     container.appendTo("body");
     var header = $('<h2>Squarify your image!</h2>');
     header.appendTo("#crop-container");
@@ -81,9 +83,21 @@ $(document).ready(function() {
     var img = $('<img />');
     img.attr('src', '/system/tmp/' + filename);
     img.appendTo('#crop-img-container');
+    var cancel_button = $("<a href='#' class='btn secondary'>Cancel</a>");
+    cancel_button.attr("id", "cancel-button");
+    cancel_button.appendTo('#crop-container');
+    var crop_button = $("<a href='#' class='btn primary'>Crop</a>");
+    crop_button.attr("id", "crop-button");
+    crop_button.appendTo('#crop-container');
     //hide until image is loaded and positioned
-    overlay.css("display", "hidden");
-    container.css("display", "hidden");
+    overlay.css({
+      position: "absolute",
+      top: "-10000px"
+    });
+    container.css({
+      position: "absolute",
+      top: "-10000px"
+    });
     img.hide();
     img.load(function() {
       //scale image to always fit in the window
@@ -98,8 +112,6 @@ $(document).ready(function() {
       });
       //show once everything is loaded
       img.show();
-      overlay.css("display", "block");
-      container.css("display", "block");
       //set the crop_dim_w used to calculate the ratio to crop correctly with paperclip
       $("#crop_dim_w").val(img.width());
       var cropbox_dim = img.width() > img.height() ? img.height() : img.width();
@@ -155,13 +167,15 @@ $(document).ready(function() {
           jcrop_api = this;
         });
       });
+      overlay.css({
+        position: "fixed",
+        top: 0
+      });
+      container.css({
+        position: "fixed",
+        top: "50%"
+      });
     });
-    var crop_button = $("<a href='#' class='btn primary'>Crop</a>");
-    crop_button.attr("id", "crop-button");
-    crop_button.appendTo('#crop-container');
-    var cancel_button = $("<a href='#' class='btn secondary'>Cancel</a>");
-    cancel_button.attr("id", "cancel-button");
-    cancel_button.appendTo('#crop-container');
 
     //add appropriate handlers for buttons
     crop_button.click(function(e) {
@@ -177,6 +191,10 @@ $(document).ready(function() {
     $("body").keydown(function(e) {
       if((e.which) == 27)
         reset_img(e);
+      if((e.which) == 13) {
+        e.preventDefault();
+        $("#crop-button").click();
+      }
     });
   };
 

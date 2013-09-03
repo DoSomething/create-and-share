@@ -1,0 +1,110 @@
+$(document).ready(function() {
+  // INITIALIZE FRIEND SELECTOR
+  TDFriendSelector.init();
+
+  friendselector = TDFriendSelector.newInstance({
+    maxSelection: 1,
+    autoDeselection: true,
+    friendsPerPage: 7,
+    callbackSubmit: function(selected, settings) {
+      friend = parseInt(selected[0]);
+
+      FB.ui({
+        'to': friend,
+        'method': 'feed',
+        'link': document.location.origin + '/' + campaign.path + '/' + settings['id'],
+        'name': campaign.facebook.title || '',
+        'caption': campaign.facebook.caption || '',
+        'description': campaign.facebook.description || '',
+        'picture': settings['picture']
+      }, function(response) {
+        if (response && response.post_id) {
+          var new_count = ++settings['share_count'];
+          settings['share_elm'].text(new_count);
+          $.post('/' + campaign.path + '/posts/' + settings['id'] + '/share', { 'share': { 'post_id': settings['id'] }, 'new_count': new_count }, function(res) {
+            if (typeof response['popup'] !== 'undefined') {
+              render_popup(response["popup"]);
+            }
+          });
+        }
+        $('html,body').animate({ scrollTop: $('.id-' + settings['id']).offset().top }, 'fast');
+      });
+    }
+  });
+
+  // ABSTRACTS FACEBOOK CLICK FOR INFINITE SCROLL
+  load_facebook = function() {
+    handle_facebook_click = function(elm, e) {
+      var $id = elm.attr('data-id');
+      var $name = elm.parent().parent().find('span.name').text();
+      var $picture = document.location.origin + elm.parent().parent().find('img').attr('src');
+      var $share_count = parseInt(elm.parent().find('.share-count').text());
+      var $share_elm = elm.parent().find('.share-count');
+
+      if (campaign.share_type == 'friends') {
+        e.preventDefault();
+        friendselector.showFriendSelector({
+          'id': $id,
+          'name': $name,
+          'picture': $picture,
+          'share_count': $share_count,
+          'share_elm': $share_elm
+        });
+      }
+      else if (campaign.share_type == 'mine') {
+        var post = elm.parent().parent();
+        var post_id = post.data('id');
+        var image_url = document.location.origin + '/' + post.find('img').attr('src');
+
+        FB.ui({
+          'method': 'feed',
+          'link': document.location.origin + '/' + campaign.path + '/' + post_id,
+          'name': campaign.facebook.title || '',
+          'caption': campaign.facebook.caption || '',
+          'description': campaign.facebook.description || '',
+          'picture': image_url,
+        }, function(response) {
+          if (response && response.post_id) {
+            var new_count = ++$share_count;
+            $share_elm.text(new_count);
+            $.post('/' + campaign.path + '/posts/' + $id + '/share', { 'share': { 'post_id': $id }, 'new_count': new_count }, function(res) {
+              if (typeof response['popup'] !== 'undefined') {
+                render_popup(response["popup"]);
+              }
+            });
+          }
+          $('html,body').animate({ scrollTop: $('.id-' + post_id).offset().top }, 'fast');
+        });
+      }
+    };
+
+    var $fbid;
+    // Remove previous click event
+    $('.facebook-share').unbind('click');
+    $('.facebook-share').click(function(e) {
+      $fbid = FB.getUserID();
+      if ($fbid === "") {
+        if (campaign.share_type == 'friends') {
+          FB.login(function(response) {
+            if (response.authResponse) {
+              self.handle_facebook_click($(this), e);
+            }
+          }, { 'scope': 'email,user_birthday' });
+        }
+        else if (campaign.share_type == 'mine') {
+          FB.login(function(response) {
+            if (response.authResponse) {
+              self.handle_facebook_click($(this), e);
+            }
+          });
+        }
+
+        return false;
+      }
+
+      self.handle_facebook_click($(this), e);
+    });
+  };
+  // FACEBOOK POST SHARING FUNCTIONALITY
+  load_facebook();
+});

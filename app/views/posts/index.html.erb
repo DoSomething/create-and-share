@@ -9,7 +9,7 @@
 <section class="posts">
   <div class="section-container">
     <h2>Create and Share index page.</h2>
-    <p>This will be the default index page, unless you overwrite it with 'app/views/<%= get_campaign.path %>/posts/index.html.erb'.</p>
+    <p>This will be the default index page, unless you overwrite it with 'app/views/campaigns/<%= @campaign.path %>/posts/index.html.erb'.</p>
     <div class="post-list">
       <% if @posts.length > 0 %>
         <%=raw render('post').gsub(/\n/, '') %>

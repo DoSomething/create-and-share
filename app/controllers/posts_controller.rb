@@ -1,9 +1,17 @@
 class PostsController < ApplicationController
   include Services
-  include PostsHelper
+
+  # Get campaign
+  before_filter :get_campaign, except: [:autoimg, :edit, :update, :destroy, :flag, :thumbs]
+  before_filter :get_user, only: [:index, :show, :filter, :vanity, :extras]
 
   # Before everything runs, run an authentication check and an API key check.
   before_filter :is_not_authenticated, :verify_api_key, :campaign_closed
+  skip_before_filter :campaign_closed, only: [:create, :update]
+
+  before_filter only: [:edit, :update, :destroy, :flag] do
+    raise 'User ' + (session[:drupal_user_id] || 0).to_s + ' is unauthorized.' unless admin?
+  end
 
   # Ignores xsrf in favor of API keys for JSON requests.
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
@@ -11,7 +19,7 @@ class PostsController < ApplicationController
   # Shows the static (closed) gallery when a campaign is finished, or not started yet.
   def campaign_closed
     now = Time.now
-    if $campaign.start_date > now || $campaign.end_date < now
+    if @campaign && (@campaign.start_date > now || @campaign.end_date < now)
       render 'static_pages/gallery'
       return
     end
@@ -20,7 +28,8 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
-    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(admin?, params, 'index')
+    @stats = Rails.application.config.stats[@campaign.path]
+    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
 
     respond_to do |format|
       format.js
@@ -31,43 +40,43 @@ class PostsController < ApplicationController
   end
 
   # Automatically uploads an image for the form.
+  # POST /:campaign/posts/autoimg
   def autoimg
     valid_types = ['image/jpeg', 'image/gif', 'image/png']
     file = params[:file]
 
-    # Make tripl-y sure that we're uploading a valid file.
-    if !valid_types.include?(file.content_type)
-      render json: { :success => false, :reason => 'Not a valid file.' }
-    else
+    # Make triple-y sure that we're uploading a valid file.
+    if valid_types.include?(file.content_type)
       # Basic variables.
       path = file.tempfile.path()
       name = file.original_filename
       dir = 'public/system/tmp'
 
+      if File.exists?(path) && File.exists?(dir)
+        newfile = File.join(dir, name)
+        File.open(newfile, 'wb') { |f| f.write(file.tempfile.read()) }
       # This shouldn't happen.
-      if !File.exists? path
-        render json: { :success => false, :reason => "Your file didn't upload properly.  Try again." }
       else
-        # Write the file to the tmp directory.
-        if File.exists? dir and File.exists? path
-          newfile = File.join(dir, name)
-          File.open(newfile, 'wb') { |f| f.write(file.tempfile.read()) }
-        end
+        render json: {:success => false, :reason => "Your file didn't upload properly.  Try again."}
       end
 
       # Render success.
-      render json: { :success => true, :filename => name }
+      render json: {:success => true, :filename => name}
+    else
+      render json: {:success => false, :reason => 'Not a valid file.'}
     end
   end
 
   # GET /posts/1
   # GET /posts/1.json
   def show
-    @post = Post
-      .infinite_scroll($campaign.id)
-      .where(:id => params[:id])
-      .limit(1)
-      .first
+    @post = Rails.cache.fetch 'campaign-' + @campaign.id.to_s + '-post-' + params[:id].to_s do
+      Post
+        .build_post(@campaign)
+        .where(id: params[:id])
+        .limit(1)
+        .first
+    end
 
     respond_to do |format|
       format.html # show.html.erb
@@ -76,22 +85,13 @@ class PostsController < ApplicationController
     end
   end
 
-  # GET /posts/new
+  # GET /:campaign/submit
   def new
     @post = Post.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-    end
   end
 
-  # GET /posts/1/edit
+  # GET /:campaign/posts/1/edit
   def edit
-    # Shouldn't be here if they're not an admin.
-    if !admin?
-      redirect_to :root
-    end
-
     @post = Post.find(params[:id])
   end
 
@@ -104,12 +104,35 @@ class PostsController < ApplicationController
       params[:post][:uid] = session[:drupal_user_id]
     end
 
-    @post = Post.new(params[:post])
+    require 'uri'
+    if params[:post][:image] =~ URI::regexp
+      real_filename = File.basename(params[:post][:image])
+      tmp_file = Rails.root.to_s + '/public/tmp/' + real_filename
 
+      File.open(tmp_file, 'wb') do |file|
+        file.write open(params[:post][:image]).read
+      end
+
+      params[:post][:processed_from_url] = tmp_file
+      params[:post][:image] = File.new(tmp_file)
+    end
+
+    if params[:post][:school_id] && (@campaign && @campaign.has_school_field === true)
+      match = params[:post][:school_id].match(/\((?<gsid>\d+)\)/)
+
+      # Force a failure if they've input a non-GS school
+      if match && !match['gsid'].nil?
+        params[:post][:school_id] = match['gsid']
+      else
+        params[:post][:school_id] = nil
+      end
+    end
+
+    @post = Post.new(params[:post])
     respond_to do |format|
       if @post.save
-        format.html { redirect_to show_post_path(@post, :campaign_path => $campaign.path) }
-        format.json { render json: @post, status: :created, location: @post }
+        format.html { redirect_to show_post_path(@post, :campaign_path => @post.campaign.path) }
+        format.json { render json: @post, status: :created }
       else
         format.html { render action: "new" }
         format.json { render json: @post.errors, status: :unprocessable_entity }
@@ -120,14 +143,11 @@ class PostsController < ApplicationController
   # PUT /posts/1
   # PUT /posts/1.json
   def update
-    # Shouldn't be here if they're not an admin.
-    render :status => :forbidden if !admin?
-
     @post = Post.find(params[:id])
 
     respond_to do |format|
       if @post.update_attributes(params[:post])
-        format.html { redirect_to show_post_path(@post, :campaign_path => $campaign.path), notice: 'Post was successfully updated.' }
+        format.html { redirect_to show_post_path(@post, :campaign_path => @post.campaign.path), notice: 'Post was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
@@ -139,9 +159,6 @@ class PostsController < ApplicationController
   # DELETE /posts/1
   # DELETE /posts/1.json
   def destroy
-    # Shouldn't be here if they're not an admin.
-    render :status => :forbidden if !admin?
-
     @post = Post.find(params[:id])
     @post.destroy
 
@@ -151,47 +168,46 @@ class PostsController < ApplicationController
     end
   end
 
-  # GET /flag/1
+  # POST /:campaign/posts/1/flag
   def flag
-    # Shouldn't be here if they're not an admin.
-    render :status => :forbidden unless admin?
+    # Mark this post as flagged
+    Post.find(params[:id]).update_attribute(:flagged, true)
 
-    @post = Post.find(params[:id])
-    @post.flagged = true
-    @post.save
-
-    respond_to do |format|
-      format.html { redirect_to request.env["HTTP_REFERER"] }
-    end
+    redirect_to request.env['HTTP_REFERER']
   end
 
+  # GET /:campaign/henri
+  # Shows a post that is featured and has the same name as your search.
   def vanity
-    @post = Post
-      .joins('LEFT JOIN shares ON shares.post_id = posts.id')
-      .select('posts.*, COUNT(shares.*) AS real_share_count')
-      .where(:promoted => true, :flagged => false, :campaign_id => $campaign.id)
-      .where('LOWER(name) = ?', params[:vanity])
-      .group('posts.id')
-      .limit(1)
-      .first
+    @post = Rails.cache.fetch 'campaign-' + @campaign.id.to_s + 'vanity-' + params[:vanity].downcase do
+      Post
+        .build_post(@campaign)
+        .where(promoted: true)
+        .where('LOWER(name) = ?', params[:vanity].downcase)
+        .limit(1)
+        .first
+    end
 
     if @post.nil?
-      redirect_to :root
+      redirect_to root_path(campaign_path: @campaign.path)
     else
-      render :controller => 'posts', :action => 'show', :campaign_path => $campaign.path
+      render :show
     end
   end
 
+  # GET /:campaign/show/cats-NY
   def filter
-    if Rails.application.config.filters[params[:campaign_path]].nil?
+    @stats = Rails.application.config.stats[@campaign.path]
+    if Rails.application.config.filters[@campaign.path].nil?
       redirect_to :root
       return
     end
 
     begin
-      @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(admin?, params, params[:filter], true)
+      @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, params[:filter], true)
       @filter = params[:filter]
-    rescue
+    rescue => e
+      logger.error("Exception: #{e.message}")
       redirect_to :root
       return
     end
@@ -204,19 +220,18 @@ class PostsController < ApplicationController
     end
   end
 
+  # GET /:campaign/mine
+  # GET /:campaign/featured
   def extras
+    @stats = Rails.application.config.stats[@campaign.path]
+    
     @result = nil
     @where = {}
     @real_path = params[:filter] ||= Pathname.new(request.fullpath).basename.to_s.gsub(/\.[a-z]+/, '')
     @admin = ''
-    @page = 0.to_s
+    @page = "0"
 
-    # Page and offset.
-    page = params[:page] || 0
-    offset = (page.to_i * Post.per_page)
-    @scrolling = !params[:last].nil?
-
-    @posts = Post.infinite_scroll($campaign.id)
+    @posts = Post.build_post(@campaign)
     if params[:run] == 'mine'
       @posts = @posts.where(:uid => session[:drupal_user_id])
     elsif params[:run] == 'featured'
@@ -234,15 +249,84 @@ class PostsController < ApplicationController
     render :index
   end
 
-  # POST /posts/:id/thumbs_up
-  def thumbs_up
-    post = Post.increment_counter(:thumbs_up_count, params[:id])
-    render json: { success: true }
+  # POST /:campaign/posts/1/thumbs
+  def thumbs
+    user = User.find_by_uid(session[:drupal_user_id])
+    post = Post.find(params[:id])
+
+    # Execute the vote
+    color = user.perform_vote(params[:type], post)
+
+    score = post.plusminus
+    up = post.votes_for
+    down = post.votes_against
+
+    popup = color ? get_popup : ""
+
+    render :json => { score: score, up: up, down: down, color: color, popup: popup }
   end
 
-  # POST /posts/:id/thumbs_down
-  def thumbs_down
-    post = Post.increment_counter(:thumbs_down_count, params[:id])
-    render json: { success: true }
+  # GET /:campaign_path/posts/school_lookup?term=[term]
+  # POST /:campaign_path/posts/school_lookup
+  def school_lookup
+    raise 'This campaign does not have a school field' unless @campaign.has_school_field
+
+    # params[:term] = searchterm
+    # params[:state] = state
+
+    # Make a request to the GreatSchools search
+    require 'open-uri'
+    search = JSON.parse(open('http://lofischools.herokuapp.com/search?query=' + URI::escape(params[:term]) + '&state=' + URI::escape(params[:state])).read)['results']
+
+    # Test data
+    # search = [
+    #   { 'gsid' => 1, 'name' => 'DoSomething High School', 'city' => 'Brooklyn', 'state' => 'NY', 'zip' => '11225' },
+    #   { 'gsid' => 2, 'name' => 'Blah blah School', 'city' => 'Wesminster', 'state' => 'MD', 'zip' => '11225' }
+    # ]
+
+    results = search.inject([]) do |res, elm|
+      result = { label: elm['name'], value: "#{elm['name']} (#{elm['gsid']})" }
+
+      begin
+        # Store a local copy of the school so we can reference posts to its information.
+        School.create({
+          gsid: elm['gsid'],
+          title: elm['name'],
+          state: elm['state'],
+          city: elm['city'],
+          zip: elm['zip']
+        })
+      rescue
+        # There's a unique key on GSID so School.create will fail sometimes.  Whatever!
+      end
+
+      res << result if result[:label] =~ Regexp.new(params[:term], 'i')
+    end
+
+    render json: results, root: false, response: 200
+  end
+
+  # POST /:campaign/posts/:id/share
+  def share
+    render status: :forbidden unless (request.format.symbol == :json || authenticated?)
+
+    # Uy populating UID through mobile request
+    params[:share][:uid] = session[:drupal_user_id] unless request.format.symbol == :json
+
+    @share = Share.new(params[:share])
+    Post.increment_counter(:share_count, params[:share][:post_id])
+
+    # Get popup if applicable
+    popup = get_popup
+
+    respond_to do |format|
+      if @share.save
+        format.html { render json: { 'success' => true, popup: popup } }
+        format.json { render json: { 'success' => true, popup: popup } }
+      else
+        format.html { render json: { 'success' => false, popup: popup } }
+        format.json { render json: { 'success' => false, popup: popup } }
+      end
+    end
   end
 end

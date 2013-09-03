@@ -1,0 +1,5 @@
+Create and Share
+
+An abstraction of DoSomething's Pics for Pets campaign.
+
+Built by Maxwell Watson, Michael Chittenden, and Marvin Qian.

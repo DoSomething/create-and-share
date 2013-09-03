@@ -1,15 +1,21 @@
 class CampaignsController < ApplicationController
-  layout 'admin', :except => [:show]
-  # We can skip this for testing purposes.
-  # @TODO: Change this later to honor proper auth.
-  if !Rails.env.test?
-    before_filter :admin, :except => [:index]
-  end
+  layout 'admin'
+
+  # Hide everything except the index page from non-admins
+  before_filter :admin, :except => [:index, :popups]
 
   # GET /campaigns
   # GET /campaigns.json
   def index
-    @campaigns = Campaign.all
+    @campaigns = Rails.cache.fetch 'campaign-list' do
+      Campaign.order('created_at DESC').all
+    end
+
+    # Redirect to single campaign if there's only one running.
+    if !Rails.env.test? && @campaigns.count === 1
+      redirect_to root_path(campaign_path: @campaigns.first.path)
+      return
+    end
 
     respond_to do |format|
       format.html # index.html.erb
@@ -21,11 +27,6 @@ class CampaignsController < ApplicationController
   # GET /campaigns/new.json
   def new
     @campaign = Campaign.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @campaign }
-    end
   end
 
   # GET /campaigns/1/edit
@@ -74,6 +75,17 @@ class CampaignsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to campaigns_url }
       format.json { head :no_content }
+    end
+  end
+
+  before_filter :get_campaign, only: [:popups]
+  # GET /:campaign/popups/:popup
+  def popups
+    file = Rails.root.to_s + "/app/views/campaigns/#{@campaign.path}/popups/#{params[:popup]}"
+    if File.exists? file + '.html.erb'
+      render file, layout: false
+    else
+      render nothing: true
     end
   end
 end
