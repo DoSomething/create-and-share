@@ -1,5 +1,5 @@
 set :application, "Create and Share"
-set :repository,  "git@github.com:DoSomething/create-and-share.git"
+set :repository,  "git@cas:DoSomething/create-and-share.git"
 set :branch, 'master'
 
 set :gateway, 'admin.dosomething.org:38383'
