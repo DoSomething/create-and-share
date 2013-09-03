@@ -1,7 +1,7 @@
 facebook:
-  # title: Facebook post title
-  # caption: Caption
-  # description: Description
+  title: "Fed Up"
+  caption: "http://fedup.dosomething.org"
+  description: "What is your school serving you for lunch? Snap a pic and submit it to Do Something's Fed Up and you'll be eligible to win a scholarship."
 
 home:
   order:

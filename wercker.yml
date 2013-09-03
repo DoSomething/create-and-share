@@ -32,4 +32,5 @@ build:
 deploy:
     steps:
         - bundle-install
-        - cap build:ssh
+        - cap:
+            tasks: build:ssh
