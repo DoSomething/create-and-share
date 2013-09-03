@@ -76,9 +76,9 @@
     <% end %>
   </div>
 
+  <%= f.submit 'submit', :value => 'Send Us Your Photos', :id => 'edit-final-submit', :class => 'btn primary large' %>
   <% if @campaign.paged_form %>
     <%= f.submit 'next_page', as: 'button', value: 'Next Page', id: 'next-page', class: 'btn primary large' %>
     <%= f.submit 'prev_page', as: 'button', value: 'Previous Page', id: 'prev-page', class: 'btn primary large' %>
   <% end %>
-  <%= f.submit 'submit', :value => 'Submit', :id => 'edit-final-submit', :class => 'btn primary large' %>
 <% end %>

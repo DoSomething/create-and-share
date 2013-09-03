@@ -52,6 +52,15 @@ a:hover
   .section-container
     background: none
 
+img.header-pics-logo
+  height: auto
+  width: 300px
+  margin: 0 0 0 -150px
+  top: 15px
+  left: 50%
+  border: none
+  border-radius: none
+
 // --------------
 // CALL TO ACTION
 // --------------
@@ -105,12 +114,12 @@ a:hover
 
     .thumbs-up
       background-color: $fu-secondary
-      .icon
+      .thumb-icon
         background-position: 0 0
 
     .thumbs-down
       background-color: $fu-primary
-      .icon
+      .thumb-icon
         background-position: -24px 0
 
 // ---------
@@ -124,6 +133,26 @@ a:hover
   input[type="text"], input[type="file"], textarea
     border: 2px solid #ddd
     color: $fu-off-black
+
+#counter
+  height: 39px
+  width: 96%
+  max-width: 320px
+  margin: 2em auto
+  background-image: url('/images/campaigns/fedup/counter.png')
+  background-position: 0 0
+  background-repeat: no-repeat
+
+/* Pagination and submit buttons */
+#next-page
+  width: 7em
+
+#prev-page
+  width: 9em
+
+#edit-final-submit
+  width: 13em
+  margin: 0 auto
 
 .ui-autocomplete
   background: #fff
