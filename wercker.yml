@@ -35,4 +35,4 @@ deploy:
       - script:
         name: Send to Admin.ds
         code: |-
-          cap build:ssh
+            cap build:ssh
