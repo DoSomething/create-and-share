@@ -19,9 +19,9 @@ build:
                 mkdir /pipeline/build/tmp/cache/
                 RAILS_ENV=test bundle exec rake tmp:cache:clear
 
-        # - script:
-        #     name: rspec
-        #     code: RAILS_ENV=test HEADLESS=true bundle exec rspec
+        - script:
+            name: rspec
+            code: RAILS_ENV=test HEADLESS=true bundle exec rspec
 
     after-steps:
         - hipchat-notify:
