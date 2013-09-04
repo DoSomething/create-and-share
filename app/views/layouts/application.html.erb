@@ -19,6 +19,9 @@
   %>
   <script type="text/javascript">
   <!--
+    var user = {
+      id: '<%= session[:drupal_user_id] || 0 %>',
+    };
     var campaign = {
       title: '<%= campaign.title %>',
       path: '<%= campaign.path %>',
