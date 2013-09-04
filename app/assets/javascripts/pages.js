@@ -27,7 +27,7 @@ $(document).ready(function() {
     var third_position = '0 -78px';
 
     $('#edit-final-submit').hide();
-    $('#next-page').attr('value', 'tell us more about your lunch');
+    $('#next-page').attr('value', 'tell us more about your lunch').addClass('first-value');
 
     $('#next-page').click(function() {
       page++;
@@ -38,7 +38,7 @@ $(document).ready(function() {
         $('#edit-final-submit').show();
       }
       if (page > 1) {
-        $('#next-page').attr('value', 'next page');
+        $('#next-page').attr('value', 'next page').removeClass('first-value');
         $('#prev-page').show();
         $('#counter').css('background-position', second_position);
       }
@@ -60,12 +60,12 @@ $(document).ready(function() {
       if (page > 1) {
         $('#prev-page').show();
         if (page < pages.length) {
-          $('#next-page').show();
+          $('#next-page').show().removeClass('first-value');
         }
       }
       if (page == 1) {
         $('#prev-page').hide();
-        $('#next-page').show().attr('value', 'tell us more about your lunch');
+        $('#next-page').show().attr('value', 'tell us more about your lunch').addClass('first-value')
         $('#counter').css('background-position', first_position);
       }
       if (page == 2) {

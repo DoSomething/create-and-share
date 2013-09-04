@@ -1,0 +1,11 @@
+<section class="cta">
+  <div class="section-container">
+      	<% if already_submitted? %>
+          <h2>SHOW US YOUR SCHOOL LUNCH</h2>
+          <%= link_to :submit, :class => 'btn primary large' do %><span>submit another pic</span><% end %>
+        <% else %>
+          <h2>SHOW US YOUR SCHOOL LUNCH</h2>
+          <%= link_to :intent, :class => 'btn large primary solo' do %><span>submit a pic</span><% end %>
+        <% end %>
+  </div>
+</section>

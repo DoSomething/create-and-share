@@ -66,6 +66,25 @@ img.header-pics-logo
 // --------------
 .cta
   background: $fu-primary
+  h2
+    float: left
+    margin: 0.5em 0 0 0
+    @media all and (max-width: 750px)
+      float: none
+      margin: 0
+
+  .btn
+    float: right
+    @media all and (max-width: 750px)
+      float: none
+      margin: 0 auto
+
+  .btn.solo
+    float: none
+
+  .section-container
+    max-width: 575px
+    width: 98%
 
 // -------
 // FILTERS
@@ -85,18 +104,39 @@ img.header-pics-logo
   .school
     margin: 0 0 5px 15px
 
+  .share-container
+    .share-count
+      padding: 0.8em 0.8em 0.4em
+
+    .btn.share
+      @media all and (max-width: 600px)
+        margin: 0 2% 3% 2%
+
+    .facebook-share
+      width: 5.5em !important
+
+    .facebook-icon
+      background-image: url('/images/campaigns/fedup/facebook.png')
+      background-repeat: no-repeat
+      background-size: 12px
+      display: inline-block
+      height: 24px
+      width: 12px
+      position: relative
+      top: 4px
+      left: -8px
+      @media all and (max-width: 600px)
+        background-size: 8px
+        height: 15px
+        width: 12px
+        top: 3px
+        left: -4px
+
   .votes
     .thumbs-up, .thumbs-down, .count
       font-weight: 500 !important
       color: #fff
       +border-radius(3px)
-
-    .facebook-icon
-      background-image: url('/images/campaigns/fedup/facebook.png')
-      background-repeat: no-repeat
-
-    .facebook-share
-      background: lightblue
 
     .thumbs-up, .thumbs-down
       padding: 10px 15px 10px 20px
@@ -134,6 +174,9 @@ img.header-pics-logo
     border: 2px solid #ddd
     color: $fu-off-black
 
+  .btn
+    margin: 1em 0 0
+
 #counter
   height: 39px
   width: 96%
@@ -147,12 +190,18 @@ img.header-pics-logo
 #next-page
   width: 7em
 
+#next-page.first-value
+  width: 18em
+  margin: 2em auto
+  @media all and (max-width: 600px)
+    margin: 1em auto
+    font-size: 1em
+
 #prev-page
   width: 9em
 
 #edit-final-submit
   width: 13em
-  margin: 0 auto
 
 .ui-autocomplete
   background: #fff
@@ -179,6 +228,8 @@ img.header-pics-logo
 #upload-preview
   border: 50px solid #f4f4f4
   +border-radius(3px)
+  @media all and (max-width: 600px)
+    border: 10px solid rgb(244, 244, 244)
 
 #image_error
   margin: 1em 0 0 0
@@ -241,6 +292,23 @@ section.start, section.faq, section.posts-new
       width: 100%
 
 .faq
+  @media all and (max-width: 600px)
+    h2
+      font-size: 1.1em
+      font-weight: bold
+      margin: 0 0 0.5em 0
+
+    p
+      font-size: 1em
+
+  h2.ready
+    text-align: center
+
+  .btn
+    margin: 0.5em auto 1em auto
+    padding: 0.6em 0.2em 0.2em 0.2em
+    display: block
+
   .section-container
     padding: 0
 
@@ -252,6 +320,7 @@ section.start, section.faq, section.posts-new
   border-top: 1px solid #ddd
   p
     color: $fu-off-black
+    padding: 1em 0 0.5em
 
 .shared
   background: #ededed !important
