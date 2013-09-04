@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <%= render 'partials/analytics' %>
+  <% if Rails.env.production? %>
+    <%= render 'partials/analytics' %>
+  <% end %>
 
   <title><%= get_campaign ? get_campaign.title : "DoSomething Create and Share Campaigns" %></title>
   <%= campaign_stylesheet_link_tag('gate', get_campaign) %>
