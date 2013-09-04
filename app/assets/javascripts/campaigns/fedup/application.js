@@ -14,3 +14,4 @@
 //= require_tree .
 // Multi-page forms
 //= require ../../pages
+//= require jquery.ui.dialog

@@ -52,6 +52,11 @@ $(function() {
   set_votes = function() {
     // THUMBS UP & THUMBS DOWN
     $('.thumbs-up, .thumbs-down').click(function(e) {
+      if (user.id == 0) {
+        $('<div>Please <a href="/' + campaign.path + '/login">log in or register</a> to vote on posts.</div>').dialog({ dialogClass: 'please-log-in', minHeight: '250px' });
+        return false;
+      }
+
       if (!campaign.allow_revoting && $(this).hasClass('shared')) {
         return false;
       }
