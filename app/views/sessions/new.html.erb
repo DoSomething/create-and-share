@@ -1,8 +1,41 @@
 <div class="gate">
-  <%= render 'header' %>
-  <%= render 'aside' %>
-  <%= render 'notifications' %>
-  <%= render 'login' %>
-  <%= render 'register' %>
-  <%= render 'footer' %>
-</div>
+
+  <section class="notifications">
+    <% if flash[:message] %><p class="message"><%= h flash[:message] %></p><% end %>
+    <% if flash[:error] %><p class="error"><%= h flash[:error] %></p><% end %>
+  </section>
+
+  <section class="desktop-container">
+    <a class="logo-ds" href="/" title="DoSomething.org">
+      <img src="/images/logo-ds.png" alt="DoSomething.org" />
+    </a>
+
+    <img class="image-hero" src="/images/campaigns/fedup/gate-photo.jpg" alt="Teens Having Fun" />
+
+    <div class="field-content">
+      <h2 class="subheadline">Show us your lunch</h2>
+      <p class="description">Show us your school lunch to get tips on how to make change in your cafeteria and be entered to win a scholarship.</p>
+    </div>
+  </section>
+
+  <section class="form-container">
+    <div class="toolbar desktop"><a href="#" id="toggle-form">register</a></div>
+    <div class="toolbar mobile"><a href="#" class="toggle-form">register</a></div>
+
+    <div class="field-content">
+      <h1 class="headline">Sign In</h1>
+      <h2 class="subheadline">Show us your lunch</h2>
+      <p class="description">Show us your school lunch to get tips on how to make change in your cafeteria and be entered to win a scholarship.</p>
+    </div>
+
+    <div class="region region-content">
+      <%= render 'login' %>
+      <%= render 'register' %>
+    </div>
+
+  </section>
+
+  <div class="disclaimer">
+    Clicking "Finish" won't sell your soul, but it means you agree to our <a href="/about/terms-of-service">terms of service</a> &amp; <a href="/about/privacy">privacy policy</a> &amp; to receive our weekly update.
+  </div>
+</div> <!-- .gate -->

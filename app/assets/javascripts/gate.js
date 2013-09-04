@@ -1,22 +1,25 @@
 // GATE
 // -----
 $(function() {
-  var $login_form = $('#login-form');
-  var $login_link = $('.login-link');
+  var $toggle_form = $('#toggle-form');
 
-  var $reg_form = $('#registration-form');
-  var $reg_link = $('.registration-link');
+  $toggle_form.click(function() {
+    var $this = $(this);
+    var $this_text = $this.text();
 
-  $login_link.click(function() {
-    $reg_form.hide();
-    $login_form.show();
-    return false;
-  });
+    var $login = $('#login-form');
+    var $register = $('#registration-form');
 
-  $reg_link.click(function() {
-    $reg_form.show();
-    $login_form.hide();
-    return false;
+    if($this_text === 'register') {
+      $this.text('login');
+      $register.show();
+      $login.hide();
+    }
+    else if($this_text === 'login' ) {
+      $this.text('register');
+      $login.show();
+      $register.hide();
+    }
   });
 
   // END
