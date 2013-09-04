@@ -56,6 +56,7 @@ $(function() {
         $('<div id="please-log-in">Please <a href="/' + campaign.path + '/login">log in or register</a> to vote on posts.</div>').dialog({
           dialogClass: 'please-log-in',
           minHeight: '250px',
+          width: '350px',
           close: function() {
             $('#please-log-in').remove();
           }
