@@ -54,12 +54,14 @@ $(function() {
     $('.thumbs-up, .thumbs-down').click(function(e) {
       if (user.id == 0) {
         $('<div id="please-log-in">Please <a href="/' + campaign.path + '/login">log in or register</a> to vote on posts.</div>').dialog({
-            dialogClass: 'please-log-in',
-            minHeight: '250px',
-            close: function() {
-              $('#please-log-in').remove();
-            }
-          });
+          dialogClass: 'please-log-in',
+          minHeight: '250px',
+          width: '350px',
+          close: function() {
+            $('#please-log-in').remove();
+          }
+        });
+
         return false;
       }
 
@@ -107,21 +109,6 @@ $(function() {
       }
     }
   };
-
-  // PET FINDER SHELTER LOCATOR
-  var $err = $('#shelter-finder .error');
-  $err.hide();
-  $('#shelter-submit').click(function() {
-    var zip = $('#shelter-zip').val();
-    var dest = 'http://www.adoptapet.com/animal-shelter-search?city_or_zip=' + zip + '&shelter_name=&distance=50&adopts_out=all';
-    if (zip.match(/^\d{5}$/)) {
-      $('#shelter-submit').attr('href', dest);
-    }
-    else {
-      $err.show();
-      return false;
-    }
-  });
 
   $(document).ready(function() {
     if (typeof campaign !== 'undefined') {
