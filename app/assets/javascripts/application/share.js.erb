@@ -78,23 +78,24 @@ $(document).ready(function() {
       }
     };
 
-    var $fbid;
+    var $fbid, $current_elm;
     // Remove previous click event
     $('.facebook-share').unbind('click');
     $('.facebook-share').click(function(e) {
       $fbid = FB.getUserID();
+      $current_elm = $(this);
       if ($fbid === "") {
         if (campaign.share_type == 'friends') {
           FB.login(function(response) {
             if (response.authResponse) {
-              self.handle_facebook_click($(this), e);
+              self.handle_facebook_click($current_elm, e);
             }
           }, { 'scope': 'email,user_birthday' });
         }
         else if (campaign.share_type == 'mine') {
           FB.login(function(response) {
             if (response.authResponse) {
-              self.handle_facebook_click($(this), e);
+              self.handle_facebook_click($current_elm, e);
             }
           });
         }
@@ -102,7 +103,7 @@ $(document).ready(function() {
         return false;
       }
 
-      self.handle_facebook_click($(this), e);
+      self.handle_facebook_click($current_elm, e);
     });
   };
   // FACEBOOK POST SHARING FUNCTIONALITY
