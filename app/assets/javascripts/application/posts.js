@@ -53,7 +53,13 @@ $(function() {
     // THUMBS UP & THUMBS DOWN
     $('.thumbs-up, .thumbs-down').click(function(e) {
       if (user.id == 0) {
-        $('<div>Please <a href="/' + campaign.path + '/login">log in or register</a> to vote on posts.</div>').dialog({ dialogClass: 'please-log-in', minHeight: '250px' });
+        $('<div id="please-log-in">Please <a href="/' + campaign.path + '/login">log in or register</a> to vote on posts.</div>').dialog({
+            dialogClass: 'please-log-in',
+            minHeight: '250px',
+            close: function() {
+              $('#please-log-in').remove();
+            }
+          });
         return false;
       }
 
