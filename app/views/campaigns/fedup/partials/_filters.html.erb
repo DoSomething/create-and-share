@@ -2,10 +2,10 @@
   # Logic for getting the filter from the URL.
   state_filter, type_filter = nil
   if params[:filter]
-    if filter = params[:filter].match(/(delish|gross)-([A-Z]{2})/i)
+    if filter = params[:filter].match(/(eatit|tossit)-([A-Z]{2})/i)
       state_filter = filter[2]
       type_filter = filter[1]
-    elsif ['delish', 'gross'].include? params[:filter]
+    elsif ['eatit', 'tossit'].include? params[:filter]
       type_filter = params[:filter]
     elsif get_states.include? params[:filter].to_sym
       state_filter = params[:filter]
