@@ -1,4 +1,5 @@
 require 'rvm/capistrano'
+require File.join(File.expand_path('./config'), 'initializers', 'deploy_vars')
 
 set :application, "Create and Share"
 set :repository,  "git@github.com:DoSomething/create-and-share.git"
