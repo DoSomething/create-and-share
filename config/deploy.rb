@@ -29,9 +29,6 @@ namespace :deploy do
   # task :rspec do
   #   run "cd #{release_path} && bundle exec rake"
   # end
-  task :huh do
-    run 'whoami'
-  end
   task :db do
     run "cd #{release_path} && bundle exec rake db:migrate"
   end
@@ -44,11 +41,14 @@ namespace :deploy do
   # task :refresh_styles do
   #   run "cd #{release_path}; RAILS_ENV=production bundle exec rake paperclip:refresh:missing_styles"
   # end
+  task :cache_clear do
+    run "cd #{release_path} && bundle exec rake cache_clear"
+  end
 end
 
-before 'deploy:update_code', 'deploy:huh'
 before 'deploy:assets:precompile', 'deploy:bundle'
 after 'deploy:bundle', 'deploy:db'
+after 'deploy:update_code', 'deploy:cache_clear'
 # before 'deploy:bundle', 'deploy:install_bundler'
 #after 'deploy:update_code', 'deploy:rspec'
 #after 'deploy:update_code', 'deploy:refresh_styles'
