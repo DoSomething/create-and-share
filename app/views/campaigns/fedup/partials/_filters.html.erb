@@ -16,8 +16,8 @@
   <div class="section-container">
     <select class="lunch_filter filter" id="lunch_filter">
       <option value="all"<%= ' selected="selected"' if type_filter.nil? %>>All Lunches</option>
-      <option value="delish"<%= ' selected="selected"' if type_filter == 'delish' %>>Delish lunches</option>
-      <option value="gross"<%= ' selected="selected"' if type_filter == 'gross' %>>Gross lunches</option>
+      <option value="eatit"<%= ' selected="selected"' if type_filter == 'eatit' %>>"Eat It" lunches</option>
+      <option value="tossit"<%= ' selected="selected"' if type_filter == 'tossit' %>>"Toss It" lunches</option>
     </select>
     <select class="state_filter filter" id="state_filter">
       <option value="">All States</option>
