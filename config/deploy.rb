@@ -15,6 +15,7 @@ set :user, 'dosomething'
 set :password, ENV['DS_DEPLOY_PASS']
 ssh_options[:keys] = [ENV['CAP_PRIVATE_KEY']]
 ssh_options[:forward_agent] = true
+default_run_options[:pty] = true
 
 set :deploy_to, '/var/www/campaigns'
 set :use_sudo, false
