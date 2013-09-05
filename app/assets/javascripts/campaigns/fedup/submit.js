@@ -18,16 +18,18 @@ $(document).ready(function() {
       $('.ui-autocomplete-input').addClass('throbbing');
     },
     close: function() {
-      $('.ui-autocomplete-input').removeClass('throbbing');
     },
     minLength: 2,
     select: function( event, ui ) {
-      // Select logic here
+      $('.first-value').show();
+      $('.ui-autocomplete-input').removeClass('throbbing');
+      $('.first-value').addClass('primary').removeClass('secondary').removeAttr('disabled');
     }
   });
 
   if ($('#post_state').val() == "") {
     $('.post_school_id').hide();
+
     $('#post_state').change(function() {
       if ($(this).val() != "") {
         $('.post_school_id').slideDown('fast');

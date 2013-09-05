@@ -4,7 +4,5 @@
   <%= f.hidden_field :source, :value => @source || '/' %>
   <%= f.input :username, label: 'Username, e-mail or cell' %>
   <%= f.input :password, input_html: { :id => 'login-password' } %>
-  <%= f.submit 'submit', :name => 'form', :value => 'login', :id => 'btn-login', :class => 'btn primary large primary' %>
-  <p class="mobile">Need an account? <a href="#" class="registration-link">register</a></p>
+  <%= f.submit 'submit', :name => 'form', :value => 'log in', :id => 'btn-login', :class => 'btn primary large primary' %>
 <% end %>
-

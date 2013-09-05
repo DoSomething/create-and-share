@@ -27,6 +27,8 @@ $(document).ready(function() {
     var third_position = '0 -78px';
 
     $('#edit-final-submit').hide();
+    $('#next-page').hide();
+    $('#prev-page').hide();
     $('#next-page').attr('value', 'tell us more about your lunch').addClass('first-value');
 
     $('#next-page').click(function() {
