@@ -22,7 +22,7 @@ $(document).ready(function() {
     },
     minLength: 2,
     select: function( event, ui ) {
-      // Select logic here
+      $('.first-value').show();
     }
   });
 
