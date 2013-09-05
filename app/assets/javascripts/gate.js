@@ -1,22 +1,19 @@
 // GATE
 // -----
 $(function() {
-  var $login_form = $('#login-form');
-  var $login_link = $('.login-link');
+  var $toggle_form = $('#toggle-form');
 
-  var $reg_form = $('#registration-form');
-  var $reg_link = $('.registration-link');
+  toggle = function(elm, text) {
+    elm.text((text == 'register' ? 'log in' : 'register'));
+    $('.headline').text(text);
+    $('#login-form, #registration-form').toggle();
+  };
 
-  $login_link.click(function() {
-    $reg_form.hide();
-    $login_form.show();
-    return false;
-  });
+  $toggle_form.click(function() {
+    var $this = $(this);
+    var $this_text = $this.text();
 
-  $reg_link.click(function() {
-    $reg_form.show();
-    $login_form.hide();
-    return false;
+    toggle($this, $this_text);
   });
 
   // END

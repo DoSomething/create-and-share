@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe SessionsController, :type => :controller do
   let(:user) { FactoryGirl.create(:user) }
-  let(:login_params) { { :form => 'login', :session => { :password => 'test' } } }
+  let(:login_params) { { :form => 'log in', :session => { :password => 'test' } } }
   let(:register_params) { {
           :form => 'register',
           :session => {
@@ -148,7 +148,7 @@ describe SessionsController, :type => :controller do
 
           # Make sure session was not set
           session["drupal_user_id"].should eq nil
-          flash[:error].should eq "Invalid username / password."
+          flash[:error].should eq "Invalid username / password"
         end
 
         specify 'without campaign' do
@@ -159,7 +159,7 @@ describe SessionsController, :type => :controller do
 
           # Make sure session was not set
           session["drupal_user_id"].should eq nil
-          flash[:error].should eq "Invalid username / password."
+          flash[:error].should eq "Invalid username / password"
         end
       end
 

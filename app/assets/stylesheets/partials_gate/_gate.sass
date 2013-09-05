@@ -1,35 +1,404 @@
-// GATE
-// ----
-$first: 950px
-$second: 900px
-$third: 700px
+// -------------
+// -------------
+// CAMPAIGN GATE
+// -------------
+// -------------
 
-// Base gate styling
+// VARIABLES
+// ---------
+$main:  #1F7AFF
+$off-black: #1E1D1C
+$accent: #84CDC9
+$error: #ee0044
+$gate-bg: #fafafa
+$subtle-shadow: #eeeeee
+
+$input-bg: #fff
+$input-color: #444
+$input-border: #ddd
+
+$btn-primary: #FFCB15
+$btn-primary-color: $off-black
+$btn-primary-hover: #FEB800
+$btn-primary-border: $btn-primary
+
+$breakpoint-first: 800px
+
+// MIXINS
+// ------
+@mixin border-and-shadow
+  background: #fff
+  border: 1px solid #eee
+  +box-shadow($subtle-shadow 0px 15px 20px -10px)
+
+// BASIC ELEMENTS
+// --------------
+html
+  background: $gate-bg !important
+
 body
-  background: $gate-page-bg
-  width: 100%
+  font-family: din-web-reg
+  background: #f8f8f8
 
+a
+  color: $off-black
+
+// TYPOGRAPHY
+// ----------
+h1, h2, h3, p
+  line-height: 1.5em
+  font-weight: 400
+  margin: 0
+  padding: 0
+
+h1
+  font-size: 2.5em
+  font-weight: 500
+  font-familiy: din-web
+  text-transform: uppercase
+
+h2
+  font-size: 2em
+
+p
+  font-size: 1em
+
+// PAGE WRAPPER
+// ------------
 .gate
+  max-width: 1000px
+  width: 93%
+  margin: 5% auto 0
+  padding: 20px 25px 25px 25px
+  overflow: hidden
+  +border-and-shadow
+  @media only screen and (max-width: $breakpoint-first)
+    max-width: 400px
+    padding: 0
+
+.image-hero
+  margin: -90px 0 0 0
+  padding: 10px
+  width: 93%
+  +border-and-shadow
+
+.logo-ds
   position: relative
-  float: none
-  min-height: 940px
-  width: 800px
-  margin: 25px auto
-  padding: 15px
-  background-color: $gate-sbg-color
-  background-image: url($gate-sbg-image)
-  border: 1px solid #ddd
-  +border-radius(2px)
-  +box-shadow(#ccc 0px 15px 20px -10px)
+  z-index: 2
+  top: -5px
+  left: -20px
+  border: none !important
+  img
+    display: block
+    width: 120px
+    border: none !important
 
-  @media only screen and (max-width: $first)
-    width: 400px
-    border: none
-    margin: 5px auto
-    padding: 10px 10px 50px 10px
-    overflow: hidden
-    min-height: 200px
+// DESKTOP
+// -------
+.desktop-container
+  float: left
+  width: 58%
+  padding: 10px
+  @media only screen and (max-width: $breakpoint-first)
+    display: none
 
-  @media only screen and (max-width: 460px)
-    width: 88%
+// TOOLBAR
+// -------
+.toolbar.desktop
+  @media only screen and (max-width: $breakpoint-first)
+    display: none
+  a
+    position: absolute
+    top: -15px
+    right: -15px
+    width: auto
+    font-size: 16px
+    color: #222
 
+.toolbar.mobile
+  display: none
+  padding: 0.2em 0.5em
+  margin: 0 0 0.5em 0
+  background: #111
+  text-align: right
+  a
+    color: #fff
+  @media only screen and (max-width: $breakpoint-first)
+    display: block
+
+// JOIN PAGE
+// ---------
+.join
+  max-width: 540px
+  margin: 2% auto
+
+  .form-container
+    float: none
+    width: 100%
+    h1, h2, p
+      display: block
+    h1
+      font-size: 3em
+
+  form
+    @media only screen and (max-width: $breakpoint-first)
+      width: 90%
+
+  .logo-ds
+    @media only screen and (max-width: $breakpoint-first)
+      display: none
+
+  .image-hero
+    width: 97%
+    @media only screen and (max-width: $breakpoint-first)
+      display: none
+
+  #edit-submit
+    position: relative
+    left: 50%
+    margin: 0.5em 0 0.5em -2.5em
+    width: 5em
+    @media only screen and (max-width: $breakpoint-first)
+      margin: 0.5em auto 0
+      position: static
+      display: block
+      width: 100%
+
+// FIELD CONTENT
+// -------------
+
+// NOTE - THE "DESKTOP" FIELD CONTENT SECTIONS ARE HIDDEN AUTOMATICALLY
+//        WHEN THE .desktop-container <section> IS HIDDEN
+
+.field-content
+  h2
+    font-family: din-web
+    text-transform: uppercase
+
+.desktop-container
+  h2
+    padding: 0.5em 0
+    color: rgb(219, 80, 71)
+    font-size: 2em
+    line-height: 1.2em
+
+.form-container         // This section wraps the "mobile" field content sections
+  h1                    // Show the <h1> shared by desktop and mobile views
+    display: block
+    color: rgb(219, 80, 71)
+    font-size: 2.5em
+    line-height: 2em
+
+  h2, p                 // Hide the <h2> & <p> used only on mobile
+    display: none
+
+  @media only screen and (max-width: $breakpoint-first)
+    .field-content
+      width: 90%
+      margin: 0 auto
+    h1
+      font-size: 1.4em
+      line-height: 2em
+    h2
+      font-size: 1.3em
+      line-height: 1.7em
+    p
+      font-weight: 400
+      padding: 0.5em 0
+    h2, p
+      display: block
+
+// ERRORS
+// -----
+div.messages.error
+  margin: 0 0 1em 0
+  float: right
+  width: 100%
+  color: $error
+  list-style: none outside none
+  @media only screen and (max-width: $breakpoint-first)
+    margin: 0 auto
+    width: 90%
+  ul
+    padding: 0
+    margin: 0
+  li, a
+    color: $error
+  li
+    list-style: none
+
+label.error
+  color: $error
+
+// LOGIN & REG. FORMS
+// ------------------
+.form-container
+  float: right
+  width: 38.5%
+  position: relative
+  @media only screen and (max-width: $breakpoint-first)
+    float: none
+    width: 100%
+    margin: 0
+
+form
+  background: transparent
+  min-height: auto
+  padding: 0
+  width: 100%
+  box-shadow: none
+  margin: 0
+  float: right
+  @media only screen and (max-width: $breakpoint-first)
+    float: none
+    width: 90%
+    margin: 0 auto
+  label
+    display: block
+    text-transform: lowercase
+    font-weight: 400
+    font-size: 1em
+    color: $off-black
+  p
+    clear: left
+    font-size: 0.9em
+    margin-bottom: 20px
+
+  .disclaimer
+    display: none
+
+  #edit-final-submit, #edit-submit
+    font-family: din-web-reg
+    margin: 1em 0 0.5em
+    padding: 0.2em 1em 0.25em
+    clear: both
+    float: left
+    position: static
+    height: 2em
+    display: block
+    cursor: pointer
+    font-size: 24px
+    font-weight: 700
+    text-align: center
+    text-decoration: none !important
+    text-transform: uppercase
+    color: $btn-primary-color !important
+    border: 1px solid $btn-primary-border
+    background: $btn-primary
+    -webkit-appearance: none
+    +border-radius(3px)
+    +background-image(linear-gradient($btn-primary, $btn-primary-hover))
+    &:hover
+      background: $btn-primary-hover
+    &:active
+      +background-image(linear-gradient($btn-primary-hover, $btn-primary))
+    &:link, &:active, &:hover
+      color: $off-black
+      text-decoration: none !important
+
+  .form-item-parent-email
+    margin: 0.5em 0 0 0
+
+  .form_header
+    margin: 0 0 4% 0
+    display: block
+
+  .form-item
+    width: 100%
+    float: none !important
+    margin: 0
+
+  .form-item-first-name, .form-item-last-name
+    float: left !important
+    width: 40%
+
+  .form-item-last-name
+    width: 48%
+    margin: 0 0 0 10%
+
+  #edit-birthday
+    label
+      float: none !important
+      margin: 0
+    span
+      position: static !important
+
+  .form-item-day, .form-item-month, .form-item-year
+    float: left !important
+    width: 2.6em
+    margin: 0 9% 0 0
+    padding: 0
+
+  .form-item-year
+    width: 3.5em
+
+  .already-member
+    float: left
+    clear: left
+    padding: 0
+    font-family: din-web-reg
+    font-weight: 400
+    font-size: 14px
+    color: #222
+
+  .disclaimer,
+  .under-13-field
+    float: left
+
+// UNDER 13 FIELD
+// --------------
+#edit-parent-email-message
+  margin: 0.5em 0
+
+// input fields for both forms
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"]
+  height: 2.5em
+  width: 96%
+  margin: 0.3em 0 0.5em 0
+  background: $input-bg
+  border: none
+  border: 1px solid $input-border
+  font-weight: 400
+  font-size: 0.9em
+  color: $input-color
+  padding: 0 0 0 0.5em
+  box-shadow: none
+  +border-radius(3px)
+
+.disclaimer
+  float: left
+  clear: both
+  width: 100%
+  margin: 1em 0 0 0
+  text-align: center
+  color: #ddd
+  font-size: 0.8em
+  @media only screen and (max-width: $breakpoint-first)
+    float: none
+    width: 90%
+    margin: 2em auto
+  a
+    color: #ddd
+    &:hover
+      color: #ccc
+
+.forgot-password-link
+  display: block
+  padding: 1em 0 0
+
+// RAILS STYLES
+// ------------
+#btn-register
+  width: 7em
+  float: left
+  margin: 0.5em 0
+
+#btn-login
+  width: 5em
+  margin: 0.5em 0 1em
+
+#registration-form
+  display: none
