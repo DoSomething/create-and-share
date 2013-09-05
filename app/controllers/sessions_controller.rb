@@ -35,7 +35,7 @@ class SessionsController < ApplicationController
     # Campaign information
     campaign = Campaign.find_by_id(sess[:campaign])
 
-    if form == 'login' # logs in user if he/she exist
+    if form == 'log in' # logs in user if he/she exist
       login(campaign, form, session, username, password, nil)
     elsif form == 'register' # registers user if they don't exist in the DoSomething drupal database and then logs in him/her
       if User.exists?(email)
