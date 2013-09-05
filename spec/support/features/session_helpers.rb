@@ -9,6 +9,6 @@ def login(type)
   #click_link 'log in'
   fill_in('session_username', with: user.email)
   fill_in('login-password', with: "bohemian_test")
-  click_button 'login'
+  click_button 'log in'
   user
 end
