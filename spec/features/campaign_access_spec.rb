@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'View campaigns gated / ungated' do
+feature 'View campaigns gated / ungated', feature: true do
   background do
     @gated = FactoryGirl.create(:campaign, gated: 'all')
     @gated_submit = FactoryGirl.create(:campaign, gated: 'submit')

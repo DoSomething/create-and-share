@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Popups occur when user shares or votes', js:true do
+feature 'Popups occur when user shares or votes', js:true, feature: true do
   background do
     @campaign = FactoryGirl.create(:campaign)
     add_config(@campaign.path)

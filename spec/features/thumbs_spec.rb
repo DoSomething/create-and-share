@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Voting on a post for the first time', js:true do
+feature 'Voting on a post for the first time', js:true, feature: true do
   background do
     @user = login(:user)
     @post = FactoryGirl.create(:post)
@@ -33,7 +33,7 @@ feature 'Voting on a post for the first time', js:true do
   end
 end
 
-feature 'Modifying votes on a post', js:true do
+feature 'Modifying votes on a post', js:true, feature: true do
   background do
     @user = login(:user)
     @post = FactoryGirl.create(:post)

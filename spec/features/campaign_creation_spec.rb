@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Campaign creation' do
+feature 'Campaign creation', feature: true do
   background do
     login(:admin_user)
     visit '/'
@@ -24,7 +24,7 @@ feature 'Campaign creation' do
   end
 end
 
-feature 'Campaign creation doesn\'t work for regular users' do
+feature 'Campaign creation doesn\'t work for regular users', feature: true do
   background do
     login(:user)
     visit '/'

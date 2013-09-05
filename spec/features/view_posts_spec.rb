@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'View posts' do
+feature 'View posts', feature: true do
   let(:campaign) { FactoryGirl.create(:campaign, stat_frequency: 1) }
 
   background do

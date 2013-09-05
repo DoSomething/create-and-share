@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Submit flow' do
+feature 'Submit flow', feature: true do
   let(:campaign) { FactoryGirl.create(:campaign) }
 
   background do
@@ -16,7 +16,7 @@ feature 'Submit flow' do
   end
 end
 
-feature 'Create posts' do
+feature 'Create posts', feature: true do
   let(:campaign) { FactoryGirl.create(:campaign) }
 
   background do
@@ -40,7 +40,7 @@ feature 'Create posts' do
   end
 end
 
-feature 'Crop popup', js:true do
+feature 'Crop popup', js:true, feature: true do
   let(:campaign) { FactoryGirl.create(:campaign, gated: false) }
 
   background do
