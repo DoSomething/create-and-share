@@ -85,16 +85,17 @@ describe Post do
       context 'pagination' do
         before :each do
           @campaign = FactoryGirl.create(:campaign)
-          FactoryGirl.create_list(:post, 20, campaign_id: @campaign.id)
           @posts = Post.build_post(@campaign)
         end
 
-        it 'shows 9 results on the first page.' do
-          @posts.scrolly.length.should be 9
+      it 'shows 9 results on the first page.' do
+          FactoryGirl.create(:post, campaign_id: @campaign.id)
+          @posts.scrolly.length.should be 1
         end
         it 'shows 9 results on a subsequent page' do
-          last_id = Post.order('id DESC').limit(10).last.id
-          @posts.scrolly(last_id).length.should be 9
+          FactoryGirl.create_list(:post, 2, campaign_id: @campaign.id)
+          last_id = Post.order('id DESC').limit(1).last.id
+          @posts.scrolly(last_id).length.should be 1
         end
       end
     end
