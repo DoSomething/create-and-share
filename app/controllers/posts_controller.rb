@@ -308,25 +308,34 @@ class PostsController < ApplicationController
 
   # POST /:campaign/posts/:id/share
   def share
-    render status: :forbidden unless (request.format.symbol == :json || authenticated?)
-
-    # Uy populating UID through mobile request
-    params[:share][:uid] = session[:drupal_user_id] unless request.format.symbol == :json
+    session[:drupal_user_id] ||= 0
+    params[:share][:uid] = session[:drupal_user_id] unless params[:share][:uid]
 
     @share = Share.new(params[:share])
     Post.increment_counter(:share_count, params[:share][:post_id])
 
     # Get popup if applicable
-    popup = get_popup
-
-    respond_to do |format|
-      if @share.save
-        format.html { render json: { 'success' => true, popup: popup } }
-        format.json { render json: { 'success' => true, popup: popup } }
+    popup =
+      if params[:share][:uid] && params[:share][:uid].to_i > 0
+        get_popup
       else
-        format.html { render json: { 'success' => false, popup: popup } }
-        format.json { render json: { 'success' => false, popup: popup } }
+        false
+      end
+
+    if @share.save
+      render json: { success: true, popup: popup }, root: false, response: 200
+    else
+      begin
+        # Forces an email to be sent if a share somehow fails.
+        raise "Share failed with post ID #{params[:share][:post_id].to_s} and UID #{params[:share][:uid].to_s}"
+      rescue
+        render json: { success: false }
       end
     end
+  end
+
+  def uid_lookup
+    @posts = Post.where(uid: params[:uid], campaign_id: @campaign.id)
+    render json: @posts, root: false, response: 200
   end
 end
