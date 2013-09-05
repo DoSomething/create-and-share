@@ -25,6 +25,7 @@ CreateAndShare::Application.routes.draw do
       collection do
         post 'autoimg'
         get 'school_lookup'
+        get 'uid_lookup'
       end
     end
 
