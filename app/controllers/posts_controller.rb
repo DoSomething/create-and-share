@@ -9,7 +9,7 @@ class PostsController < ApplicationController
   before_filter :is_not_authenticated, :verify_api_key, :campaign_closed
   skip_before_filter :campaign_closed, only: [:create, :update]
 
-  before_filter only: [:edit, :update, :destroy, :flag] do
+  before_filter only: [:edit, :destroy, :flag] do
     raise 'User ' + (session[:drupal_user_id] || 0).to_s + ' is unauthorized.' unless admin?
   end
 
@@ -144,6 +144,19 @@ class PostsController < ApplicationController
   # PUT /posts/1.json
   def update
     @post = Post.find(params[:id])
+
+    require 'uri'
+    if params[:post][:image] =~ URI::regexp
+      real_filename = File.basename(params[:post][:image])
+      tmp_file = Rails.root.to_s + '/public/tmp/' + real_filename
+
+      File.open(tmp_file, 'wb') do |file|
+        file.write open(params[:post][:image]).read
+      end
+
+      params[:post][:processed_from_url] = tmp_file
+      params[:post][:image] = File.new(tmp_file)
+    end
 
     respond_to do |format|
       if @post.update_attributes(params[:post])
