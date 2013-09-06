@@ -47,8 +47,10 @@ a:hover
 // ------
 .header
   background-image: $fu-header
-  background-size: cover
+  background-size: auto 105%
   background-position: 50% 50%
+  @media all and (max-width: 600px)
+    background-size: cover
   .section-container
     background: none
 

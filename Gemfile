@@ -81,4 +81,3 @@ gem 'rvm-capistrano'
 
 # To use debugger
 # gem 'debugger'
-
