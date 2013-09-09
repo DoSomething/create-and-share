@@ -76,6 +76,7 @@ p
   +border-and-shadow
   @media only screen and (max-width: $breakpoint-first)
     max-width: 400px
+    min-height: 800px
     padding: 0
 
 .image-hero
@@ -106,9 +107,13 @@ p
 
 // TOOLBAR
 // -------
-.toolbar.desktop
+.toolbar
   @media only screen and (max-width: $breakpoint-first)
-    display: none
+    padding: 0.2em 0.5em
+    margin: 0 0 0.5em 0
+    background: #111
+    text-align: right
+    min-height: 1.3em
   a
     position: absolute
     top: -15px
@@ -116,17 +121,9 @@ p
     width: auto
     font-size: 16px
     color: #222
-
-.toolbar.mobile
-  display: none
-  padding: 0.2em 0.5em
-  margin: 0 0 0.5em 0
-  background: #111
-  text-align: right
-  a
-    color: #fff
-  @media only screen and (max-width: $breakpoint-first)
-    display: block
+    @media only screen and (max-width: $breakpoint-first)
+      color: #fff
+      position: static
 
 // JOIN PAGE
 // ---------
@@ -382,8 +379,8 @@ input[type="password"]
   bottom: 1em
   @media only screen and (max-width: $breakpoint-first)
     float: none
-    width: 90%
-    margin: 2em auto
+    width: 94%
+    margin: 0 3%
   a
     color: #ddd
     &:hover
