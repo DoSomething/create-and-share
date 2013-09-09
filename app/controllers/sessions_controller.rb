@@ -59,6 +59,12 @@ class SessionsController < ApplicationController
     # Try and find the campaign by the path specified in source.
     campaign = Campaign.find_by_path(origin_campaign)
 
+    unless auth['email']
+      flash[:error] = "Sorry, we couldn't get your email from Facebook.  Please try registering through the regular form, below."
+      redirect_to '/login'
+      return
+    end
+
     unless User.exists?(auth['email']) # registers user if he/she isn't already in the drupal database
       password = (0...50).map{ ('a'..'z').to_a[rand(26)] }.join
       if auth['birthday'].nil? # parse user's birthday or fake it
@@ -71,7 +77,12 @@ class SessionsController < ApplicationController
       end
     end
 
-    login(campaign, 'facebook', session, auth['email'], nil, nil, auth['id'])
+    begin
+      login(campaign, 'facebook', session, auth['email'], nil, nil, auth['id'])
+    rescue
+      flash[:error] = "There was a problem while logging you in through Facebook.  Please try registering through the regular form, below."
+      redirect_to '/login'
+    end
   end
 
   # GET /logout
