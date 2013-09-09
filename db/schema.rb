@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130822185046) do
+ActiveRecord::Schema.define(:version => 20130909214657) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(:version => 20130822185046) do
     t.datetime "image_updated_at"
     t.string   "mailchimp"
     t.string   "mobile_commons"
+    t.string   "mailchimp_submit"
     t.string   "email_submit"
     t.string   "email_signup"
     t.string   "meme_header"
@@ -65,15 +66,15 @@ ActiveRecord::Schema.define(:version => 20130822185046) do
     t.string   "image"
     t.string   "name"
     t.string   "state"
-    t.boolean  "flagged",            :default => false
-    t.boolean  "promoted",           :default => false
+    t.boolean  "flagged",                         :default => false
+    t.boolean  "promoted",                        :default => false
     t.integer  "share_count"
     t.text     "story"
     t.datetime "creation_time"
     t.datetime "update_time"
     t.boolean  "adopted"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
+    t.datetime "created_at",                                         :null => false
+    t.datetime "updated_at",                                         :null => false
     t.string   "image_file_name"
     t.string   "image_content_type"
     t.integer  "image_file_size"
@@ -84,7 +85,7 @@ ActiveRecord::Schema.define(:version => 20130822185046) do
     t.string   "city"
     t.integer  "campaign_id"
     t.text     "extras"
-    t.integer  "school_id"
+    t.integer  "school_id",          :limit => 8
   end
 
   add_index "posts", ["campaign_id"], :name => "index_posts_on_campaign_id"
