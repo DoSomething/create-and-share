@@ -22,7 +22,22 @@ class User < ActiveRecord::Base
     end
   end
 
-  # creates a new user with the given parameters in the DoSomething drupal database
+  # Creates a new user in the Drupal database with the given information.
+  #
+  # @param [String] password
+  #   The user's password.
+  # @param [String] email
+  #   The user's email address.
+  # @param [Fixnum] fbid
+  #   The user's (potential) Facebook ID.
+  # @param [String] first
+  #   The user's first name, if applicable.
+  # @param [String] last
+  #   The user's last name, if applicable.
+  # @param [String] cell
+  #    The user's cell phone number, if applicable.
+  # @param [String] birthday
+  #    The user's birthday.
   def self.register(password, email, fbid, first, last, cell, birthday)
     bday = Date.strptime(birthday, '%m/%d/%Y')
     response = Services::Auth.register(password, email, first, last, cell, bday.month, bday.day, bday.year)

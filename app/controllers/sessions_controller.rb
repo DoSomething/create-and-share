@@ -66,7 +66,7 @@ class SessionsController < ApplicationController
       else
         date = Date.strptime(auth['birthday'], '%m/%d/%Y')
       end
-      unless User.register(campaign, password, auth['email'], auth['id'], auth['first_name'], auth['last_name'], '', "#{date.month}/#{date.day}/#{date.year}")
+      unless User.register(password, auth['email'], auth['id'], auth['first_name'], auth['last_name'], '', "#{date.month}/#{date.day}/#{date.year}")
         flash[:error] = "An error has occurred. Please log in again."
       end
     end
