@@ -78,6 +78,11 @@ class PostsController < ApplicationController
         .first
     end
 
+    if @post.nil?
+      redirect_to root_path
+      return
+    end
+
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @post }
