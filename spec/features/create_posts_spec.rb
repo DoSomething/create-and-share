@@ -27,7 +27,6 @@ feature 'Create posts', feature: true do
   scenario 'User can create a valid post and see it in mine' do
     post = fill_post_form
     click_button 'Submit'
-    page.should have_content post.name
     page.should have_content 'submit another pic'
     page.should have_content 'see your'
     click_link 'see your'
