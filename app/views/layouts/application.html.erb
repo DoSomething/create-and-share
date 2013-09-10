@@ -12,7 +12,10 @@
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <meta property="og:image" content="http://pics.dosomething.org/images/logo-pics.png" />
+  <meta property="og:image" content="http://<%= @campaign.path %>.dosomething.org<%= @campaign.image.url(:campaign) %>" />
+  <meta property="og:url" content="http://<%= @campaign.path %>.dosomething.org/<%= @campaign.path %>" />
+  <meta property="og:title" content="<%= @campaign.title %>" />
+
   <%= csrf_meta_tags %>
 
   <%
