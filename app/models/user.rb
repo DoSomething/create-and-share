@@ -39,11 +39,15 @@ class User < ActiveRecord::Base
   # @param [String] birthday
   #    The user's birthday.
   def self.register(password, email, fbid, first, last, cell, birthday)
-    bday = Date.strptime(birthday, '%m/%d/%Y')
-    response = Services::Auth.register(password, email, first, last, cell, bday.month, bday.day, bday.year)
-    if response.code == 200 && response.kind_of?(Hash)
-      return true
-    else
+    begin
+      bday = Date.strptime(birthday, '%m/%d/%Y')
+      response = Services::Auth.register(password, email, first, last, cell, bday.month, bday.day, bday.year)
+      if response.code == 200 && response.kind_of?(Hash)
+        return true
+      else
+        return false
+      end
+    rescue
       return false
     end
   end

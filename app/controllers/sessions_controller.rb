@@ -45,7 +45,8 @@ class SessionsController < ApplicationController
         if User.register(password, email, 0, first, last, cell, "#{month}/#{day}/#{year}")
           login(campaign, form, session, email, password, cell)
         else
-          flash[:error] = "An error has occurred. Please register again."
+          flash[:error] = "Invalid information specified. Please try registering again."
+          redirect_to campaign ? "/#{campaign.path}/login" : "/login"
         end
       end
     end
