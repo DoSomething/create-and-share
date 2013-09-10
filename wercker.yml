@@ -11,7 +11,9 @@ build:
 
         - script:
             name: Set up db
-            code: bundle exec rake db:schema:load RAILS_ENV=test
+            code: |
+                RAILS_ENV=test bundle exec rake db:schema:load
+                RAILS_ENV=test bundle exec rake db:migrate
 
         - script:
             name: Clear caches
