@@ -26,7 +26,7 @@ class Post < ActiveRecord::Base
   validates :campaign_id, :presence => true, :numericality => true
 
   has_attached_file :image, :styles => { :gallery => '450x450!' }, :default_url => '/images/:style/default.png', :processors => [:cropper, :memify, :compress]
-  validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif'] }
+  validates_attachment :image, :presence => true, :content_type => { :content_type => ['image/jpeg', 'image/png', 'image/gif', 'image/pjpeg', 'image/x-png'] }
 
   has_many :shares
   has_many :tags

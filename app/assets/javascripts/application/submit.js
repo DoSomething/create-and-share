@@ -254,7 +254,7 @@ $(document).ready(function() {
     //make sure we don't try to crop a nonexistent photo
     if ($(this).val() !== "") {
       var file_data = $("#post_image").prop("files")[0];
-      if (!file_data.type.match(/image\/(jpeg|gif|png)/)) {
+      if (!file_data.type.match(/image\/(p?jpeg|gif|(x-)?png)/)) {
         $('#image_error').show();
         return false;
       }
