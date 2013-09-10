@@ -1,6 +1,6 @@
 <header class="header">
   <div class="section-container">
     <%= link_to '//www.dosomething.org' do %><%= image_tag 'logo-ds.png', :class => 'header-ds-logo', :alt => 'DoSomething.org logo' %><% end %>
-    <%= link_to '/' + @campaign.path do %><%= image_tag @campaign.image(:campaign), :class => 'header-pics-logo', :alt => @campaign.title + ' logo' %><% end %>
+    <%= link_to '/' + @campaign.path do %><%= image_tag @campaign.image.url(:original), :class => 'header-pics-logo', :alt => @campaign.title + ' logo' %><% end %>
   </div>
 </header>
