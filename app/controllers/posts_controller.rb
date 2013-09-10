@@ -272,8 +272,12 @@ class PostsController < ApplicationController
     user = User.find_by_uid(session[:drupal_user_id])
     post = Post.find(params[:id])
 
-    # Execute the vote
-    color = user.perform_vote(params[:type], post)
+    begin
+      # Execute the vote
+      color = user.perform_vote(params[:type], post)
+    rescue
+      color = false
+    end
 
     score = post.plusminus
     up = post.votes_for
