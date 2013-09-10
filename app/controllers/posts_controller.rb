@@ -251,7 +251,7 @@ class PostsController < ApplicationController
 
     @posts = Post.build_post(@campaign)
     if params[:run] == 'mine'
-      @posts = @posts.where(:uid => session[:drupal_user_id])
+      @posts = @posts.where(:uid => session[:drupal_user_id]).order('created_at DESC')
     elsif params[:run] == 'featured'
       @posts = @posts.where(:promoted => true)
     end
