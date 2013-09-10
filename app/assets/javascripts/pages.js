@@ -37,6 +37,9 @@ $(document).ready(function() {
       if (page >= pages.length) {
         $('#next-page').hide();
         $('#edit-final-submit').show();
+        $('#edit-final-submit').unbind('click').click(function() {
+          $('#new_post').submit();
+        });
       }
       if (page > 1) {
         $('#next-page').attr('value', 'next page').removeClass('first-value');
