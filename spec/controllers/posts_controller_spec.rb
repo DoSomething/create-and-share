@@ -82,6 +82,11 @@ describe PostsController, :type => :controller do
           bad_attributes = FactoryGirl.attributes_for(:post, school_id: false)
           expect { post :create, { post: bad_attributes }, session }.to_not change(Post, :count).by(1)
         end
+        it 'Uses a custom school if there is none in the database' do
+          @attributes[:school_id] = 'Custom school'
+          expect { post :create, { post: @attributes, campaign_path: campaign.path }, session }.to change(Post, :count).by(1)
+          expect(assigns(:post).custom_school).to eq 'Custom school'
+        end
         it 'ignores a school ID when the campaign setting is FALSE' do
           bad_campaign = FactoryGirl.create(:campaign, has_school_field: false)
           fine_post = FactoryGirl.attributes_for(:post, campaign_id: bad_campaign)

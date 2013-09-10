@@ -27,6 +27,12 @@ $(document).ready(function() {
     }
   });
 
+  $('#post_school_id').change(function() {
+    $('.first-value').show();
+    $('.ui-autocomplete-input').removeClass('throbbing');
+    $('.first-value').addClass('primary').removeClass('secondary').removeAttr('disabled');
+  });
+
   if ($('#post_state').val() == "") {
     $('.post_school_id').hide();
 

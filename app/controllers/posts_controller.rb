@@ -129,6 +129,7 @@ class PostsController < ApplicationController
       if match && !match['gsid'].nil?
         params[:post][:school_id] = match['gsid']
       else
+        params[:post][:custom_school] = params[:post][:school_id]
         params[:post][:school_id] = nil
       end
     end
@@ -306,7 +307,8 @@ class PostsController < ApplicationController
     #   { 'gsid' => 2, 'name' => 'Blah blah School', 'city' => 'Wesminster', 'state' => 'MD', 'zip' => '11225' }
     # ]
 
-    results = search.inject([]) do |res, elm|
+    starter = [{ label: params[:term], value: params[:term] }]
+    results = search.inject(starter) do |res, elm|
       result = { label: elm['name'], value: "#{elm['name']} (#{elm['gsid']})" }
 
       begin

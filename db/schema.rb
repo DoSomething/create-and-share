@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130909214657) do
+ActiveRecord::Schema.define(:version => 20130910173622) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(:version => 20130909214657) do
     t.datetime "image_updated_at"
     t.string   "mailchimp"
     t.string   "mobile_commons"
+    t.string   "mailchimp_submit"
     t.string   "email_submit"
     t.string   "email_signup"
     t.string   "meme_header"
@@ -85,6 +86,7 @@ ActiveRecord::Schema.define(:version => 20130909214657) do
     t.integer  "campaign_id"
     t.text     "extras"
     t.integer  "school_id",          :limit => 8
+    t.string   "custom_school"
   end
 
   add_index "posts", ["campaign_id"], :name => "index_posts_on_campaign_id"

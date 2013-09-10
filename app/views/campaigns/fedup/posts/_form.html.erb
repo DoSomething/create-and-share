@@ -57,7 +57,7 @@
   <% end %>
   <%= f.input :name, required: true, label: "Name your lunch", wrapper_html: { class: 'form-item-name' } %>
   <%= f.input :state, required: true, label: "What state is your school in?", wrapper_html: { class: 'form-item-state' }, as: :select, collection: get_states.invert, prompt: 'Choose a state', include_blank: false %>
-  <%= f.input :school_id, required: false, label: 'Start typing your school\'s name.  We\'ll offer suggestions.', wrapper_html: { class: 'form-item-school-id' }, as: 'string' %>
+  <%= f.input :school_id, maxlength: 100, required: false, label: 'Start typing your school\'s name.  We\'ll offer suggestions.', wrapper_html: { class: 'form-item-school-id' }, as: 'string' %>
 
   </div>
   <div class="page" data-page="2">

@@ -6,7 +6,7 @@ class Post < ActiveRecord::Base
     :meme_text, :meme_position,
     :crop_x, :crop_y, :crop_w, :crop_h, :crop_dim_w,
     :campaign_id, :extras, :processed_from_url,
-    :school_id
+    :school_id, :custom_school
 
   # Contains all custom fields for a campaign
   serialize :extras, Hash
@@ -48,7 +48,7 @@ class Post < ActiveRecord::Base
     return false if self.campaign_id.nil?
 
     campaign = Campaign.find(self.campaign_id)
-    campaign.has_school_field === true
+    campaign.has_school_field === true && !self.custom_school
   end
 
   # Filters posts for a specific custom field.
