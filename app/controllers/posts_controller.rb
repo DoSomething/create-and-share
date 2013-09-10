@@ -32,8 +32,8 @@ class PostsController < ApplicationController
     @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
 
     respond_to do |format|
-      format.js
       format.html # index.html.erb
+      format.js
       format.json { render json: @posts, root: false }
       format.csv { send_data Post.as_csv }
     end
@@ -232,8 +232,8 @@ class PostsController < ApplicationController
     end
 
     respond_to do |format|
-      format.js
       format.html # index.html.erb
+      format.js
       format.json { render json: @posts, root: false }
       format.csv { send_data Post.as_csv }
     end
