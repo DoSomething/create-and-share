@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  attr_accessible :email, :fbid, :uid, :is_admin, :mobile
+  attr_accessible :email, :fbid, :uid, :is_admin, :mobile, :signup_type
   cattr_accessor :campaign
 
   has_many :campaigns, through: :participations
@@ -53,7 +53,7 @@ class User < ActiveRecord::Base
   end
 
   # logs in a user with the given parameters and creates an entry in the rails database if one doesn't exist already
-  def self.login(campaign, session, username, password, cell, fbid)
+  def self.login(registered, campaign, session, username, password, cell, fbid)
     if fbid != 0 # if logging in with Facebook
       uid = Services::Auth.check_admin(username).first
       if uid
@@ -83,7 +83,7 @@ class User < ActiveRecord::Base
 
     user = User.find_by_uid(uid)
     if !user # creates a new user if he/she isn't already in the database
-      user = User.new(:uid => uid, :fbid => fbid, :email => username, :mobile => mobile, :is_admin => roles.values.include?('administrator'))
+      user = User.new(:uid => uid, :fbid => fbid, :email => username, :mobile => mobile, :is_admin => roles.values.include?('administrator'), :signup_type => (registered ? 'new' : 'exists'))
     elsif fbid != 0 # adds a fbid if they are logging in with facebook for the first time
       ### UPDATE TO EDIT FACEBOOK ON DRUPAL AS WELL ###
       user.fbid = fbid

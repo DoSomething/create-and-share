@@ -80,12 +80,14 @@ describe User do
       end
 
       it 'logs in existing users' do
-        User.login(@campaign, @session, @user.email, "test", "", 0)
+        User.login(false, @campaign, @session, @user.email, "test", "", 0)
+        u = User.last
+        u.signup_type.should eq 'exists'
         @session[:drupal_user_id].should eq @user.uid
       end
 
       it 'logs in through Facebook' do
-        User.login(@campaign, @session, @user.email, "test", "", 123)
+        User.login(false, @campaign, @session, @user.email, "test", "", 123)
         @session[:drupal_user_id].should eq @user.uid
       end
     end
@@ -99,7 +101,7 @@ describe User do
       response = HTTParty::Response.new(request_object, response_object, parsed_response)
       Services::Auth.stub(:login).and_return(response)
 
-      User.login(@campaign, @session, "awoefj@aofeij.com", "awefsd", "", 0).should eq false
+      User.login(true, @campaign, @session, "awoefj@aofeij.com", "awefsd", "", 0).should eq false
     end
 
     describe 'logging in new CAS users' do
@@ -113,13 +115,13 @@ describe User do
       end
 
       it 'adds users who are not in the CAS database' do
-        User.login(@campaign, @session, "test@subject.com", "test", "", 0)
+        User.login(false, @campaign, @session, "test@subject.com", "test", "", 0)
         User.find_by_uid(@session[:drupal_user_id]).should_not eq nil
       end
 
       it 'does not add users who are already in the CAS database' do
         @user = FactoryGirl.create(:user)
-        expect{ User.login(@campaign, @session, @user.email, "test", "", 0) }.to_not change{ User.count }.by(1)
+        expect{ User.login(false, @campaign, @session, @user.email, "test", "", 0) }.to_not change{ User.count }.by(1)
       end
     end
   end

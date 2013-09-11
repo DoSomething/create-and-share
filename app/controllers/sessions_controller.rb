@@ -36,14 +36,14 @@ class SessionsController < ApplicationController
     campaign = Campaign.find_by_id(sess[:campaign])
 
     if form == 'log in' # logs in user if he/she exist
-      login(campaign, form, session, username, password, nil)
+      login(false, campaign, form, session, username, password, nil)
     elsif form == 'register' # registers user if they don't exist in the DoSomething drupal database and then logs in him/her
       if User.exists?(email)
         flash[:error] = "A user with that account already exists."
         redirect_to campaign ? "/#{campaign.path}/login" : "/login"
       else
         if User.register(password, email, 0, first, last, cell, "#{month}/#{day}/#{year}")
-          login(campaign, form, session, email, password, cell)
+          login(true, campaign, form, session, email, password, cell)
         else
           flash[:error] = "Invalid information specified. Please try registering again."
           redirect_to campaign ? "/#{campaign.path}/login" : "/login"
@@ -62,10 +62,11 @@ class SessionsController < ApplicationController
 
     unless auth['email']
       flash[:error] = "Sorry, we couldn't get your email from Facebook.  Please try registering through the regular form, below."
-      redirect_to '/login'
-      return
+      redirect_to campaign ? "/#{campaign.path}/login" : "/login"
+      return false
     end
 
+    registered = false
     unless User.exists?(auth['email']) # registers user if he/she isn't already in the drupal database
       password = (0...50).map{ ('a'..'z').to_a[rand(26)] }.join
       if auth['birthday'].nil? # parse user's birthday or fake it
@@ -75,14 +76,19 @@ class SessionsController < ApplicationController
       end
       unless User.register(password, auth['email'], auth['id'], auth['first_name'], auth['last_name'], '', "#{date.month}/#{date.day}/#{date.year}")
         flash[:error] = "An error has occurred. Please log in again."
+        redirect_to campaign ? "/#{campaign.path}/login" : "/login"
+        return false
       end
+
+      registered = true
     end
 
     begin
-      login(campaign, 'facebook', session, auth['email'], nil, nil, auth['id'])
+      login(registered, campaign, 'facebook', session, auth['email'], nil, nil, auth['id'])
     rescue
       flash[:error] = "There was a problem while logging you in through Facebook.  Please try registering through the regular form, below."
-      redirect_to '/login'
+      redirect_to campaign ? "/#{campaign.path}/login" : "/login"
+      return false
     end
   end
 
@@ -98,8 +104,8 @@ class SessionsController < ApplicationController
     # @param string form
     #   Specifies from where the method was called so the method can handle errors appropriately
     ##
-    def login(campaign, form, session, username, password, cell, fbid = 0)
-      if User.login(campaign, session, username, password, cell, fbid)
+    def login(registered, campaign, form, session, username, password, cell, fbid = 0)
+      if User.login(registered, campaign, session, username, password, cell, fbid)
         case form
         when 'login'
           flash[:message] = "You've logged in successfully!"

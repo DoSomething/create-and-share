@@ -5,6 +5,7 @@ FactoryGirl.define do
     uid 703718
     mobile 1234567890
     is_admin false
+    signup_type false
 
     trait :admin do
       is_admin true

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130910173622) do
+ActiveRecord::Schema.define(:version => 20130911152631) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -143,13 +143,14 @@ ActiveRecord::Schema.define(:version => 20130910173622) do
   add_index "tags", ["value"], :name => "index_tags_on_value"
 
   create_table "users", :force => true do |t|
-    t.integer  "fbid",       :limit => 8
-    t.integer  "uid",        :limit => 8
+    t.integer  "fbid",        :limit => 8
+    t.integer  "uid",         :limit => 8
     t.string   "email"
-    t.datetime "created_at",              :null => false
-    t.datetime "updated_at",              :null => false
+    t.datetime "created_at",               :null => false
+    t.datetime "updated_at",               :null => false
     t.boolean  "is_admin"
     t.string   "mobile"
+    t.string   "signup_type"
   end
 
   add_index "users", ["fbid"], :name => "index_users_on_fbid"
