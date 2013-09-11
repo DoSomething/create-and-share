@@ -1,4 +1,5 @@
 <!-- #hidden fields for cropping -->
+<% if flash[:error] %><h1 class="error"><%= flash[:error] %></h1><% end %>
 
 <h2>LET’S SEE YOUR LUNCH</h2>
 <%= simple_form_for(@post, :url => { :action => params[:action] == 'edit' ? 'update' : 'create' }, :html => { :multipart => true, :class => "form form-submit right" }) do |f| %>
