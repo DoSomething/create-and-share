@@ -11,7 +11,7 @@ module ApplicationHelper
 
   # Is the user an administrator?
   def admin?
-    (session[:drupal_user_role] && (session[:drupal_user_role].values.include?('administrator') || session[:drupal_user_role].include?('staff'))) ? true : false
+    (session[:drupal_user_role] && (session[:drupal_user_role].values.include?('administrator') || session[:drupal_user_role].values.include?('staff'))) ? true : false
   end
 
   # Returns the Facebook App ID, based off of environment.
