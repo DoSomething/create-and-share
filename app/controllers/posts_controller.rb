@@ -105,7 +105,11 @@ class PostsController < ApplicationController
   def create
     # Attempt to set the user ID
     if request.format.symbol != :json || authenticated?
-      render :status => :forbidden unless authenticated?
+      unless authenticated?
+        flash[:error] = "Sorry, there was an error while submitting.  Please log in again and try again."
+        redirect_to submit_path
+        return false
+      end
       params[:post][:uid] = session[:drupal_user_id]
     end
 
