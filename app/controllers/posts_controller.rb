@@ -362,4 +362,20 @@ class PostsController < ApplicationController
     @posts = Post.where(uid: params[:uid], campaign_id: @campaign.id)
     render json: @posts, root: false, response: 200
   end
+
+  def stats_email
+    unless ApiKey.find_by_key(params[:key])
+      redirect_to root_path
+      return false
+    end
+
+    campaign = Campaign.find_by_path(params[:campaign_path])
+    posts_count = campaign.posts.count
+    vote_count = campaign.posts.vote_count
+    share_count = campaign.posts.share_count
+    users_count = User.count
+
+    Mailer.stats_email(users_count, posts_count, vote_count, share_count).deliver
+    render text: 'Stats email sent', layout: false
+  end
 end

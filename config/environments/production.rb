@@ -28,6 +28,10 @@ CreateAndShare::Application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
 
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_options = { from: 'no-replay@dosomething.org' }
+
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # TODO - ONCE WE HAVE A SSL CERTIFICATE ON PRODUCTION TURN THIS BACK ON TO SECURE SESSIONS INFO
   # config.force_ssl = true

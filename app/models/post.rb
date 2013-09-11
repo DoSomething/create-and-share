@@ -34,6 +34,7 @@ class Post < ActiveRecord::Base
   belongs_to :user, foreign_key: 'uid', primary_key: 'uid'
   belongs_to :school, primary_key: 'gsid'
 
+  has_many :votes, as: :voteable
   acts_as_voteable
 
   # Make sure we're not attempting to save a school when it doesn't ask for one
@@ -41,6 +42,13 @@ class Post < ActiveRecord::Base
     if !is_school_campaign? && self.school_id
       self.school_id = nil
     end
+  end
+
+  def self.vote_count
+    Vote.where(voteable_id: self.all.map(&:id)).count
+  end
+  def self.share_count
+    Share.where(post_id: self.all.map(&:id)).count
   end
 
   # See if the current campaign is a school campaign

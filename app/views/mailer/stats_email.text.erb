@@ -1,0 +1,7 @@
+Here are your stats for Fed Up on <%= Time.now.to_date.strftime('%b %d, %Y') %>:
+
+* <b><%= @stats[:report_backs] %></b> report backs
+* <b><%= @stats[:votes] %></b> votes
+* Average <b><%= (@stats[:votes] / @stats[:report_backs]) %></b> votes per post
+* <b><%= @stats[:shares] %></b> shares
+* <b><%= @stats[:sign_ups] %></b> sign ups

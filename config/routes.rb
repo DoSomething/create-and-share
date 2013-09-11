@@ -23,6 +23,7 @@ CreateAndShare::Application.routes.draw do
       end
 
       collection do
+        get 'stats_email'
         post 'autoimg'
         get 'school_lookup'
         get 'uid_lookup'

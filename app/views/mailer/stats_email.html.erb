@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <p>Here are your stats for Fed Up on <%= Time.now.to_date.strftime('%b %d, %Y') %>:</p>
+    <ul>
+      <li><b><%= @stats[:report_backs] %></b> report backs</li>
+      <li><b><%= @stats[:votes] %></b> votes</li>
+      <li>Average <b><%= (@stats[:votes] / @stats[:report_backs]) %></b> votes per post</li>
+      <li><b><%= @stats[:shares] %></b> shares</li>
+      <li><b><%= @stats[:sign_ups] %></b> sign ups</li>
+    </ul>
+  </body>
+</html>
