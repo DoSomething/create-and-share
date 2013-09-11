@@ -8,6 +8,6 @@ class Mailer < ActionMailer::Base
       shares: shares
     }
 
-    mail(to: 'mchittenden@dosomething.org', subject: 'Fed Up Stats ' + Time.now.to_date.strftime('%b %d, %Y'))
+    mail(to: 'mchittenden@dosomething.org,fsheikh@dosomething.org,jcusano@dosomething.org', subject: 'Fed Up Stats ' + Time.now.to_date.strftime('%b %d, %Y'))
   end
 end
