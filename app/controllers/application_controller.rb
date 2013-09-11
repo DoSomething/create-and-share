@@ -15,7 +15,9 @@ class ApplicationController < ActionController::Base
 
   before_filter :miniprofiler
   def miniprofiler
-    Rack::MiniProfiler.authorize_request if admin?
+    unless Rails.env.production?
+      Rack::MiniProfiler.authorize_request if admin?
+    end
   end
 
   # Not found message.
