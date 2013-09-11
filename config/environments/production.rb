@@ -30,7 +30,7 @@ CreateAndShare::Application.configure do
 
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.default_options = { from: 'no-replay@dosomething.org' }
+  # config.action_mailer.default_options = { from: 'no-replay@dosomething.org' }
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # TODO - ONCE WE HAVE A SSL CERTIFICATE ON PRODUCTION TURN THIS BACK ON TO SECURE SESSIONS INFO
