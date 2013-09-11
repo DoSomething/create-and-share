@@ -5,8 +5,8 @@ facebook:
 
 home:
   order:
-    - "vc DESC"
     - "posts.created_at DESC"
+    - "vc DESC"
 
 filters:
   ":state":
@@ -15,8 +15,8 @@ filters:
     where:
       "state": "state"
     order:
-      - "vc DESC"
       - "posts.created_at DESC"
+      - "vc DESC"
   "eatit":
     fields:
       - "COUNT(up.*) as upcount"
