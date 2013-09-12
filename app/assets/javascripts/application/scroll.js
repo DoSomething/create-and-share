@@ -15,9 +15,11 @@ $(document).ready(function() {
       page++;
 
       $.post('/' + campaign.path + '/posts/scroll.json', { filter: filter, type: campaign.scroll_type, page: page, last: latest }, function(response) {
-        $(response.posts).appendTo($('.post-list'));
         returned = response.returned;
         latest = response.latest;
+
+        $(response.posts).appendTo($('.post-list'));
+        $('img.lazy').lazyload();
 
         // Remove the current inview element.  Add a new one.
         $('.inview').remove();
@@ -27,7 +29,6 @@ $(document).ready(function() {
 
         $('<div></div>').addClass('inview').appendTo($('.post-list'));
 
-        $('img.lazy').lazyload();
         // Load Facebook
         load_facebook();
         set_votes();

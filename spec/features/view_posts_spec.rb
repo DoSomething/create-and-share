@@ -50,7 +50,7 @@ feature 'View posts', feature: true do
     page.should_not have_content @post2.name
   end
 
-  scenario 'User can scroll to see more posts', js:true do
+  scenario 'User can scroll to see more posts', js:true, focus: true do
     8.times do
       FactoryGirl.create(:post, campaign_id: campaign.id)
     end
