@@ -1,0 +1,19 @@
+<% cache @admin + 'posts-index-page-' + @page do %>
+  <% if !@promoted.nil? %>
+    <% @post = @promoted %>
+    <%= render 'single_post' %>
+  <% end %>
+  <% i = 0 %>
+  <% @n = 0 %>
+  <% @posts.each do |post| %>
+    <% @post = post %>
+    <%= render 'single_post' %>
+    <% if @campaign && @campaign.stat_frequency && @campaign.stat_frequency > 0 %>
+      <% i += 1 %>
+      <% if i % @campaign.stat_frequency === 0 %>
+        <% @n += 1 %>
+        <%= render 'stat' %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

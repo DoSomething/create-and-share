@@ -39,6 +39,11 @@ class PostsController < ApplicationController
     end
   end
 
+  def scroll
+    @stats = Rails.application.config.stats[@campaign.path]
+    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, (params[:filter] ? params[:filter] : 'index'), (params[:filter] != 'false'))
+  end
+
   # Automatically uploads an image for the form.
   # POST /:campaign/posts/autoimg
   def autoimg
