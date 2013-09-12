@@ -38,7 +38,11 @@ $(document).ready(function() {
         $('#next-page').hide();
         $('#edit-final-submit').show();
         $('#edit-final-submit').unbind('click').click(function() {
-          $('#new_post').submit();
+          // Only submit the form if it's valid.
+          if ($('#new_post')[0].checkValidity()) {
+            $(this).replaceWith($('<p class="submit-loading">Loading...</p>'));
+            $('#new_post').submit();
+          }
         });
       }
       if (page > 1) {

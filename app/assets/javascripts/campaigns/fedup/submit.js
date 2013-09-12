@@ -33,7 +33,7 @@ $(document).ready(function() {
     $('.first-value').addClass('primary').removeClass('secondary').removeAttr('disabled');
   });
 
-  if ($('#post_state').val() == "") {
+  if ($('#post_state').val() === "") {
     $('.post_school_id').hide();
 
     $('#post_state').change(function() {
