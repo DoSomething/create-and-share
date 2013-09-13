@@ -43,7 +43,7 @@ $(document).ready(function() {
       }
     }
 
-    if (typeof latest !== 'undefined') {
+    if (typeof latest !== 'undefined' && count >= <%= Post.per_page %>) {
       // Start the scroll load on the last post.  Leaves the perception of a faster infinite scroll.
       $('.id-' + latest).bind('inview', function(event, visible) {
         // Page + 1
@@ -55,6 +55,9 @@ $(document).ready(function() {
           load_the_scroll($elm, response);
         });
       });
+    }
+    else {
+      $('.inview').remove();
     }
   }
 

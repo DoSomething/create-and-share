@@ -13,7 +13,7 @@ class PostsController < ApplicationController
     raise 'User ' + (session[:drupal_user_id] || 0).to_s + ' is unauthorized.' unless admin?
   end
 
-  before_filter :build_stats, only: [:index, :filter, :scroll]
+  before_filter :build_stats, only: [:index, :scroll], unless: lambda { params[:filter] && params[:filter] != 'false' }
   # Ignores xsrf in favor of API keys for JSON requests.
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
 
