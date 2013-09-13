@@ -42,17 +42,20 @@ $(document).ready(function() {
         $('.inview').remove();
       }
     }
-    // Start the scroll load on the last post.  Leaves the perception of a faster infinite scroll.
-    $('.id-' + latest).bind('inview', function(event, visible) {
-      // Page + 1
-      page++;
-      var $elm = $(this);
 
-      // Load the next scroll
-      $.post('/' + campaign.path + '/posts/scroll.json', { seen: seen, filter: filter, type: campaign.scroll_type, page: page, last: latest }, function(response) {
-        load_the_scroll($elm, response);
+    if (typeof latest !== 'undefined') {
+      // Start the scroll load on the last post.  Leaves the perception of a faster infinite scroll.
+      $('.id-' + latest).bind('inview', function(event, visible) {
+        // Page + 1
+        page++;
+        var $elm = $(this);
+
+        // Load the next scroll
+        $.post('/' + campaign.path + '/posts/scroll.json', { seen: seen, filter: filter, type: campaign.scroll_type, page: page, last: latest }, function(response) {
+          load_the_scroll($elm, response);
+        });
       });
-    });
+    }
   }
 
   // Go.

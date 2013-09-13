@@ -27,28 +27,30 @@ class PostsController < ApplicationController
   end
 
   def build_stats
-    if @campaign.stat_frequency > 0
-      stats = Rails.application.config.stats[@campaign.path]
-      page = params[:page].to_i || 0
-      seen = params[:seen] || []
-      sc = stats.clone
-
-      @shown_stats = []
-
-      # Page 1
-      if page == 0
-        @shown_stats << sc.shift
-        @shown_stats << sc.sample(Post.per_page/@campaign.stat_frequency)
-      # Page 2, 4, 6 ,etc
-      elsif page % 2 == 1
-        @shown_stats = sc - seen
-      # Page 3, 5, 7, etc
-      elsif page % 2 == 0
-        @shown_stats = sc.sample(Post.per_page/@campaign.stat_frequency)
-      end
-
-      @shown_stats.flatten!
+    if @campaign.stat_frequency == 0
+      return []
     end
+
+    stats = Rails.application.config.stats[@campaign.path]
+    page = params[:page].to_i || 0
+    seen = params[:seen] || []
+    sc = stats.clone
+
+    @shown_stats = []
+
+    # Page 1
+    if page == 0
+      @shown_stats << sc.shift
+      @shown_stats << sc.sample(Post.per_page/@campaign.stat_frequency)
+    # Page 2, 4, 6 ,etc
+    elsif page % 2 == 1
+      @shown_stats = sc - seen
+    # Page 3, 5, 7, etc
+    elsif page % 2 == 0
+      @shown_stats = sc.sample(Post.per_page/@campaign.stat_frequency)
+    end
+
+    @shown_stats.flatten!
   end
 
   # GET /posts
@@ -249,7 +251,6 @@ class PostsController < ApplicationController
 
   # GET /:campaign/show/cats-NY
   def filter
-    @stats = Rails.application.config.stats[@campaign.path]
     if Rails.application.config.filters[@campaign.path].nil?
       redirect_to :root
       return
