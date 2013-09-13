@@ -1,6 +1,6 @@
 {
-	"posts": "<%=raw render(partial: 'post', formats: [:html]).gsub(/(\n|\r|\r\n|\t|\s{2,})/, '').gsub('"', '\\\\"') %>",
-	"latest": <%= (@posts.last ? @posts.last.id : 0) %>,
-	"returned": <%= @posts.length || 0 %>,
-	"die": <%= !(@posts.length > 0 && @posts.length == Post.per_page) %>
+  "posts": "<%=raw render(partial: 'post', formats: [:html]).gsub(/(\n|\r|\r\n|\t|\s{2,})/, '').gsub('"', '\\\\"') %>",
+  "latest": <%= (@posts.last ? @posts.last.id : 0) %>,
+  "returned": <%= @posts.length || 0 %>,
+  "die": <%= !(@posts.length > 0 && @posts.length == Post.per_page) %>
 }
