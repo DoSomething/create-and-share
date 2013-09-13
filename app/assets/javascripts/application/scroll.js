@@ -6,6 +6,10 @@ $(document).ready(function() {
 
   function in_view() {
     function load_the_scroll(elm, response) {
+      returned = response.returned;
+      latest = response.latest;
+      seen = response.seen;
+
       // Unbind the last, last post's ID so we don't load again and again.
       elm.unbind('inview');
 
@@ -45,10 +49,7 @@ $(document).ready(function() {
       var $elm = $(this);
 
       // Load the next scroll
-      $.post('/' + campaign.path + '/posts/scroll.json', { filter: filter, type: campaign.scroll_type, page: page, last: latest }, function(response) {
-        returned = response.returned;
-        latest = response.latest;
-
+      $.post('/' + campaign.path + '/posts/scroll.json', { seen: seen, filter: filter, type: campaign.scroll_type, page: page, last: latest }, function(response) {
         load_the_scroll($elm, response);
       });
     });

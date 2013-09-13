@@ -13,6 +13,7 @@ class PostsController < ApplicationController
     raise 'User ' + (session[:drupal_user_id] || 0).to_s + ' is unauthorized.' unless admin?
   end
 
+  before_filter :build_stats, only: [:index, :filter, :scroll]
   # Ignores xsrf in favor of API keys for JSON requests.
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
 
@@ -25,10 +26,34 @@ class PostsController < ApplicationController
     end
   end
 
+  def build_stats
+    if @campaign.stat_frequency > 0
+      stats = Rails.application.config.stats[@campaign.path]
+      page = params[:page].to_i || 0
+      seen = params[:seen] || []
+      sc = stats.clone
+
+      @shown_stats = []
+
+      # Page 1
+      if page == 0
+        @shown_stats << sc.shift
+        @shown_stats << sc.sample(Post.per_page/@campaign.stat_frequency)
+      # Page 2, 4, 6 ,etc
+      elsif page % 2 == 1
+        @shown_stats = sc - seen
+      # Page 3, 5, 7, etc
+      elsif page % 2 == 0
+        @shown_stats = sc.sample(Post.per_page/@campaign.stat_frequency)
+      end
+
+      @shown_stats.flatten!
+    end
+  end
+
   # GET /posts
   # GET /posts.json
   def index
-    @stats = Rails.application.config.stats[@campaign.path]
     @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
 
     respond_to do |format|
@@ -40,7 +65,6 @@ class PostsController < ApplicationController
   end
 
   def scroll
-    @stats = Rails.application.config.stats[@campaign.path]
     @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, (params[:filter] ? params[:filter] : 'index'), (params[:filter] != 'false'))
   end
 
