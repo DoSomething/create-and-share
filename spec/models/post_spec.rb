@@ -47,7 +47,7 @@ describe Post do
     end
 
     it 'has a per page count' do
-      Post.per_page.should == 10
+      Post.per_page.should be > 0
     end
 
     it 'should be able to count shares' do

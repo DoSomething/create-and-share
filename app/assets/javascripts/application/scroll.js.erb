@@ -1,0 +1,67 @@
+$(document).ready(function() {
+  var page = 0;     // Default page
+  var running = 10; // How many posts are currently shown
+  var done = [];
+  var loaded = [];
+
+  function in_view() {
+    function load_the_scroll(elm, response) {
+      returned = response.returned;
+      latest = response.latest;
+      seen = response.seen;
+
+      // Unbind the last, last post's ID so we don't load again and again.
+      elm.unbind('inview');
+
+      if (count <= <%= Post.per_page %>) {
+        $('.inview').remove();
+        return false;
+      }
+
+      $(response.posts).appendTo($('.post-list'));
+      $('img.lazy').lazyload();
+
+      // Remove the current inview element.  Add a new one.
+      $('.inview').remove();
+
+      // Load Facebook & Votes
+      load_facebook();
+      set_votes();
+
+      if (response.die) {
+        return false;
+      }
+
+      $('<div></div>').addClass('inview').appendTo($('.post-list'));
+      // Running count += returned count
+      running += returned;
+      // Only keep going if there are more posts to show.
+      if (running < count) {
+        in_view();
+      }
+      else {
+        $('.inview').remove();
+      }
+    }
+
+    if (typeof latest !== 'undefined' && count >= <%= Post.per_page %>) {
+      // Start the scroll load on the last post.  Leaves the perception of a faster infinite scroll.
+      $('.id-' + latest).bind('inview', function(event, visible) {
+        // Page + 1
+        page++;
+        var $elm = $(this);
+
+        // Load the next scroll
+        $.post('/' + campaign.path + '/posts/scroll.json', { seen: seen, filter: filter, type: campaign.scroll_type, page: page, last: latest }, function(response) {
+          load_the_scroll($elm, response);
+        });
+      });
+    }
+    else {
+      $('.inview').remove();
+    }
+  }
+
+  // Go.
+  in_view();
+});

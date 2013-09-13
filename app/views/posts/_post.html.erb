@@ -10,7 +10,7 @@
     <%= render 'single_post' %>
     <% if @campaign && @campaign.stat_frequency && @campaign.stat_frequency > 0 %>
       <% i += 1 %>
-      <% if i % @campaign.stat_frequency === 0 %>
+      <% if i % @campaign.stat_frequency === 0 && @shown_stats %>
         <% @n += 1 %>
         <%= render 'stat' %>
       <% end %>
