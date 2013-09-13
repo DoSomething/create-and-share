@@ -21,17 +21,17 @@ feature 'View posts', feature: true do
     it 'shows 2 tips if stat frequency is 1' do
       page.should have_css('.stat', count: 2)
     end
-    it 'shows 3 tips if stat frequency is 2, and there are 6 posts' do
+    it 'shows 2 tips if stat frequency is 2, and there are 4 posts', js: true do
       # Make a campaign with high stat frequency, and appropriate data
       very_frequent = FactoryGirl.create(:campaign, stat_frequency: 2)
       CreateAndShare::Application.config.stats = { very_frequent.path => ['This is one stat', 'This is another', 'and another', 'and another'] }
-      FactoryGirl.create_list(:post, 6, campaign_id: very_frequent.id)
+      FactoryGirl.create_list(:post, 4, campaign_id: very_frequent.id)
 
       # Visit it
       visit "/#{very_frequent.path}"
 
-      # And expect 3 stats!
-      page.should have_css('.stat', count: 3)
+      # And expect 2 stats!
+      page.should have_css('.stat', count: 2)
     end
   end
 
@@ -49,10 +49,8 @@ feature 'View posts', feature: true do
   end
 
   scenario 'User can scroll to see more posts', js:true do
-    8.times do
-      FactoryGirl.create(:post, campaign_id: campaign.id)
-    end
-    @topPost = FactoryGirl.create(:post, campaign_id: campaign.id)
+    Post.stub(:per_page).and_return(2)
+
     visit "/#{campaign.path}"
     page.should_not have_content @post1.name
     page.execute_script "window.scrollBy(0,10000)"

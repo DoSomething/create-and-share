@@ -3,5 +3,5 @@
   "latest": <%= (@posts.last ? @posts.last.id : 0) %>,
   "returned": <%= @posts.length || 0 %>,
   "seen": <%=raw @shown_stats.to_json %>,
-  "die": <%= !(@posts.length > 0) %>
+  "die": <%= !(@posts.length > 0 && @posts.length == Post.per_page) %>
 }

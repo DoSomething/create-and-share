@@ -13,7 +13,7 @@ $(document).ready(function() {
       // Unbind the last, last post's ID so we don't load again and again.
       elm.unbind('inview');
 
-      if (count <= 10) {
+      if (count <= <%= Post.per_page %>) {
         $('.inview').remove();
         return false;
       }
