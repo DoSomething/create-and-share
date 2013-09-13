@@ -374,7 +374,7 @@ class PostsController < ApplicationController
     end
 
     campaign = Campaign.find_by_path(params[:campaign_path])
-    posts_count = campaign.posts.count
+    posts_count = campaign.posts.where(flagged: false).count
     vote_count = campaign.posts.vote_count
     share_count = campaign.posts.share_count
     users_count = User.count

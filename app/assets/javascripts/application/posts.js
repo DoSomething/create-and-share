@@ -72,19 +72,21 @@ $(function() {
       e.preventDefault();
       var type = $(this).data("type");
       var id = $(this).parent().parent().data("id");
+      var post = '.post[data-id="' + id + '"] ';
+
+      if (!campaign.allow_revoting) {
+        $(post + ' .thumbs-up, ' + post + ' .thumbs-down').addClass('shared');
+      }
+
       $.post('/' + campaign.path + '/posts/' + id + '/thumbs',
         { type: type },
         function(response) {
-          var post = '.post[data-id="' + id + '"] ';
           $(post + '.count').text(response["score"]);
           $(post + '.thumbs-up-count').text(response["up"]);
           $(post + '.thumbs-down-count').text(response["down"]);
           $(post + '.thumbs-up, ' + post + '.thumbs-down').removeClass("voted");
           if (response["color"]) {
             $(post + '.thumbs-' + type).addClass("voted");
-            if (!campaign.allow_revoting) {
-              $(post + ' .thumbs-up, ' + post + ' .thumbs-down').addClass('shared');
-            }
           }
           render_popup(response["popup"]);
       });
