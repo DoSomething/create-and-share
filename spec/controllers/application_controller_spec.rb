@@ -195,7 +195,7 @@ describe ApplicationController do
     after { remove_config(campaign.path) }
 
     it 'returns a popup template name at appropriate action count' do
-      User.any_instance.stub(:action_count).and_return(5)
+      User.any_instance.stub(:action_count).and_return(2)
       get :popup, { campaign_path: campaign.path }, session
       assigns(:popup).should eq "test"
     end
