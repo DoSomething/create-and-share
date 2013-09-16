@@ -94,9 +94,9 @@ class Post < ActiveRecord::Base
       .joins('LEFT JOIN shares ON (shares.post_id = posts.id)')
       .joins('LEFT JOIN votes ON (votes.voteable_id = posts.id)')
       .joins('LEFT JOIN schools ON (schools.gsid = posts.school_id)')
-      .includes(:school)
       .where(campaign_id: campaign.id, flagged: false)
       .group('posts.id')
+      .includes(:school)
   end
 
   # Builds the entire infinite scroll based on custom criteria, if applicable,
