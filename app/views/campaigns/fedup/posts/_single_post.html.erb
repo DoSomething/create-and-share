@@ -8,9 +8,9 @@
   <div class="story"><%=raw simple_format(@post.story).gsub(/(\r|\n|\r\n)/, '') %></div>
 
   <div class="votes">
-    <span class="thumbs-up-count-wrapper"><span class="thumbs-up-count"><%= @post.votes_for %></span></span>
-    <a href="#" class="thumbs-up<%= !@user.nil? && @user.voted_for?(@post) ? ' voted' : '' %>" data-type="up"><span class="thumb-icon"></span>EAT IT</a>
-    <span class="thumbs-down-count-wrapper"><span class="thumbs-down-count"><%= @post.votes_against %></span></span>
-    <a href="#" class="thumbs-down<%= !@user.nil? && @user.voted_against?(@post) ? ' voted' : '' %>" data-type="down"><span class="thumb-icon"></span>TOSS IT</a>
+    <span class="thumbs-up-count-wrapper"><span class="thumbs-up-count"><%= @post.thumbs_up_count %></span></span>
+    <a href="#" class="thumbs-up" data-type="up"><span class="thumb-icon"></span>EAT IT</a>
+    <span class="thumbs-down-count-wrapper"><span class="thumbs-down-count"><%= @post.thumbs_down_count %></span></span>
+    <a href="#" class="thumbs-down" data-type="down"><span class="thumb-icon"></span>TOSS IT</a>
   </div>
 </div>
