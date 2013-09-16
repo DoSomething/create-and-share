@@ -267,13 +267,16 @@ describe PostsController, :type => :controller do
 
     it 'thumbs up posts' do
       xhr :post, :thumbs, @up, session
+      @post.reload.thumbs_up_count.should eq 1
       user.voted_on?(@post).should eq true
       JSON.parse(response.body)["color"].should eq true
     end
 
     it 'thumbs down posts' do
       xhr :post, :thumbs, @down, session
+      @post.reload.thumbs_down_count.should eq 1
       user.voted_against?(@post).should eq true
+
       JSON.parse(response.body)["color"].should eq true
     end
 
