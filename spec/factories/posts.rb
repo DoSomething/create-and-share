@@ -4,6 +4,8 @@ FactoryGirl.define do
   factory :post do
     uid { build(:user).uid }
     adopted false
+    thumbs_up_count 0
+    thumbs_down_count 0
     meme_text { Faker::Lorem.sentence }
     meme_position 'bottom'
     flagged false
