@@ -306,6 +306,11 @@ class PostsController < ApplicationController
   def thumbs
     user = User.find_by_uid(session[:drupal_user_id])
     post = Post.find(params[:id])
+    if params[:type] == 'up'
+      post.increment!(:thumbs_up_count)
+    elsif params[:type] == 'down'
+      post.increment!(:thumbs_down_count)
+    end
 
     begin
       # Execute the vote

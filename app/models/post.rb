@@ -6,7 +6,7 @@ class Post < ActiveRecord::Base
     :meme_text, :meme_position,
     :crop_x, :crop_y, :crop_w, :crop_h, :crop_dim_w,
     :campaign_id, :extras, :processed_from_url,
-    :school_id, :custom_school
+    :school_id, :custom_school, :thumbs_up_count, :thumbs_down_count
 
   # Contains all custom fields for a campaign
   serialize :extras, Hash
@@ -93,8 +93,10 @@ class Post < ActiveRecord::Base
       .select('posts.*, COUNT(shares.*) AS real_share_count, COUNT(votes.id) AS vc')
       .joins('LEFT JOIN shares ON (shares.post_id = posts.id)')
       .joins('LEFT JOIN votes ON (votes.voteable_id = posts.id)')
+      .joins('LEFT JOIN schools ON (schools.gsid = posts.school_id)')
       .where(campaign_id: campaign.id, flagged: false)
       .group('posts.id')
+      .includes(:school)
   end
 
   # Builds the entire infinite scroll based on custom criteria, if applicable,
