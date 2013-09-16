@@ -309,14 +309,14 @@ describe PostsController, :type => :controller do
       end
 
       context "action count does correspond to a popup" do
-        it 'assigns "test" to popup if action count is 5' do
-          User.any_instance.stub(:action_count).and_return(5)
+        it 'assigns "test" to popup if action count is 2' do
+          User.any_instance.stub(:action_count).and_return(2)
           xhr :post, :thumbs, @up, session
           JSON.parse(response.body)["popup"].should eq "test"
         end
 
         it 'assigns a blank string if the updated action count is because of a revoked vote' do
-          User.any_instance.stub(:action_count).and_return(5)
+          User.any_instance.stub(:action_count).and_return(2)
           user.vote_for(@post)
           xhr :post, :thumbs, @up, session
           JSON.parse(response.body)["popup"].should be_blank
@@ -356,8 +356,8 @@ describe PostsController, :type => :controller do
       end
 
       context "action count does correspond to a popup" do
-        it 'assigns "test" to popup if action count is 5' do
-          User.any_instance.stub(:action_count).and_return(5)
+        it 'assigns "test" to popup if action count is 2' do
+          User.any_instance.stub(:action_count).and_return(2)
           xhr :post, :share, @params, session
           JSON.parse(response.body)["popup"].should eq "test"
         end

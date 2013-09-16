@@ -1,0 +1,7 @@
+{
+  "posts": "<%=raw render(partial: 'post', formats: [:html]).gsub(/(\n|\r|\r\n|\t|\s{2,})/, '').gsub('"', '\\\\"') %>",
+  "latest": <%= (@posts.last ? @posts.last.id : 0) %>,
+  "returned": <%= @posts.length || 0 %>,
+  "seen": <%=raw @shown_stats.to_json %>,
+  "die": <%= !(@posts.length > 0 && @posts.length == Post.per_page) %>
+}
