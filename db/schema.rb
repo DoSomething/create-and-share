@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130911152631) do
+ActiveRecord::Schema.define(:version => 20130916154709) do
 
   create_table "api_keys", :force => true do |t|
     t.string   "key"
@@ -87,6 +87,8 @@ ActiveRecord::Schema.define(:version => 20130911152631) do
     t.text     "extras"
     t.integer  "school_id",          :limit => 8
     t.string   "custom_school"
+    t.integer  "thumbs_up_count",                 :default => 0
+    t.integer  "thumbs_down_count",               :default => 0
   end
 
   add_index "posts", ["campaign_id"], :name => "index_posts_on_campaign_id"
