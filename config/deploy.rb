@@ -35,6 +35,7 @@ namespace :deploy do
   #   run "cd #{release_path} && bundle exec rake"
   # end
   task :db do
+    run "mkdir -p #{release_path}/tmp/cache/"
     run "cd #{release_path} && bundle exec rake db:migrate"
   end
   # task :install_bundler do
