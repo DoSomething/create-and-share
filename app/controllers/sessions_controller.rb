@@ -121,7 +121,8 @@ class SessionsController < ApplicationController
           redirect_to participation_path(campaign_path: campaign.path)
         else
           source = session[:source] ||= root_path(campaign_path: campaign ? campaign.path : '')
-          session[:source] = nil
+          # Unset the session source
+          session.delete(:source)
           redirect_to source
         end
       else

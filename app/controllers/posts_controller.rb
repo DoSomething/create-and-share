@@ -1,5 +1,7 @@
 class PostsController < ApplicationController
   include Services
+  enable_esi
+  caches_action :index, :show, :filter, :scroll
 
   # Get campaign
   before_filter :get_campaign, except: [:autoimg, :edit, :update, :destroy, :flag, :thumbs]
@@ -63,13 +65,10 @@ class PostsController < ApplicationController
       format.json { render json: @posts, root: false }
       format.csv { send_data Post.as_csv }
     end
-
-    expires_in 1.hour, public: true, 'max-style' => 0
   end
 
   def scroll
     @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, (params[:filter] ? params[:filter] : 'index'), (params[:filter] != 'false'))
-    expires_in 1.hour, public: true, 'max-style' => 0
   end
 
   # Automatically uploads an image for the form.

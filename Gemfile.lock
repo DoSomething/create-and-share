@@ -74,6 +74,8 @@ GEM
     dalli (2.6.4)
     database_cleaner (1.0.1)
     diff-lcs (1.2.4)
+    easy_esi (0.3.0)
+      actionpack (>= 2)
     em-websocket (0.5.0)
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.5.3)
@@ -312,6 +314,7 @@ DEPENDENCIES
   compass-rails
   dalli
   database_cleaner
+  easy_esi
   exception_notification
   factory_girl_rails (~> 4.0)
   faker

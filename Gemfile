@@ -66,6 +66,7 @@ gem 'jquery-rails'
 
 gem 'active_model_serializers'
 gem 'exception_notification'
+gem 'easy_esi'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

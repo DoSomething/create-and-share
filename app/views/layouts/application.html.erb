@@ -45,7 +45,7 @@
 
 <% if Rails.env.development? %><%= render 'partials/debug' %><% end %>
 
-<%= render 'partials/utility_bar' %>
+<%= esi_render 'partials/utility_bar' %>
 <%= render 'partials/header' %>
 <% unless params[:controller].eql?('static_pages') || (params[:controller].eql?('posts') && params[:action].eql?('new')) %>
   <%= render 'partials/cta' %>
