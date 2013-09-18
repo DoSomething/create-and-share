@@ -72,14 +72,13 @@ img.header-pics-logo
 .cta
   background: $fu-primary
   h2
-    float: left
+    float: none
     margin: 0.5em 0 0 0
     @media all and (max-width: 750px)
-      float: none
       margin: 0
 
   .btn
-    float: right
+    float: none
     @media all and (max-width: 750px)
       float: none
       margin: 0 auto
@@ -89,6 +88,7 @@ img.header-pics-logo
 
   .section-container
     max-width: 600px
+    padding: 0 0 1em 0
     width: 98%
 
 // -------
@@ -98,7 +98,7 @@ img.header-pics-logo
   background: $fu-off-black
 
   .section-container
-    width: 545px
+    width: 625px
 
 // -----
 // POSTS
@@ -342,6 +342,21 @@ section.start, section.faq, section.posts-new
 
   .section-container
     padding: 0
+
+.official-rules
+  width: 100%
+  display: inline-block
+  text-align: center
+  text-transform: lowercase
+  color: #bbb !important
+  &:hover
+    color: lighten(#bbb, 10) !important
+
+.start .official-rules
+  margin: 1em 0 -1em
+
+.faq .official-rules
+  margin: -1em 0 1em
 
 // -------------
 // FOOTER (HELP)
