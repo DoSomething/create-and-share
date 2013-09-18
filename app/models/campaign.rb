@@ -41,7 +41,7 @@ class Campaign < ActiveRecord::Base
     is_on_login_page = (params[:controller] == 'sessions' && params[:action] == 'new')
     campaign_exists = !params[:campaign].nil?
     entire_campaign_is_gated = self.gated? 'all'
-    on_submit_page = (params[:action] == 'new' && params[:controller] == 'posts')
+    on_submit_page = (params[:action] == 'new' && params[:controller] == 'posts') || (params[:action] == 'start' && params[:controller] == 'static_pages')
     submit_page_is_gated = self.gated? 'submit'
     campaign_is_not_gated = self.gated? ''
 
