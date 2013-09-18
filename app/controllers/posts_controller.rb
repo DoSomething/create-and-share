@@ -60,14 +60,16 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.js
       format.json { render json: @posts, root: false }
       format.csv { send_data Post.as_csv }
     end
+
+    expires_in 1.hour, public: true, 'max-style' => 0
   end
 
   def scroll
     @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, (params[:filter] ? params[:filter] : 'index'), (params[:filter] != 'false'))
+    expires_in 1.hour, public: true, 'max-style' => 0
   end
 
   # Automatically uploads an image for the form.

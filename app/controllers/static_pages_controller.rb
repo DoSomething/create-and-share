@@ -3,14 +3,17 @@ class StaticPagesController < ApplicationController
 
   # GET /start
   def guide
+    expires_in 1.day, public: true, 'max-style' => 0
   end
 
   # GET /
   # This is for when the campaign closes -- static HTML for the finished gallery.
   def gallery
+    expires_in 1.day, public: true, 'max-style' => 0
   end
 
   # GET /faq
   def faq
+    expires_in 1.day, public: true, 'max-style' => 0
   end
 end

@@ -59,6 +59,7 @@ group :development, :test do
 
   gem 'better_errors'
   gem 'letter_opener'
+  gem 'quiet_assets'
 end
 
 gem 'jquery-rails'
