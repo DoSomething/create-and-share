@@ -48,7 +48,6 @@ feature 'View campaigns gated / ungated', feature: true do
     click_link @gated_submit.title
     page.should have_content 'Create and Share index page'
     click_link 'submit your pic'
-    click_link 'submit'
     page.should have_content 'you must be logged in'
   end
 end
