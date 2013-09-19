@@ -27,7 +27,7 @@ CreateAndShare::Application.routes.draw do
         post 'autoimg'
         get 'school_lookup'
         get 'uid_lookup'
-        match 'scroll', via: [:get, :post]
+        post 'scroll'
       end
     end
 
