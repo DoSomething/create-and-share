@@ -67,8 +67,9 @@ $(document).ready(function() {
   function get_counts() {
     $.post('/' + campaign.path + '/posts/get_counts.json', { post_ids: post_ids }, function(response) {
       for (i in response) {
-        $('.id-' + i).find('.thumbs-up-count').text(response[i][0]);
-        $('.id-' + i).find('.thumbs-down-count').text(response[i][1]);
+        $('.id-' + i).find('.thumbs-up-count').text(response[i]['tu']);
+        $('.id-' + i).find('.thumbs-down-count').text(response[i]['td']);
+        $('.id-' + i).find('.share-count').text(response[i]['sc']);
       }
     });
   }
