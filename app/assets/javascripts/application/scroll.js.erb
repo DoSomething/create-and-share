@@ -9,6 +9,7 @@ $(document).ready(function() {
       returned = response.returned;
       latest = response.latest;
       seen = response.seen;
+      post_ids = response.post_ids;
 
       // Unbind the last, last post's ID so we don't load again and again.
       elm.unbind('inview');
@@ -64,8 +65,11 @@ $(document).ready(function() {
   }
 
   function get_counts() {
-    $.post('/' + campaign.path + '/posts/get_counts.json', { post_ids: these_posts }, function(response) {
-      console.log(response);
+    $.post('/' + campaign.path + '/posts/get_counts.json', { post_ids: post_ids }, function(response) {
+      for (i in response) {
+        $('.id-' + i).find('.thumbs-up-count').text(response[i][0]);
+        $('.id-' + i).find('.thumbs-down-count').text(response[i][1]);
+      }
     });
   }
 

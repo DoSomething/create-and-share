@@ -403,7 +403,7 @@ class PostsController < ApplicationController
   end
 
   def get_counts
-    @posts = Post.where(id: params[:posts].split(','), campaign_id: @campaign.id)
+    @posts = Post.select('thumbs_up_count, thumbs_down_count').where(id: params[:post_ids], campaign_id: @campaign.id)
 
     inj = @posts.inject({}) do |result, post|
       result[post.id] = [post.thumbs_up_count, post.thumbs_down_count]
