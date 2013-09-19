@@ -54,6 +54,7 @@ $(document).ready(function() {
         // Load the next scroll
         $.post('/' + campaign.path + '/posts/scroll.json', { seen: seen, filter: filter, type: campaign.scroll_type, page: page, last: latest }, function(response) {
           load_the_scroll($elm, response);
+          get_counts();
         });
       });
     }
@@ -62,6 +63,13 @@ $(document).ready(function() {
     }
   }
 
+  function get_counts() {
+    $.post('/' + campaign.path + '/posts/get_counts.json', { post_ids: these_posts }, function(response) {
+      console.log(response);
+    });
+  }
+
   // Go.
   in_view();
+  get_counts();
 });

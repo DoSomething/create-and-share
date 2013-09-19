@@ -28,6 +28,7 @@ CreateAndShare::Application.routes.draw do
         get 'school_lookup'
         get 'uid_lookup'
         post 'scroll'
+        match 'get_counts', via: [:get, :post]
       end
     end
 
