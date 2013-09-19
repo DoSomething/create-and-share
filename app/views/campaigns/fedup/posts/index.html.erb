@@ -1,6 +1,7 @@
 <% cache @admin + 'posts-index-home' do %>
   <% Rails.cache.remember 'views/' + @admin + 'posts-index-home' %>
   <% Rails.cache.remember 'views/' + @admin.gsub('admin-', '') + 'posts-index-home' %>
+  <% Rails.cache.remember 'views/' + request.original_url.gsub(/https?\:\/\//, '') %>
   <script type="text/javascript">
   <!--
     var count = <%= @count %>;

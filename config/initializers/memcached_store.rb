@@ -10,7 +10,7 @@ Rails.cache.class_eval do
   end
 
   # destroys all stored keys.
-  def destroy_all(request)
+  def destroy_all
     all_keys = Rails.cache.read 'all-caches'
     all_keys ||= []
 
@@ -18,6 +18,5 @@ Rails.cache.class_eval do
       Rails.cache.delete key
     end
     Rails.cache.delete 'all-caches'
-    Rails.cache.delete 'views/' + request[:url]
   end
 end

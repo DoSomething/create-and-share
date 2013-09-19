@@ -1,7 +1,7 @@
 class PostsController < ApplicationController
   include Services
   enable_esi
-  caches_action :index, :show, :filter, :scroll
+  caches_action :index, :show, :filter
 
   # Get campaign
   before_filter :get_campaign, except: [:autoimg, :edit, :update, :destroy, :flag, :thumbs]
