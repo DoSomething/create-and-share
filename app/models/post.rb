@@ -493,7 +493,13 @@ class Post < ActiveRecord::Base
   # Clears cache after a new post.
   after_save :touch_cache
   def touch_cache
-    Rails.cache.destroy_all
+    url = if Rails.env.production?
+      'fedup.dosomething.org/' + self.campaign.path
+    else
+      'localhost:3000/' + self.campaign.path
+    end
+
+    Rails.cache.destroy_all({ url: url })
   end
 
   after_create :send_thx_email
