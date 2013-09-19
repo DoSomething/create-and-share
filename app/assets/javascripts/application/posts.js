@@ -90,17 +90,21 @@ $(function() {
           }
           render_popup(response["popup"]);
       });
-    }).mouseover(function() {
-      var type = $(this).data("type");
-      var id = $(this).parent().parent().data("id");
-      var post = '.post[data-id="' + id + '"] ';
-      $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "visible" });
-    }).mouseout(function() {
-      var type = $(this).data("type");
-      var id = $(this).parent().parent().data("id");
-      var post = '.post[data-id="' + id + '"] ';
-      $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "hidden" });
     });
+
+    if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
+      $('.thumbs-up, .thumbs-down').mouseover(function() {
+        var type = $(this).data("type");
+        var id = $(this).parent().parent().data("id");
+        var post = '.post[data-id="' + id + '"] ';
+        $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "visible" });
+      }).mouseout(function() {
+        var type = $(this).data("type");
+        var id = $(this).parent().parent().data("id");
+        var post = '.post[data-id="' + id + '"] ';
+        $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "hidden" });
+      });
+    }
 
     if (!campaign.allow_revoting) {
       if (typeof campaign.votes === 'object') {
