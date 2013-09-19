@@ -172,6 +172,7 @@ class Post < ActiveRecord::Base
       end
 
       Rails.cache.remember prefix + 'posts-' + state + '-promoted'
+      Rails.cache.remember prefix.gsub('admin-', '') + 'posts-' + state + '-promoted'
     else
       promoted = nil
     end
@@ -189,6 +190,7 @@ class Post < ActiveRecord::Base
         end
 
         Rails.cache.remember prefix + 'posts-' + state + '-before-' + params[:last]
+        Rails.cache.remember prefix.gsub('admin-', '') + 'posts-' + state + '-before-' + params[:last]
       else
         # Otherwise we can do the scroll the proper way
         cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
@@ -200,6 +202,7 @@ class Post < ActiveRecord::Base
         end
 
         Rails.cache.remember prefix + 'posts-' + state + '-before-' + params[:last]
+        Rails.cache.remember prefix.gsub('admin-', '') + 'posts-' + state + '-before-' + params[:last]
       end
     # Otherwise we're on the front page.
     else
@@ -212,6 +215,7 @@ class Post < ActiveRecord::Base
       end
 
       Rails.cache.remember prefix + 'posts-' + state
+      Rails.cache.remember prefix.gsub('admin-', '') + 'posts-' + state
 
       # Get totals for this campaign
       if !filtered
@@ -222,6 +226,7 @@ class Post < ActiveRecord::Base
         end
 
         Rails.cache.remember prefix + 'posts-' + state + '-count'
+        Rails.cache.remember prefix.gsub('admin-', '') + 'posts-' + state + '-count'
       else
         total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
           self
@@ -231,6 +236,7 @@ class Post < ActiveRecord::Base
         end
 
         Rails.cache.remember prefix + 'posts-' + state + '-count'
+        Rails.cache.remember prefix.gsub('admin-', '') + 'posts-' + state + '-count'
       end
     end
 

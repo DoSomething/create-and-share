@@ -13,8 +13,10 @@ Rails.cache.class_eval do
   def destroy_all
     all_keys = Rails.cache.read 'all-caches'
     all_keys ||= []
+
     all_keys.each do |key|
       Rails.cache.delete key
     end
+    Rails.cache.delete 'all-caches'
   end
 end
