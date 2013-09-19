@@ -476,7 +476,10 @@ class Post < ActiveRecord::Base
   after_save :touch_cache
   def touch_cache
     # We need to clear all caches -- Every cache depends on the one before it.
-    Rails.cache.clear
+    Rails.cache.delete 'admin-' + self.campaign_id.to_s + '-index-posts-index-home'
+    Rails.cache.delete self.campaign_id.to_s + '-index-posts-index-home'
+    Rails.cache.delete 'views/admin-' + self.campaign_id.to_s + '-index-posts-index-home'
+    Rails.cache.delete 'views/' + self.campaign_id.to_s + '-index-posts-index-home'
   end
 
   after_create :send_thx_email

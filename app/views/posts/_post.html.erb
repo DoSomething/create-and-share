@@ -1,4 +1,4 @@
-<% cache @admin + 'posts-index-page-' + @page do %>
+<%# cache @admin + 'posts-index-page-' + @page do %>
   <% if !@promoted.nil? %>
     <% @post = @promoted %>
     <%= render 'single_post' %>
@@ -16,4 +16,4 @@
       <% end %>
     <% end %>
   <% end %>
-<% end %>
+<%# end %>
