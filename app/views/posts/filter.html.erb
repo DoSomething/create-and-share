@@ -1,19 +1,20 @@
 <% cache @admin + '-' + @filter + '-home' do %>
-<script type="text/javascript">
-<!--
-	var count = <%= @count %>;
-	var latest = '<%= @last %>';
-	var filter = '<%= @filter %>';
-	var seen = <%=raw @shown_stats.to_json %>;
--->
-</script>
+  <%# store_cache @admin + '-' + @filter + '-home' %>
+  <script type="text/javascript">
+  <!--
+    var count = <%= @count %>;
+    var latest = '<%= @last %>';
+    var filter = '<%= @filter %>';
+    var seen = <%=raw @shown_stats.to_json %>;
+  -->
+  </script>
 
-<div class="post-list posts">
-<% if @posts.length > 0 %>
-<%=raw render('filter_posts').gsub(/\n/, '') %>
-<div class="inview"></div>
-<% else %>
-<%= render 'not_found' %>
-<% end %>
-</div>
+  <div class="post-list posts">
+    <% if @posts.length > 0 %>
+      <%=raw render('filter_posts').gsub(/\n/, '') %>
+      <div class="inview"></div>
+    <% else %>
+      <%= render 'not_found' %>
+    <% end %>
+  </div>
 <% end %>

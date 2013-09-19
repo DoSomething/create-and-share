@@ -170,6 +170,8 @@ class Post < ActiveRecord::Base
           .all
           .first
       end
+
+      Rails.cache.remember prefix + 'posts-' + state + '-promoted'
     else
       promoted = nil
     end
@@ -185,6 +187,8 @@ class Post < ActiveRecord::Base
             .limit(self.per_page)
             .all
         end
+
+        Rails.cache.remember prefix + 'posts-' + state + '-before-' + params[:last]
       else
         # Otherwise we can do the scroll the proper way
         cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
@@ -194,6 +198,8 @@ class Post < ActiveRecord::Base
             .limit(self.per_page)
             .all
         end
+
+        Rails.cache.remember prefix + 'posts-' + state + '-before-' + params[:last]
       end
     # Otherwise we're on the front page.
     else
@@ -205,6 +211,8 @@ class Post < ActiveRecord::Base
           .all
       end
 
+      Rails.cache.remember prefix + 'posts-' + state
+
       # Get totals for this campaign
       if !filtered
         total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
@@ -212,6 +220,8 @@ class Post < ActiveRecord::Base
             .where(flagged: false, campaign_id: campaign.id)
             .count
         end
+
+        Rails.cache.remember prefix + 'posts-' + state + '-count'
       else
         total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
           self
@@ -219,6 +229,8 @@ class Post < ActiveRecord::Base
             .filtered(params)
             .count
         end
+
+        Rails.cache.remember prefix + 'posts-' + state + '-count'
       end
     end
 
@@ -475,11 +487,7 @@ class Post < ActiveRecord::Base
   # Clears cache after a new post.
   after_save :touch_cache
   def touch_cache
-    # We need to clear all caches -- Every cache depends on the one before it.
-    Rails.cache.delete 'admin-' + self.campaign_id.to_s + '-index-posts-index-home'
-    Rails.cache.delete self.campaign_id.to_s + '-index-posts-index-home'
-    Rails.cache.delete 'views/admin-' + self.campaign_id.to_s + '-index-posts-index-home'
-    Rails.cache.delete 'views/' + self.campaign_id.to_s + '-index-posts-index-home'
+    Rails.cache.destroy_all
   end
 
   after_create :send_thx_email

@@ -1,25 +1,26 @@
 <% cache @admin + 'posts-index-home' do %>
-<script type="text/javascript">
-<!--
-  var count = <%= @count %>;
-  var latest = <%= @last %>;
-  var filter = false;
-  var seen = <%=raw @shown_stats.to_json %>;
--->
-</script>
+  <%# store_cache @admin + 'posts-index-home' %>
+  <script type="text/javascript">
+  <!--
+    var count = <%= @count %>;
+    var latest = <%= @last %>;
+    var filter = false;
+    var seen = <%=raw @shown_stats.to_json %>;
+  -->
+  </script>
 
-<section class="posts">
-  <div class="section-container">
-    <h2>Vote 'Eat It' or 'Toss It' on school lunch pics.</h2>
-    <p>Each vote helps show us the true state of school lunch in the US.  <%= link_to 'Find out', faq_path %> what we'll do with the info here.  Want to advocate for better lunch in your cafeteria? <%= link_to 'Download our guide here', 'http://www.dosomething.org/files/campaigns/fedup/FedUp_ActionGuide.pdf' %>.</p>
-    <div class="post-list">
-      <% if @posts.length > 0 %>
-        <%=raw render('post').gsub(/\n/, '') %>
-        <div class="inview"></div>
-      <% else %>
-        <%= render 'not_found' %>
-      <% end %>
+  <section class="posts">
+    <div class="section-container">
+      <h2>Vote 'Eat It' or 'Toss It' on school lunch pics.</h2>
+      <p>Each vote helps show us the true state of school lunch in the US.  <%= link_to 'Find out', faq_path %> what we'll do with the info here.  Want to advocate for better lunch in your cafeteria? <%= link_to 'Download our guide here', 'http://www.dosomething.org/files/campaigns/fedup/FedUp_ActionGuide.pdf' %>.</p>
+      <div class="post-list">
+        <% if @posts.length > 0 %>
+          <%=raw render('post').gsub(/\n/, '') %>
+          <div class="inview"></div>
+        <% else %>
+          <%= render 'not_found' %>
+        <% end %>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 <% end %>
