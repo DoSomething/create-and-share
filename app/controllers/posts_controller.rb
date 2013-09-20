@@ -412,7 +412,7 @@ class PostsController < ApplicationController
       result[post.id] = {
         tu: post.thumbs_up_count,
         td: post.thumbs_down_count,
-        sc: post.share_count
+        sc: post.share_count || 0
       }
       result
     end
