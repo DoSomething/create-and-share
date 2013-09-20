@@ -9,6 +9,7 @@ $(document).ready(function() {
       returned = response.returned;
       latest = response.latest;
       seen = response.seen;
+      post_ids = response.post_ids;
 
       // Unbind the last, last post's ID so we don't load again and again.
       elm.unbind('inview');
@@ -54,6 +55,7 @@ $(document).ready(function() {
         // Load the next scroll
         $.post('/' + campaign.path + '/posts/scroll.json', { seen: seen, filter: filter, type: campaign.scroll_type, page: page, last: latest }, function(response) {
           load_the_scroll($elm, response);
+          get_counts();
         });
       });
     }
@@ -62,6 +64,19 @@ $(document).ready(function() {
     }
   }
 
+  function get_counts() {
+    $.post('/' + campaign.path + '/posts/get_counts.json', { post_ids: post_ids }, function(response) {
+      for (i in response) {
+        $('.id-' + i).find('.thumbs-up-count').text(response[i]['tu']);
+        $('.id-' + i).find('.thumbs-down-count').text(response[i]['td']);
+        $('.id-' + i).find('.share-count').text(response[i]['sc']);
+      }
+    });
+  }
+
   // Go.
   in_view();
+  if (typeof post_ids !== 'undefined') {
+    get_counts();
+  }
 });

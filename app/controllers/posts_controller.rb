@@ -402,6 +402,24 @@ class PostsController < ApplicationController
     render json: @posts, root: false, response: 200
   end
 
+  def get_counts
+    @posts = Post
+      .select('id, thumbs_up_count, thumbs_down_count, share_count')
+      .where(id: params[:post_ids], campaign_id: @campaign.id)
+      .all
+
+    inj = @posts.inject({}) do |result, post|
+      result[post.id] = {
+        tu: post.thumbs_up_count,
+        td: post.thumbs_down_count,
+        sc: post.share_count || 0
+      }
+      result
+    end
+
+    render json: inj, root: false, response: 200
+  end
+
   def stats_email
     unless ApiKey.find_by_key(params[:key])
       redirect_to root_path
