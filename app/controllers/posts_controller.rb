@@ -58,9 +58,10 @@ class PostsController < ApplicationController
   def index
     @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
 
+    expires_in 1.day, public: true, 'max-style' => 0
+
     respond_to do |format|
-      format.html # index.html.erb
-      format.js
+      format.html
       format.json { render json: @posts, root: false }
       format.csv { send_data Post.as_csv }
     end
