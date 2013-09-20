@@ -404,7 +404,7 @@ class PostsController < ApplicationController
 
   def get_counts
     @posts = Post
-      .select('id, thumbs_up_count, thumbs_down_count')
+      .select('id, thumbs_up_count, thumbs_down_count, share_count')
       .where(id: params[:post_ids], campaign_id: @campaign.id)
       .all
 
@@ -412,7 +412,7 @@ class PostsController < ApplicationController
       result[post.id] = {
         tu: post.thumbs_up_count,
         td: post.thumbs_down_count,
-        sc: post.shares.count
+        sc: post.share_count
       }
       result
     end
