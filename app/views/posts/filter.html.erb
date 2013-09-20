@@ -1,10 +1,11 @@
 <% cache @admin + '-' + @filter + '-home' do %>
 <script type="text/javascript">
 <!--
-	var count = <%= @count %>;
-	var latest = '<%= @last %>';
-	var filter = '<%= @filter %>';
-	var seen = <%=raw @shown_stats.to_json %>;
+  var count = <%= @count %>;
+  var latest = '<%= @last %>';
+  var filter = '<%= @filter %>';
+  var seen = <%=raw @shown_stats.to_json %>;
+  var post_ids = <%= raw @posts.map(&:id).to_json %>;
 -->
 </script>
 
