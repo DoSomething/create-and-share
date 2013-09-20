@@ -76,5 +76,7 @@ $(document).ready(function() {
 
   // Go.
   in_view();
-  get_counts();
+  if (typeof post_ids !== 'undefined') {
+    get_counts();
+  }
 });
