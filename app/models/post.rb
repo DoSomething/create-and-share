@@ -473,7 +473,7 @@ class Post < ActiveRecord::Base
   end
 
   # Clears cache after a new post.
-  after_save :touch_cache
+  after_create :touch_cache
   def touch_cache
     # We need to clear all caches -- Every cache depends on the one before it.
     Rails.cache.clear
