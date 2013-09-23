@@ -226,6 +226,7 @@ class PostsController < ApplicationController
   def flag
     # Mark this post as flagged
     Post.find(params[:id]).update_attribute(:flagged, true)
+    Rails.cache.clear
 
     redirect_to request.env['HTTP_REFERER']
   end
