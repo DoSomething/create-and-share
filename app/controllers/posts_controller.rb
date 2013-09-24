@@ -58,7 +58,7 @@ class PostsController < ApplicationController
   def index
     @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
 
-    expires_in 1.day, public: true, 'max-style' => 0
+    expires_in 1.hour, public: true, 'max-style' => 0
 
     respond_to do |format|
       format.html
@@ -269,7 +269,7 @@ class PostsController < ApplicationController
       return
     end
 
-    expires_in 1.day, public: true, 'max-style' => 0
+    expires_in 1.hour, public: true, 'max-style' => 0
 
     respond_to do |format|
       format.html # index.html.erb
