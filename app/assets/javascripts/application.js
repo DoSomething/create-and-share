@@ -13,6 +13,7 @@
 //= require jquery
 // require jquery.turbolinks
 //= require jquery_ujs
+//= require load_page
 //= require jquery.ui.autocomplete
 //= require_tree ./application
 //= require jquery.inview.js

@@ -7,6 +7,8 @@ class SessionsController < ApplicationController
   before_filter :is_authenticated, :only => :new
   layout 'gate'
 
+  skip_before_filter :verify_authenticity_token, if: lambda { |p| params[:action] == 'get_auth_bar' }
+
   def new
     @source = session[:source]
   end
@@ -96,6 +98,10 @@ class SessionsController < ApplicationController
   def destroy
     reset_session
     redirect_to root_path(:campaign_path => '')
+  end
+
+  def get_auth_bar
+    @session = session
   end
 
   private
