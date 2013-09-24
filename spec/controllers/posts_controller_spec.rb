@@ -280,52 +280,54 @@ describe PostsController, :type => :controller do
       JSON.parse(response.body)["color"].should eq true
     end
 
-    describe "already voted" do
-      before :each do
-        user.vote_for(@post)
-      end
+    # Killed 9/24/13 -- Not used in Fed Up
+    # describe "already voted" do
+    #   before :each do
+    #     user.vote_for(@post)
+    #   end
 
-      it 'unvotes if already voted for the same type' do
-        xhr :post, :thumbs, @up, session
-        user.voted_on?(@post).should eq false
-        JSON.parse(response.body)["color"].should eq false
-      end
+    #   
+    #   it 'unvotes if already voted for the same type' do
+    #     xhr :post, :thumbs, @up, session
+    #     user.voted_on?(@post).should eq false
+    #     JSON.parse(response.body)["color"].should eq false
+    #   end
 
-      it 'changes vote if already voted for the other type' do
-        xhr :post, :thumbs, @down, session
-        user.voted_for?(@post).should eq false
-        user.voted_against?(@post).should eq true
-        JSON.parse(response.body)["color"].should eq true
-      end
-    end
+    #   it 'changes vote if already voted for the other type' do
+    #     xhr :post, :thumbs, @down, session
+    #     user.voted_for?(@post).should eq false
+    #     user.voted_against?(@post).should eq true
+    #     JSON.parse(response.body)["color"].should eq true
+    #   end
+    # end
 
-    describe "popups" do
-      before { add_config(campaign.path) }
-      after { remove_config(campaign.path) }
+    # describe "popups" do
+    #   before { add_config(campaign.path) }
+    #   after { remove_config(campaign.path) }
       
-      context "action count does not correspond to a popup" do
-        it 'assigns a blank string to popup' do
-          User.any_instance.stub(:action_count).and_return(0)
-          xhr :post, :thumbs, @up, session
-          JSON.parse(response.body)["popup"].should be_blank
-        end
-      end
+    #   context "action count does not correspond to a popup" do
+    #     it 'assigns a blank string to popup' do
+    #       User.any_instance.stub(:action_count).and_return(0)
+    #       xhr :post, :thumbs, @up, session
+    #       JSON.parse(response.body)["popup"].should be_blank
+    #     end
+    #   end
 
-      context "action count does correspond to a popup" do
-        it 'assigns "test" to popup if action count is 2' do
-          User.any_instance.stub(:action_count).and_return(2)
-          xhr :post, :thumbs, @up, session
-          JSON.parse(response.body)["popup"].should eq "test"
-        end
+    #   context "action count does correspond to a popup" do
+    #     it 'assigns "test" to popup if action count is 2' do
+    #       User.any_instance.stub(:action_count).and_return(2)
+    #       xhr :post, :thumbs, @up, session
+    #       JSON.parse(response.body)["popup"].should eq "test"
+    #     end
 
-        it 'assigns a blank string if the updated action count is because of a revoked vote' do
-          User.any_instance.stub(:action_count).and_return(2)
-          user.vote_for(@post)
-          xhr :post, :thumbs, @up, session
-          JSON.parse(response.body)["popup"].should be_blank
-        end
-      end
-    end
+    #     it 'assigns a blank string if the updated action count is because of a revoked vote' do
+    #       User.any_instance.stub(:action_count).and_return(2)
+    #       user.vote_for(@post)
+    #       xhr :post, :thumbs, @up, session
+    #       JSON.parse(response.body)["popup"].should be_blank
+    #     end
+    #   end
+    # end
   end
 
   describe 'sharing' do
@@ -346,25 +348,25 @@ describe PostsController, :type => :controller do
       end
     end
 
-    describe "popups" do
-      before { add_config(campaign.path) }
-      after { remove_config(campaign.path) }
+    # describe "popups" do
+    #   before { add_config(campaign.path) }
+    #   after { remove_config(campaign.path) }
 
-      context "action count does not correspond to a popup" do
-        it 'assigns a blank string to popup' do
-          User.any_instance.stub(:action_count).and_return(0)
-          xhr :post, :share, @params, session
-          JSON.parse(response.body)["popup"].should be_blank
-        end
-      end
+    #   context "action count does not correspond to a popup" do
+    #     it 'assigns a blank string to popup' do
+    #       User.any_instance.stub(:action_count).and_return(0)
+    #       xhr :post, :share, @params, session
+    #       JSON.parse(response.body)["popup"].should be_blank
+    #     end
+    #   end
 
-      context "action count does correspond to a popup" do
-        it 'assigns "test" to popup if action count is 2' do
-          User.any_instance.stub(:action_count).and_return(2)
-          xhr :post, :share, @params, session
-          JSON.parse(response.body)["popup"].should eq "test"
-        end
-      end
-    end
+    #   context "action count does correspond to a popup" do
+    #     it 'assigns "test" to popup if action count is 2' do
+    #       User.any_instance.stub(:action_count).and_return(2)
+    #       xhr :post, :share, @params, session
+    #       JSON.parse(response.body)["popup"].should eq "test"
+    #     end
+    #   end
+    # end
   end
 end

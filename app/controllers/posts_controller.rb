@@ -15,7 +15,7 @@ class PostsController < ApplicationController
 
   before_filter :build_stats, only: [:index, :scroll], unless: lambda { params[:filter] && !params[:filter].empty? }
   # Ignores xsrf in favor of API keys for JSON requests.
-  skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
+  skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' || ['thumbs', 'share'].include?(params[:action]) }
 
   # Shows the static (closed) gallery when a campaign is finished, or not started yet.
   def campaign_closed
@@ -58,9 +58,10 @@ class PostsController < ApplicationController
   def index
     @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
 
+    expires_in 1.day, public: true, 'max-style' => 0
+
     respond_to do |format|
-      format.html # index.html.erb
-      format.js
+      format.html
       format.json { render json: @posts, root: false }
       format.csv { send_data Post.as_csv }
     end
@@ -113,6 +114,8 @@ class PostsController < ApplicationController
       redirect_to root_path
       return
     end
+
+    expires_in 1.year, public: true, 'max-style' => 0
 
     respond_to do |format|
       format.html # show.html.erb
@@ -266,6 +269,8 @@ class PostsController < ApplicationController
       return
     end
 
+    expires_in 1.day, public: true, 'max-style' => 0
+
     respond_to do |format|
       format.html # index.html.erb
       format.js
@@ -305,6 +310,10 @@ class PostsController < ApplicationController
 
   # POST /:campaign/posts/1/thumbs
   def thumbs
+    # unless session[:drupal_user_id] > 0
+    #   render json: { message: "You must be logged in to do that." }, status: 401
+    # end
+
     user = User.find_by_uid(session[:drupal_user_id])
     post = Post.find(params[:id])
     if params[:type] == 'up'
@@ -321,8 +330,8 @@ class PostsController < ApplicationController
     end
 
     score = post.plusminus
-    up = post.votes_for
-    down = post.votes_against
+    up = post.thumbs_up_count
+    down = post.thumbs_down_count
 
     popup = color ? get_popup : ""
 
