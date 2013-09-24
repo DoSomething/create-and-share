@@ -67,7 +67,7 @@ class PostsController < ApplicationController
   end
 
   def scroll
-    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, (params[:filter] ? params[:filter] : 'index'), (params[:filter] != 'false'))
+    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, (!params[:filter].empty? ? params[:filter] : 'index'), !params[:filter].empty?)
   end
 
   # Automatically uploads an image for the form.
