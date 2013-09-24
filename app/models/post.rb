@@ -236,6 +236,8 @@ class Post < ActiveRecord::Base
   # @param [Object] params
   #   The parameters from the controller action, as passed through get_scroll, above.
   def self.filtered(params)
+    return self if params[:action] == 'index'
+
     # Get filters for the current campaign.
     Rails.application.config.filters[params[:campaign_path]].each do |route, config|
       ret = route
