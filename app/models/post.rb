@@ -90,9 +90,7 @@ class Post < ActiveRecord::Base
   # Sets up the basic infinite scroll query.
   def self.build_post(campaign)
     self
-      .select('posts.*, COUNT(shares.*) AS real_share_count, COUNT(votes.id) AS vc')
-      .joins('LEFT JOIN shares ON (shares.post_id = posts.id)')
-      .joins('LEFT JOIN votes ON (votes.voteable_id = posts.id)')
+      .select('(posts.thumbs_up_count + posts.thumbs_down_count) AS vc')
       .joins('LEFT JOIN schools ON (schools.gsid = posts.school_id)')
       .where(campaign_id: campaign.id, flagged: false)
       .group('posts.id')
