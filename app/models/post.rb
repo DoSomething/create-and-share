@@ -90,7 +90,7 @@ class Post < ActiveRecord::Base
   # Sets up the basic infinite scroll query.
   def self.build_post(campaign)
     self
-      .select('(posts.thumbs_up_count + posts.thumbs_down_count) AS vc')
+      .select('posts.*, (posts.thumbs_up_count + posts.thumbs_down_count) AS vc')
       .joins('LEFT JOIN schools ON (schools.gsid = posts.school_id)')
       .where(campaign_id: campaign.id, flagged: false)
       .group('posts.id')
@@ -310,7 +310,7 @@ class Post < ActiveRecord::Base
     #   fields:
     #     - "COUNT(up.*) as upcount"
     unless fields.nil?
-      results = results.select('posts.*')
+      results = results
       fields.each do |f|
         results = results.select(f)
       end
