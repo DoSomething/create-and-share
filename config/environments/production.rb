@@ -9,6 +9,7 @@ CreateAndShare::Application.configure do
   config.action_controller.perform_caching = true
   config.cache_store = :dalli_store, 'localhost:11211'
 
+  config.static_cache_control = "public, max-age=86400"
   # Disable Rails's static asset server (Apache or nginx will already do this)
   config.serve_static_assets = true
 
@@ -52,7 +53,7 @@ CreateAndShare::Application.configure do
   # config.action_controller.asset_host = "http://assets.example.com"
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
-  config.assets.precompile += ['html5.js', 'gate.js', 'gate.css', 'admin/admin.css', 'admin.js', 'jquery.Jcrop.min.css', 'jquery.Jcrop.min.js']
+  config.assets.precompile += ['html5.js', 'gate.js', 'gate.css', 'admin/admin.css', 'admin.js', 'jquery.Jcrop.min.css', 'jquery.Jcrop.min.js', 'facebook.png']
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false

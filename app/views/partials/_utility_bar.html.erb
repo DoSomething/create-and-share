@@ -1,12 +1,3 @@
 <section class="utility-bar">
-  <% if Rails.env.development? %><%= link_to 'debug', '#', { :id => 'debug' } %><% end %>
-  <% if authenticated? %>
-    <%= link_to 'log out', logout_path(:campaign_path => @campaign.path) || '/logout', { :class => 'logout', 'data-no-turbolink' => true } %>
-  <% else %>
-    <%= link_to 'log in', login_path(:campaign_path => @campaign.path) || '/login', { :class => 'logout' } %>
-  <% end %>
-  <%= link_to 'faq', faq_path(:campaign_path => @campaign.path), { :class => 'faq' } %>
-  <% if admin? %>
-    <%= link_to 'edit this campaign', edit_campaign_path(@campaign.id) %>
-  <% end %>
+
 </section>
