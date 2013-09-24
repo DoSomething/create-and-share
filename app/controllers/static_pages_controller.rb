@@ -13,9 +13,4 @@ class StaticPagesController < ApplicationController
   # GET /faq
   def faq
   end
-
-  def auth_bar
-    expires_now
-    render partial: 'partials/auth_bar', layout: false
-  end
 end
