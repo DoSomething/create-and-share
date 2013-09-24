@@ -1,5 +1,5 @@
 function admin_tools() {
-  $.post('/' + campaign.path + '/is-admin.json', {}, function(response) {
+  $.post('/' + campaign.path + '/is-admin.json?' + (new Date()).getTime(), {}, function(response) {
     if (response.is_admin === true) {
       $('.flag-container').html(response.tools);
       $('.flag-container').each(function() {
@@ -12,7 +12,7 @@ function admin_tools() {
 
 $(document).ready(function() {
   if (typeof campaign !== 'undefined') {
-    $.post('/' + campaign.path + '/auth-bar.json', {}, function(response) {
+    $.post('/' + campaign.path + '/auth-bar.json?' + (new Date()).getTime(), {}, function(response) {
       $('.utility-bar').html(response.response);
       user.id = response.uid;
       user.votes = response.votes;
