@@ -5,6 +5,7 @@
   var latest = <%= @last %>;
   var filter = null;
   var seen = <%=raw @shown_stats.to_json %>;
+  var post_ids = <%= raw @posts.map(&:id).to_json %>;
 -->
 </script>
 
