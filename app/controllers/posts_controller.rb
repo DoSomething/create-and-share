@@ -13,7 +13,7 @@ class PostsController < ApplicationController
     raise 'User ' + (session[:drupal_user_id] || 0).to_s + ' is unauthorized.' unless admin?
   end
 
-  before_filter :build_stats, only: [:index, :scroll], unless: lambda { params[:filter] && params[:filter] != 'false' }
+  before_filter :build_stats, only: [:index, :scroll], unless: lambda { params[:filter] && !params[:filter].empty? }
   # Ignores xsrf in favor of API keys for JSON requests.
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
 
@@ -68,7 +68,7 @@ class PostsController < ApplicationController
   end
 
   def scroll
-    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, (params[:filter] ? params[:filter] : 'index'), (params[:filter] != 'false'))
+    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
   end
 
   # Automatically uploads an image for the form.
@@ -227,6 +227,7 @@ class PostsController < ApplicationController
   def flag
     # Mark this post as flagged
     Post.find(params[:id]).update_attribute(:flagged, true)
+    Rails.cache.clear
 
     redirect_to request.env['HTTP_REFERER']
   end

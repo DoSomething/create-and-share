@@ -1,9 +1,14 @@
 $(document).ready(function() {
   var $mobile = false;
+  var $old_ie = false;
 
   (function() {
     if(/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
       $mobile = true;
+    }
+
+    if (navigator.userAgent.match(/MSIE [1-9]\.0/i)) {
+      $old_ie = true;
     }
   })();
 
@@ -247,48 +252,50 @@ $(document).ready(function() {
 
   //respond when someone picks a new image
   $('#post_image').change(function() {
-    $('#post_meme_text').val("");
-    $(".text-pos").hide();
-    $("#preview-img-container").remove();
+    if (!$old_ie) {
+      $('#post_meme_text').val("");
+      $(".text-pos").hide();
+      $("#preview-img-container").remove();
 
-    //make sure we don't try to crop a nonexistent photo
-    if ($(this).val() !== "") {
-      var file_data = $("#post_image").prop("files")[0];
-      if (!file_data.type.match(/image\/(p?jpeg|gif|(x-)?png)/)) {
-        $('#image_error').show();
-        return false;
-      }
-
-      $('#upload-preview span.text').hide();
-      $('#upload-preview').addClass('loading');
-
-      $('#upload-preview span').hide();
-      $('#upload-preview').addClass('loading');
-      var form_data = new FormData();
-      form_data.append("file", file_data);
-      $.ajax({
-        url: "/" + campaign.path + "/posts/autoimg",
-        dataType: 'script',
-        cache: false,
-        contentType: false,
-        processData: false,
-        data: form_data,
-        type: 'post',
-        complete: function(response) {
-          res = $.parseJSON(response.responseText);
-          if (res.success === true) {
-            //if (!$mobile) {
-              crop_upload(res.filename);
-            //}
-            //else {
-            //  change_upload(res.filename, 450, 450);
-            //}
-          }
-          else {
-            $('#image_error').text(res.reason).show();
-          }
+      //make sure we don't try to crop a nonexistent photo
+      if ($(this).val() !== "") {
+        var file_data = $("#post_image").prop("files")[0];
+        if (!file_data.type.match(/image\/(p?jpeg|gif|(x-)?png)/)) {
+          $('#image_error').show();
+          return false;
         }
-      });
+
+        $('#upload-preview span.text').hide();
+        $('#upload-preview').addClass('loading');
+
+        $('#upload-preview span').hide();
+        $('#upload-preview').addClass('loading');
+        var form_data = new FormData();
+        form_data.append("file", file_data);
+        $.ajax({
+          url: "/" + campaign.path + "/posts/autoimg",
+          dataType: 'script',
+          cache: false,
+          contentType: false,
+          processData: false,
+          data: form_data,
+          type: 'post',
+          complete: function(response) {
+            res = $.parseJSON(response.responseText);
+            if (res.success === true) {
+              //if (!$mobile) {
+                crop_upload(res.filename);
+              //}
+              //else {
+              //  change_upload(res.filename, 450, 450);
+              //}
+            }
+            else {
+              $('#image_error').text(res.reason).show();
+            }
+          }
+        });
+      }
     }
     else {
       $('#form-item-meme-text, #form-item-meme-position, #top_text, #bottom_text').hide();

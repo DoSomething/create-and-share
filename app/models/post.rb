@@ -84,7 +84,7 @@ class Post < ActiveRecord::Base
 
   # The number of elements to show per "page" in the infinite scroll.
   def self.per_page
-    11
+    16
   end
 
   # Sets up the basic infinite scroll query.
@@ -236,6 +236,8 @@ class Post < ActiveRecord::Base
   # @param [Object] params
   #   The parameters from the controller action, as passed through get_scroll, above.
   def self.filtered(params)
+    return self if params[:action] == 'index'
+
     # Get filters for the current campaign.
     Rails.application.config.filters[params[:campaign_path]].each do |route, config|
       ret = route
