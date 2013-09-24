@@ -269,6 +269,8 @@ class PostsController < ApplicationController
       return
     end
 
+    expires_in 1.day, public: true, 'max-style' => 0
+
     respond_to do |format|
       format.html # index.html.erb
       format.js
@@ -308,6 +310,10 @@ class PostsController < ApplicationController
 
   # POST /:campaign/posts/1/thumbs
   def thumbs
+    # unless session[:drupal_user_id] > 0
+    #   render json: { message: "You must be logged in to do that." }, status: 401
+    # end
+
     user = User.find_by_uid(session[:drupal_user_id])
     post = Post.find(params[:id])
     if params[:type] == 'up'
