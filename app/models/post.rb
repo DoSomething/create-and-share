@@ -84,7 +84,7 @@ class Post < ActiveRecord::Base
 
   # The number of elements to show per "page" in the infinite scroll.
   def self.per_page
-    11
+    16
   end
 
   # Sets up the basic infinite scroll query.

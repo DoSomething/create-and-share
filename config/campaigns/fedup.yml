@@ -60,14 +60,19 @@ popups:
   # 5: "test"
 
 stats:
-  - 'There are lots of ways to make change in your cafeteria.  Download <a href="http://www.dosomething.org/files/campaigns/fedup/FedUp_ActionGuide.pdf" target="_blank">the advocacy kit</a> to find out more.'
+  - 'There are lots of ways to make change in your cafeteria. Download <a href="http://www.dosomething.org/files/campaigns/fedup/FedUp_ActionGuide.pdf" target="_blank">the advocacy kit</a> to find out more.'
   - 'Check out the <a href="http://www.dosomething.org/files/campaigns/fedup/Lunch_Line.pdf" target="_blank">history of school lunch</a> to find out why your tray looks the way it does.'
-  - "Most school lunch decisions are made on a local level - that means your school district decides what you eat."
-  - "Ask your lunch lady if foods that are fried can be baked next time."
-  - "Ask a cafeteria staff member how often food is delivered to school (if it's delivered more often, it's likely fresher!)"
-  - "Is there variety in the produce your cafeteria serves? As long as you get 2-5 cups, your school can serve any fruit or veggie they want."
-  - "Juices high in sugar make you tired - your school can provide water or milk instead to help keep your energy up."
-  - "Grab some green stickers and stick 'em on the fresh foods in your cafeteria line."
-  - "Buying local produce can actually be less expensive than what your school currently buys.  Many farmers markets will provide reduced rates for schools."
-  - "Almost 50% of American students are eligible for free or reduced lunch."
-  - "64% of schools prepare only a quarter of their entrees from scratch - that means prepackaged stuff is the majority of what students eat."
+  - 'Most school lunch decisions are made on a local level - email your school district leader to ask questions about your cafeteria'
+  - 'Ask your lunch lady if foods that are fried can be baked next time'
+  - 'Ask a cafeteria staff member how often food is delivered to school (if its delivered more often, its likely fresher!)'
+  - 'Is there variety with fruits and vegetables? As long as you get 2-5 cups, you can ask your school to change up the types of produce they serve!'
+  - 'Juices high in sugar make you tired - ask your school to provide water or milk instead to help keep your energy up'
+  - 'Grab some green stickers and stick &lsquo;em on the fresh foods in your cafeteria line'
+  - 'Many farmers markets will provide reduced rates for schools. Ask your nutrition manager if they’ve spoken to farms in your community.'
+  - 'Almost 50% of American students are eligible for free or reduced lunch. Ask your principal how many students in your school qualify.'
+  - '64% of schools prepare only a quarter of their entrees from scratch - that means prepackaged stuff is the majority of what students eat. Ask your cafeteria worker what on your tray was made from scratch.'
+  - 'Is the fruit on your tray fresh or canned? Ask your cafeteria worker if they can always provide fresh fruit options'
+  - 'Prefer your veggies fresh instead of cooked? Talk to your nutrition manager to keep vegetables raw instead of cooked.'
+  - 'Is your pizza the size of your face? Ask for a smaller piece if you think you might not eat it all.'
+  - 'Is your salad a measly pile of lettuce? Ask your cafeteria server to pile up the veggies!'
+  - 'Is your school&rsquo;s idea of vegetables a bag of potato chips? Ask for the veggies you want instead!'
