@@ -330,8 +330,8 @@ class PostsController < ApplicationController
     end
 
     score = post.plusminus
-    up = post.votes_for
-    down = post.votes_against
+    up = post.thumbs_up_count
+    down = post.thumbs_down_count
 
     popup = color ? get_popup : ""
 
