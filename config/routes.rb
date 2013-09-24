@@ -15,6 +15,7 @@ CreateAndShare::Application.routes.draw do
   scope ':campaign_path', constraints: lambda { |params| Campaign.where(:path => params[:campaign_path]).count > 0 } do
     root to: 'posts#index'
     match 'auth-bar', to: 'sessions#get_auth_bar'
+    match 'is-admin', to: 'sessions#is_admin'
 
     resources :posts do
       member do

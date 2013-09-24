@@ -104,6 +104,10 @@ class SessionsController < ApplicationController
     @session = session
   end
 
+  def is_admin
+    @session = session
+  end
+
   private
     # attempts to log in user and creates a new entry in the rails database if one doesn't exist already
     #

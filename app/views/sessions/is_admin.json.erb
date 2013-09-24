@@ -1,0 +1,4 @@
+{
+  "is_admin": <%= admin?.to_json %>,
+  "tools": <%=raw render(partial: 'partials/admin_tools', formats: [:html]).gsub(/\r|\n|\r\n|\t|\s{2,}/, '').to_json %>
+}
