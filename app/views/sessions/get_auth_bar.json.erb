@@ -1,0 +1,5 @@
+{
+  "response": <%=raw render(partial: 'partials/auth_bar', formats: [:html]).to_json.gsub(/(\r|\n|\r\n|\t|\s{2,})/, '') %>,
+  "uid": <%=raw (@session[:drupal_user_id] || 0).to_json %>,
+  "votes": <%=raw get_votes.to_json %>
+}

@@ -15,7 +15,7 @@ class PostsController < ApplicationController
 
   before_filter :build_stats, only: [:index, :scroll], unless: lambda { params[:filter] && !params[:filter].empty? }
   # Ignores xsrf in favor of API keys for JSON requests.
-  skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
+  skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' || params[:action] == 'thumbs' }
 
   # Shows the static (closed) gallery when a campaign is finished, or not started yet.
   def campaign_closed
@@ -114,6 +114,8 @@ class PostsController < ApplicationController
       redirect_to root_path
       return
     end
+
+    expires_in 1.year, public: true, 'max-style' => 0
 
     respond_to do |format|
       format.html # show.html.erb

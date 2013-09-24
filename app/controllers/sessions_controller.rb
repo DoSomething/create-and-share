@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
   before_filter :is_authenticated, :only => :new
   layout 'gate'
 
-  skip_before_filter :verify_authenticity_token, if: lambda { |p| params[:action] == 'get_session_bar' }
+  skip_before_filter :verify_authenticity_token, if: lambda { |p| params[:action] == 'get_auth_bar' }
 
   def new
     @source = session[:source]
@@ -100,8 +100,8 @@ class SessionsController < ApplicationController
     redirect_to root_path(:campaign_path => '')
   end
 
-  def get_session_bar
-    render partial: 'partials/auth_bar', layout: false
+  def get_auth_bar
+    @session = session
   end
 
   private
