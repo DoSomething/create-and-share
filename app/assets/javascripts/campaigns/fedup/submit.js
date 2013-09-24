@@ -1,4 +1,9 @@
 $(document).ready(function() {
+  // Upload preview don't work in IE <= 9.  So hide the box.
+  if (navigator.userAgent.match(/MSIE [1-9]\.0/i)) {
+    $('#upload-preview').hide();
+  }
+
   $('#post_school_id').autocomplete({
     source: function(request, response) {
       $.ajax({

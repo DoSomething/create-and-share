@@ -114,11 +114,19 @@ class User < ActiveRecord::Base
     if !self.email.nil? && email.match(/\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i)
       if !campaign.mailchimp.nil?
         logger.info "Sending mailchimp (#{campaign.mailchimp}) email to (#{self.email})"
-        Services::MailChimp.subscribe(self.email, campaign.mailchimp)
+        begin
+          Services::MailChimp.subscribe(self.email, campaign.mailchimp)
+        rescue
+          # MailChimp sometimes throws an exception here.  There's not much we can do about it.
+        end
       end
       if !campaign.email_signup.nil?
         logger.info "Sending mandrill (#{campaign.email_signup}) email to (#{self.email})"
-        Services::Mandrill.mail(campaign.lead, campaign.lead_email, self.email, campaign.email_signup)
+        begin
+          Services::Mandrill.mail(campaign.lead, campaign.lead_email, self.email, campaign.email_signup)
+        rescue
+          # Mandrill sometimes throws an exception here.  There's not much we can do about it.
+        end
       end
     end
 
