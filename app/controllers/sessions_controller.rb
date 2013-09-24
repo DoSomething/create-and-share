@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
   before_filter :is_authenticated, :only => :new
   layout 'gate'
 
-  skip_before_filter :verify_authenticity_token, if: lambda { |p| params[:action] == 'get_auth_bar' }
+  skip_before_filter :verify_authenticity_token, if: lambda { |p| ['get_auth_bar', 'is_admin'].include?(params[:action]) }
 
   def new
     @source = session[:source]
