@@ -27,7 +27,8 @@
   <script type="text/javascript">
   <!--
     var user = {
-      id: '<%= session[:drupal_user_id] || 0 %>',
+      id: 0,
+      votes: [],
     };
     var campaign = {
       title: '<%= campaign.title %>',
@@ -35,7 +36,6 @@
       facebook: <%=raw facebook.to_json %>,
       share_type: '<%= campaign.facebook %>',
       allow_revoting: <%= campaign.allow_revoting %>,
-      votes: <%= get_votes %>,
       scroll_type: '<%= filters && !filters['order'].nil? ? 'custom' : 'default' %>',
     };
   -->

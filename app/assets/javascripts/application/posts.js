@@ -107,10 +107,10 @@ $(function() {
     }
 
     if (!campaign.allow_revoting) {
-      if (typeof campaign.votes === 'object') {
-        for (var i in campaign.votes) {
-          $('.id-' + campaign.votes[i] + ' .thumbs-up').addClass('shared');
-          $('.id-' + campaign.votes[i] + ' .thumbs-down').addClass('shared');
+      if (typeof user.votes === 'object') {
+        for (var i in user.votes) {
+          $('.id-' + user.votes[i] + ' .thumbs-up').addClass('shared');
+          $('.id-' + user.votes[i] + ' .thumbs-down').addClass('shared');
         }
       }
     }
@@ -119,7 +119,7 @@ $(function() {
   $(document).ready(function() {
     if (typeof campaign !== 'undefined') {
       $('img.lazy').lazyload();
-      set_votes();
+      // set_votes();
     }
   });
 });
