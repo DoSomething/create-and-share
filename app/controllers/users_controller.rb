@@ -18,7 +18,11 @@ class UsersController < ApplicationController
   end
 
   def participation
-    render :status => :forbidden unless authenticated?
+    unless authenticated?
+      flash[:error] = "Oops! Something went wrong.  Please try logging in again."
+      redirect_to login_path
+      return
+    end
 
     account, participated = Rails.cache.fetch 'user-' + session[:drupal_user_id].to_s + '-participated-in-' + @campaign.id.to_s do
       user = User.find_by_uid(session[:drupal_user_id])
