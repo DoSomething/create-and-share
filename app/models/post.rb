@@ -158,19 +158,7 @@ class Post < ActiveRecord::Base
     end
 
     # If we're NOT on a filtered page, we likely have a promoted post to show.
-    if !filtered
-      promoted = Rails.cache.fetch prefix + 'posts-' + state + '-promoted' do
-        self
-          .build_post(campaign)
-          .where(:promoted => true)
-          .order('RANDOM()')
-          .limit(1)
-          .all
-          .first
-      end
-    else
-      promoted = nil
-    end
+    promoted = nil
 
     # If we're on a "page" of the infinite scroll...
     if !params[:last].nil?
@@ -476,7 +464,7 @@ class Post < ActiveRecord::Base
   after_create :touch_cache
   def touch_cache
     # We need to clear all caches -- Every cache depends on the one before it.
-    Rails.cache.clear
+    # Rails.cache.clear
   end
 
   after_create :send_thx_email
