@@ -1,4 +1,5 @@
 function admin_tools() {
+  console.log("RUnning...");
   $.post('/' + campaign.path + '/is-admin.json?' + (new Date()).getTime(), {}, function(response) {
     if (response.is_admin === true) {
       $('.flag-container').html(response.tools);
@@ -12,6 +13,7 @@ function admin_tools() {
 
 $(document).ready(function() {
   if (typeof campaign !== 'undefined') {
+    console.log("Loading...");
     $.post('/' + campaign.path + '/auth-bar.json?' + (new Date()).getTime(), {}, function(response) {
       $('.utility-bar').html(response.response);
       user.id = response.uid;

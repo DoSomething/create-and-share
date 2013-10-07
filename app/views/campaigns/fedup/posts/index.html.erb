@@ -1,14 +1,3 @@
-<% cache @admin + 'posts-index-home' do %>
-<script type="text/javascript">
-<!--
-  var count = <%= @count %>;
-  var latest = <%= @last %>;
-  var filter = null;
-  var seen = <%=raw @shown_stats.to_json %>;
-  var post_ids = <%= raw @posts.map(&:id).to_json %>;
--->
-</script>
-
 <section class="posts">
   <div class="section-container">
     <h2>Vote 'Eat It' or 'Toss It' on school lunch pics.</h2>
@@ -23,4 +12,3 @@
     </div>
   </div>
 </section>
-<% end %>

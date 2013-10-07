@@ -53,12 +53,26 @@ class PostsController < ApplicationController
     @shown_stats.flatten!
   end
 
+  def get_posts(offset, count)
+    posts = Rails.cache.read 'first-posts'
+    posts = posts.slice(offset..count)
+    posts.map! do |item|
+      result = Rails.cache.fetch 'post-' + item.to_s do
+        Post.find(item)
+      end
+
+      result
+    end
+
+    posts
+  end
+
   # GET /posts
   # GET /posts.json
   def index
-    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
-
-    expires_in 1.hour, public: true, 'max-style' => 0
+    @posts = get_posts(0, 10)
+    #@promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
+    #expires_in 1.hour, public: true, 'max-style' => 0
 
     respond_to do |format|
       format.html

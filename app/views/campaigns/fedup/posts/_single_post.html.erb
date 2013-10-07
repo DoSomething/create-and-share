@@ -4,7 +4,6 @@
   <% if @post.promoted %><div class="promoted-container"><%= link_to 'promoted', '/featured', :class => 'promoted-badge'  %></div><% end %>
   <div class="image-container"><%= image_tag 'blank.gif', 'data-original' => @post.image(:gallery), :alt => @post.name + ' from ' + @post.state, :class => 'lazy' %></div>
   <div class="name-loc"><%= link_to show_post_path(@post, :campaign_path => params[:campaign_path]) do %><span class="name"><%= @post.name %></span><% end %></div>
-  <% if @post.school || @post.custom_school %><div class="school"><%= (@post.school ? @post.school.title + ', ' + @post.school.state : @post.custom_school + ', ' + @post.state) %></div><% end %>
   <div class="story"><%=raw simple_format(@post.story).gsub(/(\r|\n|\r\n)/, '') %></div>
 
   <div class="votes">

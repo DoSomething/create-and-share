@@ -55,6 +55,7 @@ $(document).ready(function() {
 
         // Load the next scroll
         $.post('/' + campaign.path + '/posts/scroll.json', { seen: seen, filter: filter, type: campaign.scroll_type, page: page, last: latest }, function(response) {
+          console.log(response);
           load_the_scroll($elm, response);
           get_counts();
         });
