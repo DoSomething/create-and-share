@@ -17,5 +17,10 @@
         <%= render 'not_found' %>
       <% end %>
     </div>
+
+    <div id="pagination">
+      <span><%= link_to(raw("Next Page &raquo;"), { page: ((params[:page] || 1).to_i + 1) }, id: 'next-page') %></span>
+      <span><% unless params[:page] == 1 || params[:page].nil? %><%= link_to(raw("&laquo; Previous Page"), { page: ((params[:page] || 2).to_i - 1) }, id: 'prev-page') %><% end %></span>
+    </div>
   </div>
 </section>

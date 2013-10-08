@@ -15,6 +15,7 @@ $(document).ready(function() {
       elm.unbind('inview');
 
       if (count <= <%= Post.per_page %>) {
+        $('#pagination').show();
         $('.inview').remove();
         return false;
       }
@@ -31,6 +32,7 @@ $(document).ready(function() {
       admin_tools();
 
       if (response.die) {
+        $('#pagination').show();
         return false;
       }
 
@@ -42,6 +44,7 @@ $(document).ready(function() {
         in_view();
       }
       else {
+        $('#pagination').show();
         $('.inview').remove();
       }
     }
