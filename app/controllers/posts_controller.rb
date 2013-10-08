@@ -89,8 +89,6 @@ class PostsController < ApplicationController
       @posts = Rails.cache.fetch 'index-posts' do
         get_posts(0, Post.per_page)
       end
-    else
-      @posts = Post.where(flagged: false, campaign_id: @campaign.id).offset(((params[:page].to_i - 1) * Post.per_page)).limit(Post.per_page)
     end
 
     @filter = 'index'
@@ -99,6 +97,16 @@ class PostsController < ApplicationController
       format.html
       format.json { render json: @posts, root: false }
     end
+  end
+
+  def page
+    if params[:page] == "1"
+      redirect_to root_path
+      return
+    end
+
+    @posts = Post.where(flagged: false, campaign_id: @campaign.id).order('created_at DESC').offset(((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page)).limit(Post.per_page)
+    render :index
   end
 
   def scroll

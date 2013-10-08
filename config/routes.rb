@@ -43,7 +43,7 @@ CreateAndShare::Application.routes.draw do
     get 'gallery',      to: 'static_pages#gallery', as: :gallery
     get 'start',        to: 'static_pages#start', as: :start
 
-    get 'page/:page', to: 'posts#index', as: :page
+    get 'page/:page', to: 'posts#page', constraints: { page: /[0-9]+/ }, as: :page
 
     # User pages
     get 'submit/guide', to: 'users#intent', as: :intent
