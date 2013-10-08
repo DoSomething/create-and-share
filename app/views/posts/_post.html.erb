@@ -1,5 +1,7 @@
 <% i = 0 %>
 <% @n = 0 %>
+
+<% cache [@campaign.path, @posts.first.id.to_s] do %>
 <% @posts.each do |post| %>
   <% @post = post %>
   <%= render 'single_post' %>
@@ -10,4 +12,5 @@
       <%= render 'stat' %>
     <% end %>
   <% end %>
+<% end %>
 <% end %>
