@@ -70,7 +70,11 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
-    @posts = get_posts(0, 10)
+    @posts = Rails.cache.fetch 'index-posts' do
+      get_posts(0, 10)
+    end
+
+    @filter = 'index'
     #@promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
     #expires_in 1.hour, public: true, 'max-style' => 0
 

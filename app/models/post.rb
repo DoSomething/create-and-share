@@ -463,8 +463,14 @@ class Post < ActiveRecord::Base
   # Clears cache after a new post.
   after_create :touch_cache
   def touch_cache
-    # We need to clear all caches -- Every cache depends on the one before it.
-    # Rails.cache.clear
+    # Basic queueing for the home page.
+    list = Rails.cache.read 'first-posts'
+    list.unshift self.id
+    list.pop
+    Rails.cache.write 'first-posts', list
+
+    # Delete the index-posts cache, which holds the original post-list
+    Rails.cache.delete 'index-posts'
   end
 
   after_create :send_thx_email
