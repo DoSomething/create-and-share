@@ -85,8 +85,12 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
-    @posts = Rails.cache.fetch 'index-posts' do
-      get_posts(0, Post.per_page)
+    unless params[:page] && params[:page].to_i > 1
+      @posts = Rails.cache.fetch 'index-posts' do
+        get_posts(0, Post.per_page)
+      end
+    else
+      @posts = Post.where(flagged: false, campaign_id: @campaign.id).offset(((params[:page].to_i - 1) * Post.per_page)).limit(Post.per_page)
     end
 
     @filter = 'index'
