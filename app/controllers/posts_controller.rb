@@ -105,7 +105,14 @@ class PostsController < ApplicationController
       return
     end
 
-    @posts = Post.where(flagged: false, campaign_id: @campaign.id).order('created_at DESC').offset(((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page)).limit(Post.per_page)
+    @sample = Post.where(campaign_id: @campaign.id).order('posts.created_at DESC').offset((((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page))).limit(1).first
+    filter = params[:filter] || 'index'
+
+    @posts = Rails.cache.fetch filter + '-page-' + params[:page].to_s + '/' + @sample.created_at.to_i.to_s do
+      Post.where(campaign_id: @campaign.id).order('posts.created_at DESC').offset((((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page)) + 1).limit(Post.per_page)
+    end
+    @posts.unshift @sample
+
     render :index
   end
 

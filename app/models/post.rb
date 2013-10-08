@@ -16,6 +16,10 @@ class Post < ActiveRecord::Base
     :reprocessed, :crop_dim_w, :real_share_count,
     :processed_from_url
 
+  default_scope { select('posts.*') }
+  default_scope { where(flagged: false) }
+  #default_scope { joins('LEFT JOIN schools ON (schools.gsid = posts.school_id)') }
+
   validates :name,    :presence => true
   validates :city,    :format => { :with => /[A-Za-z0-9\-\_\s]+/ },
                       :allow_blank => true
@@ -473,9 +477,12 @@ class Post < ActiveRecord::Base
 
         Post.where(flagged: false).last(200).reverse.map(&:id)
       end
-      list.unshift self.id
-      list.pop
-      Rails.cache.write 'index-first-posts', list
+
+      unless list.first == self.id
+        list.unshift self.id
+        list.pop
+        Rails.cache.write 'index-first-posts', list
+      end
 
       # Delete the index-posts cache, which holds the original post-list
       Rails.cache.delete 'index-posts'
