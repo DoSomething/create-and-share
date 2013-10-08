@@ -55,18 +55,31 @@ class PostsController < ApplicationController
     @shown_stats.flatten!
   end
 
-  def get_posts(offset, count)
-    posts = Rails.cache.read 'first-posts'
-    posts = posts.slice(offset, count)
-    posts.map! do |item|
-      result = Rails.cache.fetch 'post-' + item.to_s do
-        Post.find(item)
-      end
+  def get_posts(offset, count, filter = 'index')
+    last_post = Post.last.created_at.to_i.to_s
+    posts = Rails.cache.fetch filter + '-first-posts' do
+      current_filters = Rails.cache.read 'all-first-posts'
+      current_filters ||= []
+      current_filters << filter + '-first-posts'
+      Rails.cache.write 'all-first-posts', current_filters
 
-      result
+      Post.where(flagged: false).last(200).reverse.map(&:id)
     end
 
-    posts
+    cached = Rails.cache.fetch filter + '-offset-' + offset.to_s + '-' + count.to_s + '/' + last_post do
+      posts = posts.slice(offset, count)
+      posts.map! do |item|
+        result = Rails.cache.fetch 'post-' + item.to_s do
+          Post.find(item)
+        end
+
+        result
+      end
+
+      posts
+    end
+
+    cached
   end
 
   # GET /posts
@@ -85,9 +98,7 @@ class PostsController < ApplicationController
   end
 
   def scroll
-    page = (params[:page].to_i * Post.per_page)
-    @posts = get_posts(page, Post.per_page)
-    p @posts
+    @posts = get_posts((params[:page].to_i * Post.per_page), Post.per_page)
     # @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
   end
 

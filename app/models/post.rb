@@ -464,10 +464,10 @@ class Post < ActiveRecord::Base
   after_create :touch_cache
   def touch_cache
     # Basic queueing for the home page.
-    list = Rails.cache.read 'first-posts'
+    list = Rails.cache.read 'index-first-posts'
     list.unshift self.id
     list.pop
-    Rails.cache.write 'first-posts', list
+    Rails.cache.write 'index-first-posts', list
 
     # Delete the index-posts cache, which holds the original post-list
     Rails.cache.delete 'index-posts'
