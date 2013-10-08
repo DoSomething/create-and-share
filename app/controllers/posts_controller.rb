@@ -17,6 +17,8 @@ class PostsController < ApplicationController
   # Ignores xsrf in favor of API keys for JSON requests.
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' || ['thumbs', 'share', 'flag'].include?(params[:action]) }
 
+  caches_action :index
+
   # Shows the static (closed) gallery when a campaign is finished, or not started yet.
   def campaign_closed
     now = Time.now
@@ -55,7 +57,7 @@ class PostsController < ApplicationController
 
   def get_posts(offset, count)
     posts = Rails.cache.read 'first-posts'
-    posts = posts.slice(offset..count)
+    posts = posts.slice(offset, count)
     posts.map! do |item|
       result = Rails.cache.fetch 'post-' + item.to_s do
         Post.find(item)
@@ -71,22 +73,22 @@ class PostsController < ApplicationController
   # GET /posts.json
   def index
     @posts = Rails.cache.fetch 'index-posts' do
-      get_posts(0, 10)
+      get_posts(0, Post.per_page)
     end
 
     @filter = 'index'
-    #@promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
-    #expires_in 1.hour, public: true, 'max-style' => 0
 
     respond_to do |format|
       format.html
       format.json { render json: @posts, root: false }
-      format.csv { send_data Post.as_csv }
     end
   end
 
   def scroll
-    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
+    page = (params[:page].to_i * Post.per_page)
+    @posts = get_posts(page, Post.per_page)
+    p @posts
+    # @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
   end
 
   # Automatically uploads an image for the form.
@@ -193,7 +195,7 @@ class PostsController < ApplicationController
     @post = Post.new(params[:post])
     respond_to do |format|
       if @post.save
-        format.html { redirect_to show_post_path(@post, :campaign_path => @post.campaign.path) }
+        format.html { expire_pages; redirect_to show_post_path(@post, :campaign_path => @post.campaign.path) }
         format.json { render json: @post, status: :created }
       else
         format.html { render action: "new" }
@@ -222,13 +224,17 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.update_attributes(params[:post])
-        format.html { redirect_to show_post_path(@post, :campaign_path => @post.campaign.path), notice: 'Post was successfully updated.' }
+        format.html { expire_pages; redirect_to show_post_path(@post, :campaign_path => @post.campaign.path), notice: 'Post was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
         format.json { render json: @post.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def expire_pages
+    expire_action(action: 'index', campaign_path: @campaign.path)
   end
 
   # DELETE /posts/1

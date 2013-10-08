@@ -1,6 +1,6 @@
 $(document).ready(function() {
   var page = 0;     // Default page
-  var running = 10; // How many posts are currently shown
+  var running = <%= Post.per_page %>; // How many posts are currently shown
   var done = [];
   var loaded = [];
 
@@ -54,8 +54,7 @@ $(document).ready(function() {
         var $elm = $(this);
 
         // Load the next scroll
-        $.post('/' + campaign.path + '/posts/scroll.json', { seen: seen, filter: filter, type: campaign.scroll_type, page: page, last: latest }, function(response) {
-          console.log(response);
+        $.post('/' + campaign.path + '/posts/scroll.json', { seen: seen, filter: (typeof filter !== 'undefined' ? filter : 'index'), type: campaign.scroll_type, page: page, last: latest }, function(response) {
           load_the_scroll($elm, response);
           get_counts();
         });
