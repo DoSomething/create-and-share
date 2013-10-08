@@ -43,6 +43,8 @@ CreateAndShare::Application.routes.draw do
     get 'gallery',      to: 'static_pages#gallery', as: :gallery
     get 'start',        to: 'static_pages#start', as: :start
 
+    get 'page/:page', to: 'posts#index', as: :page
+
     # User pages
     get 'submit/guide', to: 'users#intent', as: :intent
     get 'participation', to: 'users#participation', as: :participation
