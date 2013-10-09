@@ -1,17 +1,23 @@
 <script>
 <!--
   var latest = <%= @posts.last.id || 0 %>;
-  var count = 200;
+  var count = <%= (@count > 200 ? 200 : @count) %>;
   var seen = <%=raw @shown_stats.to_json %>;
   var filter = '<%= @filter %>';
 -->
 </script>
 
-<div class="post-list posts">
-  <% if @posts.length > 0 %>
-    <%=raw render('filter_posts').gsub(/\n/, '') %>
-    <div class="inview"></div>
-  <% else %>
-    <%= render 'not_found' %>
-  <% end %>
+<section class="posts">
+  <div class="post-list">
+    <% if @posts.length > 0 %>
+      <%=raw render('filter_posts').gsub(/\n/, '') %>
+      <div class="inview"></div>
+    <% else %>
+      <%= render 'not_found' %>
+    <% end %>
+  </div>
+  <div id="pagination">
+    <span><%= link_to(raw("Next Page &raquo;"), filter_page_path(campaign_path: 'fedup', page: ((params[:page] && params[:page].to_i > 0 ? params[:page].to_i : 1) + 1)), id: 'next-page') %></span>
+    <span><% if (params[:page] && params[:page].to_i > 1 && !params[:page].nil?) %><%= link_to(raw("&laquo; Previous Page"), filter_page_path(campaign_path: 'fedup', page: ((params[:page] && params[:page].to_i > 0 ? params[:page].to_i : 1) - 1)), id: 'prev-page') %><% end %></span>
+  </div>
 </div>

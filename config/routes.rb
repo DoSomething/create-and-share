@@ -58,6 +58,7 @@ CreateAndShare::Application.routes.draw do
 
     # Filters
     get 'show/:filter', to: 'posts#filter', constraints: { filter: /[A-Za-z0-9\-\_]+/ }, as: :filter
+    get 'show/:filter/page/:page', to: 'posts#page', constraints: { filter: /[A-Za-z0-9\-\_]+/ }, as: :filter_page
 
     # Individual posts
     get ':id',     to: 'posts#show', constraints: { id: /\d+/ }, as: :show_post

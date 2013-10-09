@@ -110,20 +110,29 @@ class PostsController < ApplicationController
       return
     end
 
-    @sample = Post.where(campaign_id: @campaign.id).order('posts.created_at DESC').offset((((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page))).limit(1).first
-    @filter = (params[:filter].nil? ? 'index' : params[:filter])
+    unless params[:filter]
+      @sample = Post.where(campaign_id: @campaign.id).order('posts.created_at DESC').offset((((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page))).limit(1).first
+      @filter = (params[:filter].nil? ? 'index' : params[:filter])
 
-    @posts = Rails.cache.fetch @filter + '-page-' + params[:page].to_s + '/' + @sample.created_at.to_i.to_s do
-      Post.where(campaign_id: @campaign.id).order('posts.created_at DESC').offset((((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page)) + 1).limit(Post.per_page - 1).all
+      @posts = Rails.cache.fetch @filter + '-page-' + params[:page].to_s + '/' + @sample.created_at.to_i.to_s do
+        Post.where(campaign_id: @campaign.id).order('posts.created_at DESC').offset((((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page)) + 1).limit(Post.per_page - 1).all
+      end
+      @posts.unshift @sample
+      render :index
+      return
+    else
+      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
+      render :filter
+      return
     end
-    @posts.unshift @sample
-
-    render :index
   end
 
   def scroll
-    @posts = get_posts((params[:page].to_i * Post.per_page), Post.per_page)
-    # @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
+    if params[:filter] == 'index'
+      @posts = get_posts((params[:page].to_i * Post.per_page), Post.per_page)
+    else
+      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
+    end
   end
 
   # GET /:campaign/show/cats-NY
@@ -134,7 +143,7 @@ class PostsController < ApplicationController
     end
 
     #begin
-      @posts, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, params[:filter], true)
+      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, params[:filter], true)
       @filter = params[:filter]
     # rescue => e
     #   abort "#{e.message}"
