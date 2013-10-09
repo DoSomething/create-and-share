@@ -1,7 +1,7 @@
 <script>
 <!--
-  var latest = <%= @posts.last.id || 0 %>;
-  var count = <%= (@count > 200 ? 200 : @count) %>;
+  var latest = <%= (@posts && @posts.last ? @posts.last.id : 0) %>;
+  var count = <%= ((@count && @count > 200) ? 200 : @count) %>;
   var seen = <%=raw @shown_stats.to_json %>;
   var post_ids = <%= @posts.map(&:id).to_json %>;
   var filter = '<%= @filter %>';
