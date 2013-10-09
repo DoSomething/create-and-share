@@ -164,51 +164,40 @@ class Post < ActiveRecord::Base
     # If we're NOT on a filtered page, we likely have a promoted post to show.
     promoted = nil
 
+    sample = uncached_posts
+      .offset((params[:page].to_i * self.per_page))
+      .limit(1)
+      .first
+
+    # cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] + '/' + sample.created_at.to_i.to_s do
+    #   list = uncached_posts
+    #     .offset((params[:page].to_i * self.per_page) + 1)
+    #     .limit(self.per_page - 1)
+    #     .all
+    #   list.unshift sample
+    # end
+
     # If we're on a "page" of the infinite scroll...
     if !params[:last].nil?
       # ...and we have more than one ORDER BY clause, we need to do
       # the scroll the old fashioned way
       if params[:type] == 'custom'
-        cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
-          uncached_posts
-            .offset((params[:page].to_i * self.per_page))
-            .limit(self.per_page)
+        cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] + '/' + sample.created_at.to_i.to_s do
+          list = uncached_posts
+            .offset((params[:page].to_i * self.per_page) + 1)
+            .limit(self.per_page - 1)
             .all
-        end
-      else
-        # Otherwise we can do the scroll the proper way
-        cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
-          uncached_posts
-            .where('posts.id < ?', params[:last])
-            .where('posts.id != ?', promoted ? promoted.id : 0)
-            .limit(self.per_page)
-            .all
+          list.unshift sample
         end
       end
     # Otherwise we're on the front page.
     else
-      # Get a cached version of the post query
-      limit = (promoted ? (self.per_page - 1) : self.per_page)
-      cached_posts = Rails.cache.fetch prefix + 'posts-' + state do
-        uncached_posts
-          .limit(limit)
+      cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '/' + sample.created_at.to_i.to_s do
+        list = uncached_posts
+          .offset((params[:page].to_i * self.per_page) + 1)
+          .limit(self.per_page - 1)
           .all
-      end
-
-      # Get totals for this campaign
-      if !filtered
-        total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
-          self
-            .where(flagged: false, campaign_id: campaign.id)
-            .count
-        end
-      else
-        total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
-          self
-            .where(flagged: false, campaign_id: campaign.id)
-            .filtered(params)
-            .count
-        end
+        list.unshift sample
       end
     end
 
@@ -219,7 +208,7 @@ class Post < ActiveRecord::Base
     end
     last ||= nil
 
-    [promoted, cached_posts, total, last, params[:page].to_s, prefix]
+    [cached_posts, last, params[:page].to_s, prefix]
   end
 
   # Alters the query to filter by a specific field

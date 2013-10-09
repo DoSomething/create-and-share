@@ -10,8 +10,6 @@ describe PostsController, :type => :controller do
 
   describe 'GET #index' do
     it 'shows index' do
-      FactoryGirl.create(:promo, campaign_id: campaign.id)
-
       get :index, { :campaign_path => campaign.path }, session
 
       assigns(:user).should eq user

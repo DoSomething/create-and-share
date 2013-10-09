@@ -2,7 +2,7 @@ class PostsController < ApplicationController
   include Services
 
   # Get campaign
-  before_filter :get_campaign, except: [:autoimg, :edit, :update, :destroy, :flag, :thumbs]
+  before_filter :get_campaign, except: [:get_posts, :autoimg, :edit, :update, :destroy, :flag, :thumbs]
   before_filter :get_user, only: [:index, :show, :filter, :vanity, :extras]
 
   # Before everything runs, run an authentication check and an API key check.
@@ -56,27 +56,32 @@ class PostsController < ApplicationController
   end
 
   def get_posts(offset, count, filter = 'index')
-    last_post = Post.last.created_at.to_i.to_s
-    posts = Rails.cache.fetch filter + '-first-posts' do
-      current_filters = Rails.cache.read 'all-first-posts'
-      current_filters ||= []
-      current_filters << filter + '-first-posts'
-      Rails.cache.write 'all-first-posts', current_filters
+    last_post = Post.where(campaign_id: @campaign.id)
+    unless last_post.nil? || last_post.empty?
+      last_post = last_post.last.created_at.to_i.to_s
+      posts = Rails.cache.fetch filter + '-first-posts' do
+        current_filters = Rails.cache.read 'all-first-posts'
+        current_filters ||= []
+        current_filters << filter + '-first-posts'
+        Rails.cache.write 'all-first-posts', current_filters
 
-      Post.where(flagged: false).last(200).reverse.map(&:id)
-    end
-
-    cached = Rails.cache.fetch filter + '-offset-' + offset.to_s + '-' + count.to_s + '/' + last_post do
-      posts = posts.slice(offset, count)
-      posts.map! do |item|
-        result = Rails.cache.fetch 'post-' + item.to_s do
-          Post.find(item)
-        end
-
-        result
+        Post.where(flagged: false).last(200).reverse.map(&:id)
       end
 
-      posts
+      cached = Rails.cache.fetch filter + '-offset-' + offset.to_s + '-' + count.to_s + '/' + last_post do
+        posts = posts.slice(offset, count)
+        posts.map! do |item|
+          result = Rails.cache.fetch 'post-' + item.to_s do
+            Post.find(item)
+          end
+
+          result
+        end
+
+        posts
+      end
+    else
+      cached = []
     end
 
     cached
@@ -119,6 +124,60 @@ class PostsController < ApplicationController
   def scroll
     @posts = get_posts((params[:page].to_i * Post.per_page), Post.per_page)
     # @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
+  end
+
+  # GET /:campaign/show/cats-NY
+  def filter
+    if Rails.application.config.filters[@campaign.path].nil?
+      redirect_to :root
+      return
+    end
+
+    #begin
+      @posts, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, params[:filter], true)
+      @filter = params[:filter]
+    # rescue => e
+    #   abort "#{e.message}"
+    #   logger.error("Exception: #{e.message}")
+    #   redirect_to :root
+    #   return
+    # end
+
+    # expires_in 1.hour, public: true, 'max-style' => 0
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.json { render json: @posts, root: false }
+    end
+  end
+
+  # GET /:campaign/mine
+  # GET /:campaign/featured
+  def extras
+    @stats = Rails.application.config.stats[@campaign.path]
+    
+    @result = nil
+    @where = {}
+    @real_path = params[:filter] ||= Pathname.new(request.fullpath).basename.to_s.gsub(/\.[a-z]+/, '')
+    @admin = ''
+    @page = "0"
+
+    @posts = Post.build_post(@campaign)
+    if params[:run] == 'mine'
+      @posts = @posts.where(:uid => session[:drupal_user_id]).order('created_at DESC')
+    elsif params[:run] == 'featured'
+      @posts = @posts.where(:promoted => true)
+    end
+
+    @filter = @real_path
+    @count = @posts.length
+
+    # Set up limit depending on scroll position
+    @posts = @posts.scrolly(params[:last])
+
+    @last = !@posts.last.nil? ? @posts.last.id : nil
+
+    render :index
   end
 
   # Automatically uploads an image for the form.
@@ -305,61 +364,6 @@ class PostsController < ApplicationController
     else
       render :show
     end
-  end
-
-  # GET /:campaign/show/cats-NY
-  def filter
-    if Rails.application.config.filters[@campaign.path].nil?
-      redirect_to :root
-      return
-    end
-
-    begin
-      @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, params[:filter], true)
-      @filter = params[:filter]
-    rescue => e
-      logger.error("Exception: #{e.message}")
-      redirect_to :root
-      return
-    end
-
-    expires_in 1.hour, public: true, 'max-style' => 0
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.js
-      format.json { render json: @posts, root: false }
-      format.csv { send_data Post.as_csv }
-    end
-  end
-
-  # GET /:campaign/mine
-  # GET /:campaign/featured
-  def extras
-    @stats = Rails.application.config.stats[@campaign.path]
-    
-    @result = nil
-    @where = {}
-    @real_path = params[:filter] ||= Pathname.new(request.fullpath).basename.to_s.gsub(/\.[a-z]+/, '')
-    @admin = ''
-    @page = "0"
-
-    @posts = Post.build_post(@campaign)
-    if params[:run] == 'mine'
-      @posts = @posts.where(:uid => session[:drupal_user_id]).order('created_at DESC')
-    elsif params[:run] == 'featured'
-      @posts = @posts.where(:promoted => true)
-    end
-
-    @filter = @real_path
-    @count = @posts.length
-
-    # Set up limit depending on scroll position
-    @posts = @posts.scrolly(params[:last])
-
-    @last = !@posts.last.nil? ? @posts.last.id : nil
-
-    render :index
   end
 
   # POST /:campaign/posts/1/thumbs

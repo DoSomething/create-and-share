@@ -1,20 +1,17 @@
-<% cache @admin + '-' + @filter + '-home' do %>
-<script type="text/javascript">
+<script>
 <!--
-  var count = <%= @count %>;
-  var latest = '<%= @last %>';
-  var filter = '<%= @filter %>';
+  var latest = <%= @posts.last.id || 0 %>;
+  var count = 200;
   var seen = <%=raw @shown_stats.to_json %>;
-  var post_ids = <%= raw @posts.map(&:id).to_json %>;
+  var filter = '<%= @filter %>';
 -->
 </script>
 
 <div class="post-list posts">
-<% if @posts.length > 0 %>
-<%=raw render('filter_posts').gsub(/\n/, '') %>
-<div class="inview"></div>
-<% else %>
-<%= render 'not_found' %>
-<% end %>
+  <% if @posts.length > 0 %>
+    <%=raw render('filter_posts').gsub(/\n/, '') %>
+    <div class="inview"></div>
+  <% else %>
+    <%= render 'not_found' %>
+  <% end %>
 </div>
-<% end %>
