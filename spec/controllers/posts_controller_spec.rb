@@ -84,10 +84,19 @@ describe PostsController, :type => :controller do
           response.should redirect_to show_post_path(assigns(:post), :campaign_path => campaign.path)
         end
 
-        it 'adds the post to cache' do
-          post :create, { :post => @attributes, :campaign_path => campaign.path }, session
-          cache = Rails.cache.read 'index-first-posts'
-          expect(cache).to include(Post.last.id)
+        describe 'caching' do
+          it 'adds the post to cache' do
+            post :create, { :post => @attributes, :campaign_path => campaign.path }, session
+            cache = Rails.cache.read 'index-first-posts'
+            expect(cache).to include(Post.last.id)
+          end
+
+          it 'does NOT add to cache if it is flagged' do
+            @post = FactoryGirl.create(:post, flagged: true)
+            cache = Rails.cache.read 'index-first-posts'
+            expect(cache).to_not be_empty
+            expect(cache).to_not include(@post.id)
+          end
         end
       end
 

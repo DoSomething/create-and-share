@@ -3,11 +3,6 @@ def get_posts(offset, count, filter = 'index')
   unless last_post.nil? || last_post.empty?
     last_post = last_post.last.created_at.to_i.to_s
     posts = Rails.cache.fetch filter + '-first-posts' do
-      current_filters = Rails.cache.read 'all-first-posts'
-      current_filters ||= []
-      current_filters << filter + '-first-posts'
-      Rails.cache.write 'all-first-posts', current_filters
-
       Post.where(flagged: false).last(200).reverse.map(&:id)
     end
 

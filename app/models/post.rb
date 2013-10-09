@@ -463,7 +463,7 @@ class Post < ActiveRecord::Base
   # Clears cache after a new post.
   after_create :touch_cache
   def touch_cache
-    unless self.flagged === true
+    unless self.flagged == true
       # Basic queueing for the home page.
       list = Rails.cache.fetch 'index-first-posts' do
         current_filters = Rails.cache.read 'all-first-posts'
