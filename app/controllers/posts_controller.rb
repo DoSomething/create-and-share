@@ -71,6 +71,8 @@ class PostsController < ApplicationController
             p = Rails.cache.read 'post-' + post.to_s
             if p.nil?
               get[index] = post
+            else
+              posts[index] = p
             end
           end
 
