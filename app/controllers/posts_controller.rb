@@ -13,7 +13,7 @@ class PostsController < ApplicationController
     raise 'User ' + (session[:drupal_user_id] || 0).to_s + ' is unauthorized.' unless admin?
   end
 
-  before_filter :build_stats, only: [:index, :scroll], unless: lambda { params[:filter] && !params[:filter].empty? }
+  before_filter :build_stats, only: [:index, :scroll, :page], unless: lambda { params[:filter] && !params[:filter].empty? && params[:filter] != "index" }
   # Ignores xsrf in favor of API keys for JSON requests.
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' || ['thumbs', 'share', 'flag'].include?(params[:action]) }
 
@@ -66,12 +66,9 @@ class PostsController < ApplicationController
       cached = Rails.cache.fetch filter + '-offset-' + offset.to_s + '-' + count.to_s + '/' + last_post do
         posts = posts.slice(offset, count)
         unless posts.nil?
-          posts.map! do |item|
-            result = Rails.cache.fetch 'post-' + item.to_s do
-              Post.find(item)
-            end
-
-            result
+          posts = Post.where(id: posts)
+          posts.each do |post|
+            Rails.cache.write 'post-' + post.id.to_s, post
           end
         else
           posts = []
