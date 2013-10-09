@@ -445,23 +445,13 @@ class Post < ActiveRecord::Base
     end
   end
 
-  # Allows export-as-csv
-  def self.as_csv
-    CSV.generate do |csv|
-      csv << column_names
-      all.each do |item|
-        csv << item.attributes.values_at(*column_names)
-      end
-    end
-  end
-
   # Returns the total share count for a particular post.
   def total_shares
     self.shares.count
   end
 
   # Clears cache after a new post.
-  after_create :touch_cache
+  after_create :touch_cache, :create_tags
   def touch_cache
     unless self.flagged == true
       # Basic queueing for the home page.
@@ -483,6 +473,11 @@ class Post < ActiveRecord::Base
       # Delete the index-posts cache, which holds the original post-list
       Rails.cache.delete 'index-posts'
     end
+  end
+
+  def create_tags
+    # Build all associated tags
+    Tag.create_tags(self)
   end
 
   after_create :send_thx_email

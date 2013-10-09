@@ -65,12 +65,16 @@ class PostsController < ApplicationController
 
       cached = Rails.cache.fetch filter + '-offset-' + offset.to_s + '-' + count.to_s + '/' + last_post do
         posts = posts.slice(offset, count)
-        posts.map! do |item|
-          result = Rails.cache.fetch 'post-' + item.to_s do
-            Post.find(item)
-          end
+        unless posts.nil?
+          posts.map! do |item|
+            result = Rails.cache.fetch 'post-' + item.to_s do
+              Post.find(item)
+            end
 
-          result
+            result
+          end
+        else
+          posts = []
         end
 
         posts
@@ -234,7 +238,6 @@ class PostsController < ApplicationController
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @post }
-      format.csv { send_data @post.as_csv }
     end
   end
 

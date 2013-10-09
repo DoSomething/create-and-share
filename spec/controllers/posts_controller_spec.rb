@@ -15,9 +15,16 @@ describe PostsController, :type => :controller do
       expect(get_posts(0, Post.per_page)).to eq []
     end
     describe 'if there are posts' do
-      before { FactoryGirl.create_list(:post, 2, campaign_id: campaign.id) }
+      before do
+        FactoryGirl.create_list(:post, 2, campaign_id: campaign.id)
+      end
+
       it 'returns an array of post objects' do
-        expect(get_posts(0, Post.per_page)).to eq(Post.where(campaign_id: campaign.id))
+        arr = get_posts(0, Post.per_page)
+        all_posts = Post.where(campaign_id: campaign.id)
+        all_posts.each do |post|
+          expect(arr).to include post
+        end
       end
       it 'slices for pagination' do
         expect(get_posts(1, 1)).to eq([Post.last(2).reverse.second])
