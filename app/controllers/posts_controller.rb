@@ -102,7 +102,8 @@ class PostsController < ApplicationController
 
   def page
     if params[:page] == "1"
-      redirect_to root_path
+      redirect_to root_path unless params[:filter]
+      redirect_to filter_path if params[:filter]
       return
     end
 
