@@ -16,6 +16,10 @@ class Post < ActiveRecord::Base
     :reprocessed, :crop_dim_w, :real_share_count,
     :processed_from_url
 
+  default_scope { select('posts.*') }
+  default_scope { where(flagged: false) }
+  #default_scope { joins('LEFT JOIN schools ON (schools.gsid = posts.school_id)') }
+
   validates :name,    :presence => true
   validates :city,    :format => { :with => /[A-Za-z0-9\-\_\s]+/ },
                       :allow_blank => true
@@ -158,76 +162,60 @@ class Post < ActiveRecord::Base
     end
 
     # If we're NOT on a filtered page, we likely have a promoted post to show.
-    if !filtered
-      promoted = Rails.cache.fetch prefix + 'posts-' + state + '-promoted' do
-        self
-          .build_post(campaign)
-          .where(:promoted => true)
-          .order('RANDOM()')
-          .limit(1)
-          .all
-          .first
-      end
-    else
-      promoted = nil
-    end
+    promoted = nil
 
-    # If we're on a "page" of the infinite scroll...
-    if !params[:last].nil?
-      # ...and we have more than one ORDER BY clause, we need to do
-      # the scroll the old fashioned way
-      if params[:type] == 'custom'
-        cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
-          uncached_posts
-            .offset((params[:page].to_i * self.per_page))
-            .limit(self.per_page)
-            .all
-        end
-      else
-        # Otherwise we can do the scroll the proper way
-        cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] do
-          uncached_posts
-            .where('posts.id < ?', params[:last])
-            .where('posts.id != ?', promoted ? promoted.id : 0)
-            .limit(self.per_page)
-            .all
-        end
-      end
-    # Otherwise we're on the front page.
-    else
-      # Get a cached version of the post query
-      limit = (promoted ? (self.per_page - 1) : self.per_page)
-      cached_posts = Rails.cache.fetch prefix + 'posts-' + state do
-        uncached_posts
-          .limit(limit)
-          .all
-      end
+    sample = uncached_posts
+      .offset((params[:page].to_i * self.per_page))
+      .limit(1)
+      .first
 
+    unless sample.nil?
       # Get totals for this campaign
-      if !filtered
-        total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
+      unless filtered
+        total = Rails.cache.fetch prefix + 'posts-' + state + '-count/' + sample.created_at.to_i.to_s do
           self
             .where(flagged: false, campaign_id: campaign.id)
             .count
         end
       else
-        total = Rails.cache.fetch prefix + 'posts-' + state + '-count' do
+        total = Rails.cache.fetch prefix + 'posts-' + state + '-count/' + sample.created_at.to_i.to_s do
           self
             .where(flagged: false, campaign_id: campaign.id)
             .filtered(params)
             .count
         end
       end
+
+      # If we're on a "page" of the infinite scroll...
+      unless params[:last].nil? || params[:page].nil?
+        cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-before-' + params[:last] + '/' + sample.created_at.to_i.to_s do
+          list = uncached_posts
+            .offset((params[:page].to_i * self.per_page) + 1)
+            .limit(self.per_page - 1)
+            .all
+          list.unshift sample
+        end
+      else
+        cached_posts = Rails.cache.fetch prefix + 'posts-' + state + '-page-' + params[:page].to_s + '/' + sample.created_at.to_i.to_s do
+          list = uncached_posts
+            .offset((params[:last].nil? ? ((((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page)) + 1) : ((params[:page].to_i * self.per_page) + 1)))
+            .limit(self.per_page - 1)
+            .all
+          list.unshift sample
+        end
+      end
+    else
+      cached_posts = []
     end
 
     # Assuming there's a last post (there may not be if there are no posts),
     # remember that post's ID
-    if !cached_posts.last.nil?
+    last = nil
+    if cached_posts && cached_posts.last && !cached_posts.last.nil?
       last = cached_posts.last.id
     end
-    last ||= nil
 
-    [promoted, cached_posts, total, last, params[:page].to_s, prefix]
+    [cached_posts, total, last, params[:page].to_s, prefix]
   end
 
   # Alters the query to filter by a specific field
@@ -457,26 +445,39 @@ class Post < ActiveRecord::Base
     end
   end
 
-  # Allows export-as-csv
-  def self.as_csv
-    CSV.generate do |csv|
-      csv << column_names
-      all.each do |item|
-        csv << item.attributes.values_at(*column_names)
-      end
-    end
-  end
-
   # Returns the total share count for a particular post.
   def total_shares
     self.shares.count
   end
 
   # Clears cache after a new post.
-  after_create :touch_cache
+  after_create :touch_cache, :create_tags
   def touch_cache
-    # We need to clear all caches -- Every cache depends on the one before it.
-    Rails.cache.clear
+    unless self.flagged == true
+      # Basic queueing for the home page.
+      list = Rails.cache.fetch 'index-first-posts' do
+        current_filters = Rails.cache.read 'all-first-posts'
+        current_filters ||= []
+        current_filters << 'index-first-posts'
+        Rails.cache.write 'all-first-posts', current_filters
+
+        Post.where(flagged: false).last(200).reverse.map(&:id)
+      end
+
+      unless list.first == self.id
+        list.unshift self.id
+        list.pop if list.length == 200
+        Rails.cache.write 'index-first-posts', list
+      end
+
+      # Delete the index-posts cache, which holds the original post-list
+      Rails.cache.delete 'index-posts'
+    end
+  end
+
+  def create_tags
+    # Build all associated tags
+    Tag.create_tags(self)
   end
 
   after_create :send_thx_email

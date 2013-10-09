@@ -43,6 +43,8 @@ CreateAndShare::Application.routes.draw do
     get 'gallery',      to: 'static_pages#gallery', as: :gallery
     get 'start',        to: 'static_pages#start', as: :start
 
+    get 'page/:page', to: 'posts#page', constraints: { page: /[0-9]+/ }, as: :page
+
     # User pages
     get 'submit/guide', to: 'users#intent', as: :intent
     get 'participation', to: 'users#participation', as: :participation
@@ -56,6 +58,7 @@ CreateAndShare::Application.routes.draw do
 
     # Filters
     get 'show/:filter', to: 'posts#filter', constraints: { filter: /[A-Za-z0-9\-\_]+/ }, as: :filter
+    get 'show/:filter/page/:page', to: 'posts#page', constraints: { filter: /[A-Za-z0-9\-\_]+/ }, as: :filter_page
 
     # Individual posts
     get ':id',     to: 'posts#show', constraints: { id: /\d+/ }, as: :show_post

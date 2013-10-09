@@ -1,6 +1,6 @@
 $(document).ready(function() {
   var page = 0;     // Default page
-  var running = 10; // How many posts are currently shown
+  var running = <%= Post.per_page %>; // How many posts are currently shown
   var done = [];
   var loaded = [];
 
@@ -15,6 +15,7 @@ $(document).ready(function() {
       elm.unbind('inview');
 
       if (count <= <%= Post.per_page %>) {
+        $('#pagination').show();
         $('.inview').remove();
         return false;
       }
@@ -31,6 +32,7 @@ $(document).ready(function() {
       admin_tools();
 
       if (response.die) {
+        $('#pagination').show();
         return false;
       }
 
@@ -42,19 +44,22 @@ $(document).ready(function() {
         in_view();
       }
       else {
+        $('#pagination').show();
         $('.inview').remove();
       }
     }
 
-    if (typeof latest !== 'undefined' && count >= <%= Post.per_page %>) {
+    var is_page = (window.location.href.indexOf('page/') !== -1 && window.location.href.indexOf('page/1') == -1);
+    if (typeof latest !== 'undefined' && count >= <%= Post.per_page %> && !is_page) {
       // Start the scroll load on the last post.  Leaves the perception of a faster infinite scroll.
       $('.id-' + latest).bind('inview', function(event, visible) {
         // Page + 1
         page++;
         var $elm = $(this);
+        $(this).unbind('inview');
 
         // Load the next scroll
-        $.post('/' + campaign.path + '/posts/scroll.json', { seen: seen, filter: filter, type: campaign.scroll_type, page: page, last: latest }, function(response) {
+        $.post('/' + campaign.path + '/posts/scroll.json', { seen: seen, filter: (typeof filter !== 'undefined' ? filter : 'index'), type: campaign.scroll_type, page: page, last: latest }, function(response) {
           load_the_scroll($elm, response);
           get_counts();
         });
@@ -62,11 +67,14 @@ $(document).ready(function() {
     }
     else {
       $('.inview').remove();
+      // if (is_page) {
+        $('#pagination').show();
+      // }
     }
   }
 
   function get_counts() {
-    $.post('/' + campaign.path + '/posts/get_counts.json', { post_ids: post_ids }, function(response) {
+    $.post('/' + campaign.path + '/posts/get_counts.json?' + (new Date).getTime(), { post_ids: post_ids }, function(response) {
       for (i in response) {
         $('.id-' + i).find('.thumbs-up-count').text(response[i]['tu']);
         $('.id-' + i).find('.thumbs-down-count').text(response[i]['td']);

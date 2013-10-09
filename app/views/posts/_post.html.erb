@@ -1,10 +1,7 @@
-<% cache @admin + 'posts-index-page-' + @page do %>
-  <% if !@promoted.nil? %>
-    <% @post = @promoted %>
-    <%= render 'single_post' %>
-  <% end %>
+<% cache [@campaign.path, @filter, @admin, @posts.first.created_at.to_i.to_s] do %>
   <% i = 0 %>
   <% @n = 0 %>
+
   <% @posts.each do |post| %>
     <% @post = post %>
     <%= render 'single_post' %>
