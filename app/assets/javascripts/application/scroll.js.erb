@@ -56,6 +56,7 @@ $(document).ready(function() {
         // Page + 1
         page++;
         var $elm = $(this);
+        $(this).unbind('inview');
 
         // Load the next scroll
         $.post('/' + campaign.path + '/posts/scroll.json', { seen: seen, filter: (typeof filter !== 'undefined' ? filter : 'index'), type: campaign.scroll_type, page: page, last: latest }, function(response) {
