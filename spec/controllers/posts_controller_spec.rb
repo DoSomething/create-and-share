@@ -8,16 +8,37 @@ describe PostsController, :type => :controller do
 
   before { @post = FactoryGirl.create(:post, campaign_id: campaign.id) }
 
+  describe 'get_posts method' do
+    before { @campaign = campaign }
+    it 'returns an empty array if there are no posts' do
+      Post.destroy_all
+      expect(get_posts(0, Post.per_page)).to eq []
+    end
+    describe 'if there are posts' do
+      before do
+        FactoryGirl.create_list(:post, 2, campaign_id: campaign.id)
+      end
+
+      it 'returns an array of post objects' do
+        arr = get_posts(0, Post.per_page)
+        all_posts = Post.where(campaign_id: campaign.id)
+        all_posts.each do |post|
+          expect(arr).to include post
+        end
+      end
+      it 'slices for pagination' do
+        expect(get_posts(1, 1)).to eq([Post.last(2).reverse.second])
+      end
+    end
+  end
+
   describe 'GET #index' do
     it 'shows index' do
-      FactoryGirl.create(:promo, campaign_id: campaign.id)
-
       get :index, { :campaign_path => campaign.path }, session
 
       assigns(:user).should eq user
       expect(assigns(:promoted)).to eq Post.find_by_promoted(true)
       expect(assigns(:posts)).to include(@post)
-      expect(assigns(:count)).to eq 2
       expect(response).to render_template 'index'
     end
   end
@@ -56,31 +77,43 @@ describe PostsController, :type => :controller do
     describe "POST #create" do
       describe "with valid params" do
         it "creates a new post" do
-
-          expect { post :create, {:post => @attributes}, session }.to change(Post, :count).by(1)
+          expect { post :create, { :post => @attributes, :campaign_path => campaign.path }, session }.to change(Post, :count).by(1)
         end
 
         it "assigns a newly created post" do
-          post :create, {:post => @attributes}, session
-
+          post :create, { :post => @attributes, :campaign_path => campaign.path }, session
           assigns(:post).should be_a(Post)
           assigns(:post).should be_persisted
         end
 
         it "redirects to the created post" do
-          post :create, {:post => @attributes }, session
-
+          post :create, { :post => @attributes, :campaign_path => campaign.path }, session
           response.should redirect_to show_post_path(assigns(:post), :campaign_path => campaign.path)
+        end
+
+        describe 'caching' do
+          it 'adds the post to cache' do
+            post :create, { :post => @attributes, :campaign_path => campaign.path }, session
+            cache = Rails.cache.read 'index-first-posts'
+            expect(cache).to include(Post.last.id)
+          end
+
+          it 'does NOT add to cache if it is flagged' do
+            @post = FactoryGirl.create(:post, flagged: true)
+            cache = Rails.cache.read 'index-first-posts'
+            expect(cache).to_not be_empty
+            expect(cache).to_not include(@post.id)
+          end
         end
       end
 
       describe 'with school autocomplete' do
         it 'passes when school field is true, and there is a school' do
-          expect { post :create, { post: @attributes }, session }.to change(Post, :count).by(1)
+          expect { post :create, { post: @attributes, :campaign_path => campaign.path }, session }.to change(Post, :count).by(1)
         end
         it 'Fails if school field is true, and there is no school' do
           bad_attributes = FactoryGirl.attributes_for(:post, school_id: false)
-          expect { post :create, { post: bad_attributes }, session }.to_not change(Post, :count).by(1)
+          expect { post :create, { post: bad_attributes, :campaign_path => campaign.path }, session }.to_not change(Post, :count).by(1)
         end
         it 'Uses a custom school if there is none in the database' do
           @attributes[:school_id] = 'Custom school'
@@ -90,7 +123,7 @@ describe PostsController, :type => :controller do
         it 'ignores a school ID when the campaign setting is FALSE' do
           bad_campaign = FactoryGirl.create(:campaign, has_school_field: false)
           fine_post = FactoryGirl.attributes_for(:post, campaign_id: bad_campaign)
-          expect { post :create, { post: fine_post }, session }.to change(Post, :count).by(1)
+          expect { post :create, { post: fine_post, :campaign_path => campaign.path }, session }.to change(Post, :count).by(1)
           expect(assigns(:post).school_id).to be_nil
         end
       end
@@ -116,16 +149,16 @@ describe PostsController, :type => :controller do
       describe "with valid params" do
         it "updates the requested post" do
           Post.any_instance.should_receive(:update_attributes).with({ "meme_text" => "hmu" })
-          put :update, {:id => @post.id, :post => { "meme_text" => "hmu" }}, session
+          put :update, { :id => @post.id, :post => { "meme_text" => "hmu" }, :campaign_path => campaign.path }, session
         end
 
         it "assigns the requested post" do
-          put :update, {:id => @post.id, :post => @attributes}, session
+          put :update, { :id => @post.id, :post => @attributes, :campaign_path => campaign.path }, session
           assigns(:post).should eq @post
         end
 
         it "redirects to the post" do
-          put :update, {:id => @post.id, :post => @attributes}, session
+          put :update, { :id => @post.id, :post => @attributes, :campaign_path => campaign.path }, session
           response.should redirect_to show_post_path(assigns(:post), :campaign_path => campaign.path)
         end
       end
@@ -166,10 +199,18 @@ describe PostsController, :type => :controller do
     end
 
     it 'succeeds if you have the right permissions' do
-      expect { get :flag, { id: @post.id }, session }.to change { Post.find(@post.id).flagged }.to(true)
+      expect { get :flag, { id: @post.id, campaign_path: campaign.path }, session }.to change { @post.reload.flagged }.to(true)
     end
     it 'fails if you do not have the right permissions' do
-      expect { get :flag, { id: @post.id }, invalid_session }.to raise_error('User ' + invalid_session[:drupal_user_id].to_s + ' is unauthorized.')
+      expect { get :flag, { id: @post.id, campaign_path: campaign.path }, invalid_session }.to raise_error('User ' + invalid_session[:drupal_user_id].to_s + ' is unauthorized.')
+    end
+    it 'removes the post from cache' do
+      initial_cache = Rails.cache.read 'index-first-posts'
+      expect(initial_cache).to include(@post.id.to_i)
+
+      get :flag, { id: @post.id, campaign_path: campaign.path }, session
+      final_cache = Rails.cache.read 'index-first-posts'
+      expect(final_cache).to_not include(@post.id.to_i)
     end
   end
 

@@ -49,12 +49,21 @@ module ApplicationHelper
   # Assuming the user is signed in, gets the IDs of votes that they've already made
   # @return [Array] Either your votes, or an empty array
   def get_votes
+    res = []
     unless session[:drupal_user_id].nil?
-      u = User.find_by_uid(session[:drupal_user_id])
-      return Vote.select(:voteable_id).where(voter_id: u.id).map { |v| v.voteable_id } || [] unless u.nil?
+      res = Rails.cache.fetch 'votes-from-' + session[:drupal_user_id].to_s do
+        u = User.find_by_uid(session[:drupal_user_id])
+        unless u.nil?
+          r = Vote.where(voter_id: u.id).map { |v| v.voteable_id }
+        else
+          r = []
+        end
+
+        r
+      end
     end
 
-    []
+    res
   end
 
   # Did the user already submit something?

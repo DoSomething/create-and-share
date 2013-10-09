@@ -1,11 +1,9 @@
-<% cache @admin + 'posts-index-home' do %>
-<script type="text/javascript">
+<script>
 <!--
-  var count = <%= @count %>;
-  var latest = <%= @last %>;
-  var filter = null;
+  var latest = <%= @posts.last.id || 0 %>;
+  var count = 200;
   var seen = <%=raw @shown_stats.to_json %>;
-  var post_ids = <%= raw @posts.map(&:id).to_json %>;
+  var post_ids = <%= @posts.map(&:id).to_json %>;
 -->
 </script>
 
@@ -16,11 +14,15 @@
     <div class="post-list">
       <% if @posts.length > 0 %>
         <%=raw render('post').gsub(/\n/, '') %>
-        <div class="inview"></div>
+        <% unless params[:page] && params[:page].to_i > 1 %><div class="inview"></div><% end %>
       <% else %>
         <%= render 'not_found' %>
       <% end %>
     </div>
+
+    <div id="pagination">
+      <span><%= link_to(raw("Next Page &raquo;"), page_path(campaign_path: 'fedup', page: ((params[:page] ? params[:page].to_i : 1) + 1)), id: 'next-page') %></span>
+      <span><% if (params[:page] && params[:page].to_i > 1 && !params[:page].nil?) %><%= link_to(raw("&laquo; Previous Page"), page_path(campaign_path: 'fedup', page: ((params[:page] ? params[:page].to_i : 1) - 1)), id: 'prev-page') %><% end %></span>
+    </div>
   </div>
 </section>
-<% end %>
