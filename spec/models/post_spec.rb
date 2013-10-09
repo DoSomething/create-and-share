@@ -64,31 +64,13 @@ describe Post do
     end
 
     describe 'infinite scroll functionality' do
-      before :each do
-        @post = FactoryGirl.create(:post)
-        @promoted = FactoryGirl.create(:post, campaign_id: @post.campaign.id, promoted: true)
-        @scroll = Post.get_scroll(@post.campaign, false, {}, "")[1]
-      end
-
-      it 'shows some posts' do
-        @scroll.length.should be > 0
-      end
-
-      it 'has an image' do
-        @scroll.first.image.url(:gallery).should_not be nil
-      end
-
-      it 'will show a promoted post' do
-        @scroll.should include(@promoted)
-      end
-
       context 'pagination' do
         before :each do
           @campaign = FactoryGirl.create(:campaign)
           @posts = Post.build_post(@campaign)
         end
 
-      it 'shows 9 results on the first page.' do
+        it 'shows 9 results on the first page.' do
           FactoryGirl.create(:post, campaign_id: @campaign.id)
           @posts.scrolly.length.should be 1
         end

@@ -2,7 +2,7 @@ class PostsController < ApplicationController
   include Services
 
   # Get campaign
-  before_filter :get_campaign, except: [:autoimg, :edit, :update, :destroy, :flag, :thumbs]
+  before_filter :get_campaign, except: [:get_posts, :expire_pages, :autoimg, :edit, :update, :destroy, :flag, :thumbs]
   before_filter :get_user, only: [:index, :show, :filter, :vanity, :extras]
 
   # Before everything runs, run an authentication check and an API key check.
@@ -13,9 +13,11 @@ class PostsController < ApplicationController
     raise 'User ' + (session[:drupal_user_id] || 0).to_s + ' is unauthorized.' unless admin?
   end
 
-  before_filter :build_stats, only: [:index, :scroll], unless: lambda { params[:filter] && !params[:filter].empty? }
+  before_filter :build_stats, only: [:index, :scroll, :page], unless: lambda { params[:filter] && !params[:filter].empty? && params[:filter] != "index" }
   # Ignores xsrf in favor of API keys for JSON requests.
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' || ['thumbs', 'share', 'flag'].include?(params[:action]) }
+
+  caches_action :index
 
   # Shows the static (closed) gallery when a campaign is finished, or not started yet.
   def campaign_closed
@@ -53,22 +55,156 @@ class PostsController < ApplicationController
     @shown_stats.flatten!
   end
 
+  def get_posts(offset, count, filter = 'index')
+    last_post = Post.where(campaign_id: @campaign.id, flagged: false)
+    unless last_post.nil? || last_post.empty?
+      last_post = last_post.last.created_at.to_i.to_s
+      posts = Rails.cache.fetch filter + '-first-posts' do
+        Post.where(flagged: false).last(200).reverse.map(&:id)
+      end
+
+      cached = Rails.cache.fetch filter + '-offset-' + offset.to_s + '-' + count.to_s + '/' + last_post do
+        posts = posts.slice(offset, count)
+        unless posts.nil?
+          get = {}
+          posts.each_with_index do |post, index|
+            p = Rails.cache.read 'post-' + post.to_s
+            if p.nil?
+              get[index] = post
+            else
+              posts[index] = p
+            end
+          end
+
+          unless get.empty?
+            results = Post.where(id: get.values).inject({}) do |res, post|
+              res[post.id] = post
+              res
+            end
+
+            get.each do |index_pos, value|
+              if results[value]
+                Rails.cache.write 'post-' + value.to_s, results[value]
+                posts[index_pos] = results[value]
+              end
+            end
+          end
+
+          posts
+        else
+          posts = []
+        end
+
+        posts
+      end
+    else
+      cached = []
+    end
+
+    cached
+  end
+
   # GET /posts
   # GET /posts.json
   def index
-    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, 'index')
+    unless params[:page] && params[:page].to_i > 1
+      @posts = Rails.cache.fetch 'index-posts' do
+        get_posts(0, Post.per_page)
+      end
+    end
 
-    expires_in 1.hour, public: true, 'max-style' => 0
+    @filter = 'index'
+    @admin = (admin? ? 'admin' : 'member')
 
     respond_to do |format|
       format.html
       format.json { render json: @posts, root: false }
-      format.csv { send_data Post.as_csv }
+    end
+  end
+
+  def page
+    if params[:page] == "1"
+      redirect_to root_path unless params[:filter]
+      redirect_to filter_path if params[:filter]
+      return
+    end
+
+    unless params[:filter]
+      @sample = Post.where(campaign_id: @campaign.id).order('posts.created_at DESC').offset((((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page))).limit(1).first
+      @filter = (params[:filter].nil? ? 'index' : params[:filter])
+
+      @posts = Rails.cache.fetch @filter + '-page-' + params[:page].to_s + '/' + @sample.created_at.to_i.to_s do
+        Post.where(campaign_id: @campaign.id).order('posts.created_at DESC').offset((((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page)) + 1).limit(Post.per_page - 1).all
+      end
+      @posts.unshift @sample
+      render :index
+      return
+    else
+      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
+      render :filter
+      return
     end
   end
 
   def scroll
-    @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
+    if params[:filter] == 'index'
+      @posts = get_posts((params[:page].to_i * Post.per_page), Post.per_page)
+    else
+      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
+    end
+  end
+
+  # GET /:campaign/show/cats-NY
+  def filter
+    if Rails.application.config.filters[@campaign.path].nil?
+      redirect_to :root
+      return
+    end
+
+    begin
+      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, params[:filter], true)
+      @filter = params[:filter]
+    rescue => e
+      logger.error("Exception: #{e.message}")
+      redirect_to :root
+      return
+    end
+
+    # expires_in 1.hour, public: true, 'max-style' => 0
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.json { render json: @posts, root: false }
+    end
+  end
+
+  # GET /:campaign/mine
+  # GET /:campaign/featured
+  def extras
+    @stats = Rails.application.config.stats[@campaign.path]
+    
+    @result = nil
+    @where = {}
+    @real_path = params[:filter] ||= Pathname.new(request.fullpath).basename.to_s.gsub(/\.[a-z]+/, '')
+    @admin = ''
+    @page = "0"
+
+    @posts = Post.build_post(@campaign)
+    if params[:run] == 'mine'
+      @posts = @posts.where(:uid => session[:drupal_user_id]).order('created_at DESC')
+    elsif params[:run] == 'featured'
+      @posts = @posts.where(:promoted => true)
+    end
+
+    @filter = @real_path
+    @count = @posts.length
+
+    # Set up limit depending on scroll position
+    @posts = @posts.scrolly(params[:last])
+
+    @last = !@posts.last.nil? ? @posts.last.id : nil
+
+    render :index
   end
 
   # Automatically uploads an image for the form.
@@ -120,7 +256,6 @@ class PostsController < ApplicationController
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @post }
-      format.csv { send_data @post.as_csv }
     end
   end
 
@@ -175,7 +310,7 @@ class PostsController < ApplicationController
     @post = Post.new(params[:post])
     respond_to do |format|
       if @post.save
-        format.html { redirect_to show_post_path(@post, :campaign_path => @post.campaign.path) }
+        format.html { expire_pages; redirect_to show_post_path(@post, :campaign_path => @post.campaign.path) }
         format.json { render json: @post, status: :created }
       else
         format.html { render action: "new" }
@@ -204,13 +339,17 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.update_attributes(params[:post])
-        format.html { redirect_to show_post_path(@post, :campaign_path => @post.campaign.path), notice: 'Post was successfully updated.' }
+        format.html { expire_pages; redirect_to show_post_path(@post, :campaign_path => @post.campaign.path), notice: 'Post was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
         format.json { render json: @post.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def expire_pages
+    expire_action(action: 'index', campaign_path: @campaign.path)
   end
 
   # DELETE /posts/1
@@ -227,9 +366,16 @@ class PostsController < ApplicationController
 
   # POST /:campaign/posts/1/flag
   def flag
+    list = Rails.cache.fetch 'index-first-posts' do
+      Post.where(flagged: false).last(200).reverse.map(&:id)
+    end
+
     # Mark this post as flagged
-    Post.find(params[:id]).update_attribute(:flagged, true)
-    Rails.cache.clear
+    Post.where(id: params[:id]).first.update_attribute(:flagged, true)
+
+    if list.index(params[:id].to_i)
+      Rails.cache.write 'index-first-posts', Post.where(flagged: false).last(200).reverse.map(&:id)
+    end
 
     redirect_to request.env['HTTP_REFERER']
   end
@@ -251,61 +397,6 @@ class PostsController < ApplicationController
     else
       render :show
     end
-  end
-
-  # GET /:campaign/show/cats-NY
-  def filter
-    if Rails.application.config.filters[@campaign.path].nil?
-      redirect_to :root
-      return
-    end
-
-    begin
-      @promoted, @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, params[:filter], true)
-      @filter = params[:filter]
-    rescue => e
-      logger.error("Exception: #{e.message}")
-      redirect_to :root
-      return
-    end
-
-    expires_in 1.hour, public: true, 'max-style' => 0
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.js
-      format.json { render json: @posts, root: false }
-      format.csv { send_data Post.as_csv }
-    end
-  end
-
-  # GET /:campaign/mine
-  # GET /:campaign/featured
-  def extras
-    @stats = Rails.application.config.stats[@campaign.path]
-    
-    @result = nil
-    @where = {}
-    @real_path = params[:filter] ||= Pathname.new(request.fullpath).basename.to_s.gsub(/\.[a-z]+/, '')
-    @admin = ''
-    @page = "0"
-
-    @posts = Post.build_post(@campaign)
-    if params[:run] == 'mine'
-      @posts = @posts.where(:uid => session[:drupal_user_id]).order('created_at DESC')
-    elsif params[:run] == 'featured'
-      @posts = @posts.where(:promoted => true)
-    end
-
-    @filter = @real_path
-    @count = @posts.length
-
-    # Set up limit depending on scroll position
-    @posts = @posts.scrolly(params[:last])
-
-    @last = !@posts.last.nil? ? @posts.last.id : nil
-
-    render :index
   end
 
   # POST /:campaign/posts/1/thumbs

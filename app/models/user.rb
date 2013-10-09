@@ -180,6 +180,12 @@ class User < ActiveRecord::Base
       end
     end
 
+    votes = Rails.cache.read 'votes-from-' + self.uid.to_s
+    unless votes.nil?
+      votes.unshift post.id
+      Rails.cache.write 'votes-from-' + self.uid.to_s, votes
+    end
+
     color
   end
 end
