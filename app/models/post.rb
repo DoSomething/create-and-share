@@ -476,7 +476,7 @@ class Post < ActiveRecord::Base
 
       unless list.first == self.id
         list.unshift self.id
-        list.pop
+        list.pop if list.length == 200
         Rails.cache.write 'index-first-posts', list
       end
 

@@ -2,7 +2,7 @@ class PostsController < ApplicationController
   include Services
 
   # Get campaign
-  before_filter :get_campaign, except: [:get_posts, :autoimg, :edit, :update, :destroy, :flag, :thumbs]
+  before_filter :get_campaign, except: [:get_posts, :expire_pages, :autoimg, :edit, :update, :destroy, :flag, :thumbs]
   before_filter :get_user, only: [:index, :show, :filter, :vanity, :extras]
 
   # Before everything runs, run an authentication check and an API key check.
@@ -56,7 +56,7 @@ class PostsController < ApplicationController
   end
 
   def get_posts(offset, count, filter = 'index')
-    last_post = Post.where(campaign_id: @campaign.id)
+    last_post = Post.where(campaign_id: @campaign.id, flagged: false)
     unless last_post.nil? || last_post.empty?
       last_post = last_post.last.created_at.to_i.to_s
       posts = Rails.cache.fetch filter + '-first-posts' do
@@ -142,15 +142,14 @@ class PostsController < ApplicationController
       return
     end
 
-    #begin
+    begin
       @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, params[:filter], true)
       @filter = params[:filter]
-    # rescue => e
-    #   abort "#{e.message}"
-    #   logger.error("Exception: #{e.message}")
-    #   redirect_to :root
-    #   return
-    # end
+    rescue => e
+      logger.error("Exception: #{e.message}")
+      redirect_to :root
+      return
+    end
 
     # expires_in 1.hour, public: true, 'max-style' => 0
 
@@ -349,9 +348,16 @@ class PostsController < ApplicationController
 
   # POST /:campaign/posts/1/flag
   def flag
+    list = Rails.cache.fetch 'index-first-posts' do
+      Post.where(flagged: false).last(200).reverse.map(&:id)
+    end
+
     # Mark this post as flagged
-    Post.find(params[:id]).update_attribute(:flagged, true)
-    Rails.cache.clear
+    Post.where(id: params[:id]).first.update_attribute(:flagged, true)
+
+    if list.index(params[:id].to_i)
+      Rails.cache.write 'index-first-posts', Post.where(flagged: false).last(200).reverse.map(&:id)
+    end
 
     redirect_to request.env['HTTP_REFERER']
   end
