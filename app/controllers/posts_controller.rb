@@ -66,10 +66,29 @@ class PostsController < ApplicationController
       cached = Rails.cache.fetch filter + '-offset-' + offset.to_s + '-' + count.to_s + '/' + last_post do
         posts = posts.slice(offset, count)
         unless posts.nil?
-          posts = Post.where(id: posts)
-          posts.each do |post|
-            Rails.cache.write 'post-' + post.id.to_s, post
+          get = {}
+          posts.each_with_index do |post, index|
+            p = Rails.cache.read 'post-' + post.to_s
+            if p.nil?
+              get[index] = post
+            end
           end
+
+          unless get.empty?
+            results = Post.where(id: get.values).inject({}) do |res, post|
+              res[post.id] = post
+              res
+            end
+
+            get.each do |index_pos, value|
+              if results[value]
+                Rails.cache.write 'post-' + value.to_s, results[value]
+                posts[index_pos] = results[value]
+              end
+            end
+          end
+
+          posts
         else
           posts = []
         end
