@@ -1,4 +1,4 @@
-<% cache [@campaign.path, @filter, @admin, @posts.first.created_at.to_i.to_s] do %>
+<% cache [@campaign.path, @filter, @admin, (@posts && @posts.first ? @posts.first.created_at.to_i.to_s : Time.now.to_i)] do %>
   <% i = 0 %>
   <% @n = 0 %>
 

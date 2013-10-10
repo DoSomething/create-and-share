@@ -14,8 +14,11 @@ $(document).ready(function() {
       // Unbind the last, last post's ID so we don't load again and again.
       elm.unbind('inview');
 
-      if (count <= <%= Post.per_page %>) {
+      if (response.paginate) {
         $('#pagination').show();
+      }
+
+      if (count <= <%= Post.per_page %>) {
         $('.inview').remove();
         return false;
       }
@@ -32,7 +35,6 @@ $(document).ready(function() {
       admin_tools();
 
       if (response.die) {
-        $('#pagination').show();
         return false;
       }
 

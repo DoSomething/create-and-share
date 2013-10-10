@@ -21,8 +21,8 @@
     </div>
 
     <div id="pagination">
-      <span><%= link_to(raw("Next Page &raquo;"), page_path(campaign_path: 'fedup', page: ((params[:page] ? params[:page].to_i : 1) + 1)), id: 'next-page') %></span>
-      <span><% if (params[:page] && params[:page].to_i > 1 && !params[:page].nil?) %><%= link_to(raw("&laquo; Previous Page"), page_path(campaign_path: 'fedup', page: ((params[:page] ? params[:page].to_i : 1) - 1)), id: 'prev-page') %><% end %></span>
+      <span id="next-page-link"><%= link_to(raw("Next Page &raquo;"), page_path(campaign_path: 'fedup', page: ((params[:page] ? params[:page].to_i : 1) + 1)), id: 'next-page') %></span>
+      <span id="prev-page-link"><% if (params[:page] && params[:page].to_i > 1 && !params[:page].nil?) %><%= link_to(raw("&laquo; Previous Page"), page_path(campaign_path: 'fedup', page: ((params[:page] ? params[:page].to_i : 1) - 1)), id: 'prev-page') %><% end %></span>
     </div>
   </div>
 </section>

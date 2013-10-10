@@ -113,6 +113,7 @@ class PostsController < ApplicationController
       end
     end
 
+    @page = 1
     @filter = 'index'
     @admin = (admin? ? 'admin' : 'member')
 
@@ -137,6 +138,8 @@ class PostsController < ApplicationController
         Post.where(campaign_id: @campaign.id).order('posts.created_at DESC').offset((((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page)) + 1).limit(Post.per_page - 1).all
       end
       @posts.unshift @sample
+      @page = params[:page]
+
       render :index
       return
     else
@@ -149,6 +152,7 @@ class PostsController < ApplicationController
   def scroll
     if params[:filter] == 'index'
       @posts = get_posts((params[:page].to_i * Post.per_page), Post.per_page)
+      @page = params[:page]
     else
       @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
     end
