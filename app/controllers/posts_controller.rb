@@ -86,6 +86,8 @@ class PostsController < ApplicationController
               if results[value]
                 Rails.cache.write 'post-' + value.to_s, results[value]
                 posts[index_pos] = results[value]
+              else
+                posts.delete_at(index_pos)
               end
             end
           end
