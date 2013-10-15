@@ -103,7 +103,7 @@ class PostsController < ApplicationController
       cached = []
     end
 
-    cached
+    cached.reject { |p| !p.instance_of?(Post) }
   end
 
   # GET /posts
