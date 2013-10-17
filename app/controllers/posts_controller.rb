@@ -384,9 +384,10 @@ class PostsController < ApplicationController
 
     if list.index(params[:id].to_i)
       Rails.cache.write 'index-first-posts', Post.where(flagged: false).last(200).reverse.map(&:id)
-      Rails.cache.delete 'index-posts'
-      expire_pages
     end
+
+    Rails.cache.clear
+    expire_pages
 
     redirect_to request.env['HTTP_REFERER']
   end
