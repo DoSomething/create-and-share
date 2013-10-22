@@ -145,7 +145,7 @@ class PostsController < ApplicationController
       render :index
       return
     else
-      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
+      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((params[:filter] && !params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (params[:filter] && !params[:filter].empty? && params[:filter] != 'false'))
       render :filter
       return
     end
@@ -156,7 +156,7 @@ class PostsController < ApplicationController
       @posts = get_posts((params[:page].to_i * Post.per_page), Post.per_page)
       @page = params[:page]
     else
-      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
+      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((params[:filter] && !params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (params[:filter] && !params[:filter].empty? && params[:filter] != 'false'))
     end
   end
 

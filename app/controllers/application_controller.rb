@@ -28,6 +28,7 @@ class ApplicationController < ActionController::Base
   # @param [Object] url The fully qualified URL to the campaign in question.
   # @return [String] Either the campaign as a string, or nil.
   def get_campaign_from_url(url)
+    return 'fedup' unless url
     match = url.match(/^https?:\/\/[^\/]+\/(?<campaign>[^\/]+)/i)
     return match['campaign'].to_s if match && !match['campaign'].nil?
 
@@ -54,7 +55,7 @@ class ApplicationController < ActionController::Base
     campaign = get_campaign
     params[:campaign] = campaign
 
-    unless authenticated? || request.format.symbol == :json || campaign && !campaign.is_gated?(params, session)
+    unless authenticated? || (request.format && request.format.symbol && request.format.symbol == :json) || campaign && !campaign.is_gated?(params, session)
       flash[:error] = "you must be logged in to see that"
       session[:source] = request.path
       if campaign && campaign.path
@@ -91,7 +92,7 @@ class ApplicationController < ActionController::Base
   # api_keys table.
   def verify_api_key
     # Confirm that it's a json request.  This is irrelevant otherwise.
-    if request.format.symbol == :json
+    if request.format && request.format.symbol && request.format.symbol == :json
       # We must have a key, either way.  If no key, pass forbidden response.
       if params[:key].nil? && (request.env['HTTP_REFERER'] =~ Regexp.new(request.env['HTTP_HOST'])).nil?
         render :json => { :errors => "Invalid API key." }, :status => :forbidden
