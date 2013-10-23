@@ -1,11 +1,13 @@
-<script>
-<!--
-  var latest = <%= @posts.last.id || 0 %>;
-  var count = 200;
-  var seen = <%=raw @shown_stats.to_json %>;
-  var post_ids = <%= @posts.map(&:id).to_json %>;
--->
-</script>
+<% unless @posts.empty? %>
+  <script>
+  <!--
+    var latest = <%= @posts.last.id || 0 %>;
+    var count = 200;
+    var seen = <%=raw @shown_stats.to_json %>;
+    var post_ids = <%= @posts.map(&:id).to_json %>;
+  -->
+  </script>
+<% end %>
 
 <section class="posts">
   <div class="section-container">
