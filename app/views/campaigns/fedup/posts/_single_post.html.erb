@@ -7,9 +7,7 @@
   <div class="story"><%=raw simple_format(@post.story).gsub(/(\r|\n|\r\n)/, '') %></div>
   <% if @post.school || @post.custom_school %><div class="school"><%= (@post.school ? @post.school.title + ', ' + @post.school.state : @post.custom_school + ', ' + @post.state) %></div><% end %>
   <div class="votes">
-    <span class="thumbs-up-count-wrapper"><span class="thumbs-up-count"><%= @post.thumbs_up_count %></span></span>
-    <a href="#" class="thumbs-up" data-type="up"><span class="thumb-icon"></span>EAT IT</a>
-    <span class="thumbs-down-count-wrapper"><span class="thumbs-down-count"><%= @post.thumbs_down_count %></span></span>
-    <a href="#" class="thumbs-down" data-type="down"><span class="thumb-icon"></span>TOSS IT</a>
+    <a href="#" class="thumbs-up shared" data-type="up"><span class="thumb-icon"></span><%= @post.thumbs_up_count %> EAT IT</a>
+    <a href="#" class="thumbs-down shared" data-type="down"><span class="thumb-icon"></span><%= @post.thumbs_down_count %> TOSS IT</a>
   </div>
 </div>
