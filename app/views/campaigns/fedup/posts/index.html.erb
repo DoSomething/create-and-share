@@ -1,16 +1,19 @@
-<script>
-<!--
-  var latest = <%= @posts.last.id || 0 %>;
-  var count = 200;
-  var seen = <%=raw @shown_stats.to_json %>;
-  var post_ids = <%= @posts.map(&:id).to_json %>;
--->
-</script>
+<% unless @posts.empty? %>
+  <script>
+  <!--
+    var latest = <%= @posts.last.id || 0 %>;
+    var count = 200;
+    var seen = <%=raw @shown_stats.to_json %>;
+    var post_ids = <%= @posts.map(&:id).to_json %>;
+  -->
+  </script>
+<% end %>
 
 <section class="posts">
   <div class="section-container">
-    <h2>Vote 'Eat It' or 'Toss It' on school lunch pics.</h2>
-    <p>Each vote helps show us the true state of school lunch in the US.  <%= link_to 'Find out', faq_path %> what we'll do with the info here.  Want to advocate for better lunch in your cafeteria? <%= link_to 'Download our guide here', 'http://www.dosomething.org/files/campaigns/fedup/FedUp_ActionGuide.pdf' %>.</p>
+    <h2>Thanks to you, we saw 7,025 lunch pics!</h2>
+    <p>25,132 people participated in our report of the true state of school lunch.  The report will be out soon!</p>
+
     <div class="post-list">
       <% if @posts.length > 0 %>
         <%=raw render('post').gsub(/\n/, '') %>
@@ -21,8 +24,8 @@
     </div>
 
     <div id="pagination">
-      <span><%= link_to(raw("Next Page &raquo;"), page_path(campaign_path: 'fedup', page: ((params[:page] ? params[:page].to_i : 1) + 1)), id: 'next-page') %></span>
-      <span><% if (params[:page] && params[:page].to_i > 1 && !params[:page].nil?) %><%= link_to(raw("&laquo; Previous Page"), page_path(campaign_path: 'fedup', page: ((params[:page] ? params[:page].to_i : 1) - 1)), id: 'prev-page') %><% end %></span>
+      <span id="next-page-link"><%= link_to(raw("Next Page &raquo;"), page_path(campaign_path: 'fedup', page: ((params[:page] ? params[:page].to_i : 1) + 1)), id: 'next-page') %></span>
+      <span id="prev-page-link"><% if (params[:page] && params[:page].to_i > 1 && !params[:page].nil?) %><%= link_to(raw("&laquo; Previous Page"), page_path(campaign_path: 'fedup', page: ((params[:page] ? params[:page].to_i : 1) - 1)), id: 'prev-page') %><% end %></span>
     </div>
   </div>
 </section>

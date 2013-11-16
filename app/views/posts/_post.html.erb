@@ -1,15 +1,17 @@
-<% cache [@campaign.path, @filter, @admin, @posts.first.created_at.to_i.to_s] do %>
+<% cache [@campaign.path, @filter, @admin, (@posts && @posts.first ? @posts.first.created_at.to_i.to_s : Time.now.to_i)] do %>
   <% i = 0 %>
   <% @n = 0 %>
 
   <% @posts.each do |post| %>
-    <% @post = post %>
-    <%= render 'single_post' %>
-    <% if @campaign && @campaign.stat_frequency && @campaign.stat_frequency > 0 %>
-      <% i += 1 %>
-      <% if i % @campaign.stat_frequency === 0 && @shown_stats %>
-        <% @n += 1 %>
-        <%= render 'stat' %>
+    <% if post.instance_of?(Post) %>
+      <% @post = post %>
+      <%= render 'single_post' %>
+      <% if @campaign && @campaign.stat_frequency && @campaign.stat_frequency > 0 %>
+        <% i += 1 %>
+        <% if i % @campaign.stat_frequency === 0 && @shown_stats %>
+          <% @n += 1 %>
+          <%= render 'stat' %>
+        <% end %>
       <% end %>
     <% end %>
   <% end %>

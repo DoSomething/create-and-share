@@ -3,6 +3,7 @@
   "latest": <%= (@posts.last ? @posts.last.id : 0) %>,
   "returned": <%= @posts.length || 0 %>,
   "seen": <%=raw @shown_stats.to_json %>,
-  "die": <%= ((@page.to_i * Post.per_page) >= 200) %>,
+  "die": <%= (((@page.to_i + 1) * Post.per_page) >= 200 || @posts.length < Post.per_page) %>,
+  "paginate": <%= (((@page.to_i + 1) * Post.per_page) >= 200) %>,
   "post_ids": <%=raw @posts.map(&:id).to_json %>
 }

@@ -20,13 +20,13 @@ feature 'View campaigns gated / ungated', feature: true do
     click_link @gated.title
     page.should have_content 'Create and Share index page'
 
-    # Submit-gated campaign
-    visit '/'
-    click_link @gated_submit.title
-    page.should have_content 'Create and Share index page'
-    click_link 'submit your pic'
-    click_link 'submit'
-    page.should have_content 'Upload an image'
+    # # Submit-gated campaign
+    # visit '/'
+    # click_link @gated_submit.title
+    # page.should have_content 'Create and Share index page'
+    # click_link 'submit your pic'
+    # click_link 'submit'
+    # page.should have_content 'Upload an image'
   end
 
   scenario 'user is not logged in' do
@@ -34,20 +34,20 @@ feature 'View campaigns gated / ungated', feature: true do
     visit '/'
     click_link @ungated.title
     page.should have_content 'Create and Share index page'
-    click_link 'submit your pic'
-    click_link 'submit'
-    page.should have_content 'Upload an image'
+    # click_link 'submit your pic'
+    # click_link 'submit'
+    # page.should have_content 'Upload an image'
 
     # Fully gated campaign
     visit '/'
     click_link @gated.title
     page.should have_content 'you must be logged in'
 
-    # Submit-gated campaign
-    visit '/'
-    click_link @gated_submit.title
-    page.should have_content 'Create and Share index page'
-    click_link 'submit your pic'
-    page.should have_content 'you must be logged in'
+    # # Submit-gated campaign
+    # visit '/'
+    # click_link @gated_submit.title
+    # page.should have_content 'Create and Share index page'
+    # click_link 'submit your pic'
+    # page.should have_content 'you must be logged in'
   end
 end

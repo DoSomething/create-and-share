@@ -86,6 +86,8 @@ class PostsController < ApplicationController
               if results[value]
                 Rails.cache.write 'post-' + value.to_s, results[value]
                 posts[index_pos] = results[value]
+              else
+                posts.delete_at(index_pos)
               end
             end
           end
@@ -101,7 +103,7 @@ class PostsController < ApplicationController
       cached = []
     end
 
-    cached
+    cached.reject { |p| !p.instance_of?(Post) }
   end
 
   # GET /posts
@@ -113,6 +115,7 @@ class PostsController < ApplicationController
       end
     end
 
+    @page = 1
     @filter = 'index'
     @admin = (admin? ? 'admin' : 'member')
 
@@ -132,15 +135,21 @@ class PostsController < ApplicationController
     unless params[:filter]
       @sample = Post.where(campaign_id: @campaign.id).order('posts.created_at DESC').offset((((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page))).limit(1).first
       @filter = (params[:filter].nil? ? 'index' : params[:filter])
+      @posts = []
 
-      @posts = Rails.cache.fetch @filter + '-page-' + params[:page].to_s + '/' + @sample.created_at.to_i.to_s do
-        Post.where(campaign_id: @campaign.id).order('posts.created_at DESC').offset((((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page)) + 1).limit(Post.per_page - 1).all
+      unless @sample.nil?
+        @posts = Rails.cache.fetch @filter + '-page-' + params[:page].to_s + '/' + @sample.created_at.to_i.to_s do
+          Post.where(campaign_id: @campaign.id).order('posts.created_at DESC').offset((((params[:page].to_i - 1) * Post.per_page) + (200 - Post.per_page)) + 1).limit(Post.per_page - 1).all
+        end
+        @posts.unshift @sample
       end
-      @posts.unshift @sample
+
+      @page = params[:page]
+
       render :index
       return
     else
-      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
+      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((params[:filter] && !params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (params[:filter] && !params[:filter].empty? && params[:filter] != 'false'))
       render :filter
       return
     end
@@ -149,8 +158,9 @@ class PostsController < ApplicationController
   def scroll
     if params[:filter] == 'index'
       @posts = get_posts((params[:page].to_i * Post.per_page), Post.per_page)
+      @page = params[:page]
     else
-      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((!params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (!params[:filter].empty? && params[:filter] != 'false'))
+      @posts, @count, @last, @page, @admin = Post.get_scroll(@campaign, admin?, params, ((params[:filter] && !params[:filter].empty? && params[:filter] != 'false') ? params[:filter] : 'index'), (params[:filter] && !params[:filter].empty? && params[:filter] != 'false'))
     end
   end
 
@@ -261,6 +271,7 @@ class PostsController < ApplicationController
 
   # GET /:campaign/submit
   def new
+    redirect_to root_path(campaign_path: @campaign.path)
     @post = Post.new
   end
 
@@ -371,11 +382,17 @@ class PostsController < ApplicationController
     end
 
     # Mark this post as flagged
-    Post.where(id: params[:id]).first.update_attribute(:flagged, true)
+    post = Post.where(id: params[:id])
+    if post.first
+      post.first.update_attribute(:flagged, true)
+    end
 
     if list.index(params[:id].to_i)
       Rails.cache.write 'index-first-posts', Post.where(flagged: false).last(200).reverse.map(&:id)
     end
+
+    Rails.cache.clear
+    expire_pages
 
     redirect_to request.env['HTTP_REFERER']
   end

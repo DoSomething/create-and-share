@@ -208,9 +208,8 @@ describe PostsController, :type => :controller do
       initial_cache = Rails.cache.read 'index-first-posts'
       expect(initial_cache).to include(@post.id.to_i)
 
+      Rails.cache.should_receive(:clear)
       get :flag, { id: @post.id, campaign_path: campaign.path }, session
-      final_cache = Rails.cache.read 'index-first-posts'
-      expect(final_cache).to_not include(@post.id.to_i)
     end
   end
 
