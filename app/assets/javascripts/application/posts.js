@@ -51,69 +51,69 @@ $(function() {
 
   set_votes = function() {
     // THUMBS UP & THUMBS DOWN
-    $('.thumbs-up, .thumbs-down').click(function(e) {
-      if (user.id == 0) {
-        $('<div id="please-log-in">Please <a href="/' + campaign.path + '/login">log in or register</a> to vote on posts.</div>').dialog({
-          dialogClass: 'please-log-in',
-          minHeight: '250px',
-          width: '350px',
-          close: function() {
-            $('#please-log-in').remove();
-          }
-        });
+    // $('.thumbs-up, .thumbs-down').click(function(e) {
+    //   if (user.id == 0) {
+    //     $('<div id="please-log-in">Please <a href="/' + campaign.path + '/login">log in or register</a> to vote on posts.</div>').dialog({
+    //       dialogClass: 'please-log-in',
+    //       minHeight: '250px',
+    //       width: '350px',
+    //       close: function() {
+    //         $('#please-log-in').remove();
+    //       }
+    //     });
 
-        return false;
-      }
+    //     return false;
+    //   }
 
-      if (!campaign.allow_revoting && $(this).hasClass('shared')) {
-        return false;
-      }
+    //   if (!campaign.allow_revoting && $(this).hasClass('shared')) {
+    //     return false;
+    //   }
 
-      e.preventDefault();
-      var type = $(this).data("type");
-      var id = $(this).parent().parent().data("id");
-      var post = '.post[data-id="' + id + '"] ';
+    //   e.preventDefault();
+    //   var type = $(this).data("type");
+    //   var id = $(this).parent().parent().data("id");
+    //   var post = '.post[data-id="' + id + '"] ';
 
-      if (!campaign.allow_revoting) {
-        $(post + ' .thumbs-up, ' + post + ' .thumbs-down').addClass('shared');
-      }
+    //   if (!campaign.allow_revoting) {
+    //     $(post + ' .thumbs-up, ' + post + ' .thumbs-down').addClass('shared');
+    //   }
 
-      $.post('/' + campaign.path + '/posts/' + id + '/thumbs',
-        { type: type },
-        function(response) {
-          $(post + '.count').text(response["score"]);
-          $(post + '.thumbs-up-count').text(response["up"]);
-          $(post + '.thumbs-down-count').text(response["down"]);
-          $(post + '.thumbs-up, ' + post + '.thumbs-down').removeClass("voted");
-          if (response["color"]) {
-            $(post + '.thumbs-' + type).addClass("voted");
-          }
-          render_popup(response["popup"]);
-      });
-    });
+    //   $.post('/' + campaign.path + '/posts/' + id + '/thumbs',
+    //     { type: type },
+    //     function(response) {
+    //       $(post + '.count').text(response["score"]);
+    //       $(post + '.thumbs-up-count').text(response["up"]);
+    //       $(post + '.thumbs-down-count').text(response["down"]);
+    //       $(post + '.thumbs-up, ' + post + '.thumbs-down').removeClass("voted");
+    //       if (response["color"]) {
+    //         $(post + '.thumbs-' + type).addClass("voted");
+    //       }
+    //       render_popup(response["popup"]);
+    //   });
+    // });
 
-    if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
-      $('.thumbs-up, .thumbs-down').mouseover(function() {
-        var type = $(this).data("type");
-        var id = $(this).parent().parent().data("id");
-        var post = '.post[data-id="' + id + '"] ';
-        $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "visible" });
-      }).mouseout(function() {
-        var type = $(this).data("type");
-        var id = $(this).parent().parent().data("id");
-        var post = '.post[data-id="' + id + '"] ';
-        $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "hidden" });
-      });
-    }
+    // if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
+    //   $('.thumbs-up, .thumbs-down').mouseover(function() {
+    //     var type = $(this).data("type");
+    //     var id = $(this).parent().parent().data("id");
+    //     var post = '.post[data-id="' + id + '"] ';
+    //     $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "visible" });
+    //   }).mouseout(function() {
+    //     var type = $(this).data("type");
+    //     var id = $(this).parent().parent().data("id");
+    //     var post = '.post[data-id="' + id + '"] ';
+    //     $(post + '.thumbs-' + type + '-count-wrapper').css({ visibility: "hidden" });
+    //   });
+    // }
 
-    if (!campaign.allow_revoting) {
-      if (typeof user.votes === 'object') {
-        for (var i in user.votes) {
-          $('.id-' + user.votes[i] + ' .thumbs-up').addClass('shared');
-          $('.id-' + user.votes[i] + ' .thumbs-down').addClass('shared');
-        }
-      }
-    }
+    // if (!campaign.allow_revoting) {
+    //   if (typeof user.votes === 'object') {
+    //     for (var i in user.votes) {
+    //       $('.id-' + user.votes[i] + ' .thumbs-up').addClass('shared');
+    //       $('.id-' + user.votes[i] + ' .thumbs-down').addClass('shared');
+    //     }
+    //   }
+    // }
   };
 
   $(document).ready(function() {

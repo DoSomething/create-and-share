@@ -271,6 +271,7 @@ class PostsController < ApplicationController
 
   # GET /:campaign/submit
   def new
+    redirect_to root_path(campaign_path: @campaign.path)
     @post = Post.new
   end
 
