@@ -3,11 +3,14 @@ require 'rvm/capistrano'
 vars_file = File.join(File.expand_path('./config'), 'initializers', 'deploy_vars')
 if File.exists? vars_file + '.rb'
   require vars_file
+  set :repository,  "git@bitbucket.org:mchitten/rpg-site-ruby.git"
+  set :scm, :git
+  set :branch, "master"
+else
+  set :repository, "."
+  set :scm, :none
+  set :deploy_via, :copy
 end
-
-set :application, "Create and Share"
-set :repository,  "git@github.com:DoSomething/create-and-share.git"
-set :branch, 'master'
 
 set :scm, :git
 set :scm_user, ENV['DS_DEPLOY_SCM_USER']
