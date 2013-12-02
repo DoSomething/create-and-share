@@ -16,11 +16,11 @@ end
 
 set :gateway, 'admin.dosomething.org:38383'
 server 'campaigns.dosomething.org', :app, :web, :db
-# set :port, '38383'
+set :port, '38383'
 set :user, 'dosomething'
 set :password, ENV['DS_DEPLOY_PASS']
-ssh_options[:keys] = [ENV['CAP_PRIVATE_KEY']]
-ssh_options[:forward_agent] = true
+# ssh_options[:keys] = [ENV['CAP_PRIVATE_KEY']]
+# ssh_options[:forward_agent] = true
 default_run_options[:pty] = true
 
 set :deploy_to, '/var/www/campaigns'
