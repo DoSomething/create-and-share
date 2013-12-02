@@ -6,15 +6,13 @@ if File.exists? vars_file + '.rb'
   set :repository,  "git@github.com:DoSomething/create-and-share.git"
   set :scm, :git
   set :branch, "master"
+  set :scm_user, ENV['DS_DEPLOY_SCM_USER']
+  set :scm_passphrase, ENV['DS_DEPLOY_SCM_PASS']
 else
   set :repository, "."
   set :scm, :none
   set :deploy_via, :copy
 end
-
-set :scm, :git
-set :scm_user, ENV['DS_DEPLOY_SCM_USER']
-set :scm_passphrase, ENV['DS_DEPLOY_SCM_PASS']
 
 set :gateway, 'admin.dosomething.org:38383'
 server 'campaigns.dosomething.org', :app, :web, :db
